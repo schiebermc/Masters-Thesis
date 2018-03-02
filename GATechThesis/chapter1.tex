@@ -1,0 +1,111 @@
+\chapter{Introduction and Background}
+
+Electron repulsion integrals (ERIs) and operations involving them pose a fundamental
+computational problem for quantum chemistry. These 2-electron, 4-center integrals take the form:
+\begin{align}(\mu \nu | \lambda \sigma) = \int \int \mu(\textbf{r}_{1}) 
+\nu(\textbf{r}_{1}) r^{-1}_{12} \lambda(\textbf{r}_{2}) \sigma(\textbf{r}_{2}) 
+d{\textbf{r}_{1}}d{\textbf{r}_{2}}
+\end{align}
+
+Where $\mu, \nu, \lambda, \sigma$ are atomic orbital (AO) basis functions and $\textbf{r}_{1}$ and $\textbf{r}_{2}$
+are electron coordinates. For simplicity, we have assumed the orbitals are real functions, as is usually
+the case in practice. Immediately, one should note the $\mathcal{O}(N_{AO}^4)$ storage costs (where $N_{AO}$ is
+the number of AO basis functions), which quickly 
+limits the size of in-core investigations. Moreover, the two fundamental operations involving ERIs 
+are also costly. The first operation involves their evaluation to build the Coulomb and exchange matrices:
+\begin{align}
+J[D_{\lambda \sigma}]_{\mu \nu} &= (\mu \nu|\lambda \sigma)D_{\lambda \sigma} \\
+K[D_{\lambda \sigma}]_{\mu \nu} &= (\mu \lambda|\nu \sigma)D_{\lambda \sigma}
+\end{align}
+
+\noindent Where $J[D_{\lambda \sigma}]_{\mu \nu}$, $K[D_{\lambda \sigma}]_{\mu \nu}$, 
+and $D_{\lambda \sigma}$ are the Coulomb, exchange, and density matrices, respectively.
+Evaluating the 4-center ERIs according to (1.2) and (1.3) requires $\mathcal{O}(N_{AO}^4)$ operations, 
+which is a heavy computational burden that plagues even the most basic quantum chemistry procedures. 
+The second fundamental operation when using ERIs involves their transformation from the AO basis 
+to the molecular orbital (MO) basis. This operation is written as:
+\begin{align}
+(pq | rs) = C_{p \mu}C_{q \nu}
+(\mu \nu | \lambda \sigma)C_{r\lambda}C_{s\sigma},
+\end{align} 
+
+\noindent where $p,q,r,s$ denote MO indices and orbital matrices, $C$, were introduced. These integral transformations scale 
+as $\mathcal{O}(N_{AO}^4N_p)$ (where $N_p$ is the size of the denoted MO basis) and serve as a major 
+bottleneck for perturbative correlation methods like second-order M{\o}ller-Plesset perturbation theory (MP2).
+
+To overcome the drastic cost of evaluation, transforming, and processing the 4-center ERIs, various approximations 
+and screening techniques have been developed.  
+Density fitting is one method for alleviating these costs which has been gaining popularity in electronic structure theory.
+By utilizing the resolution of the identity technique, 
+density fitting reduces the rank of the 4-center ERIs and approximates them using a 3-center form: 
+\begin{align} 
+(\mu \nu|P) &= \int \int \mu(\textbf{r}_{1}) 
+\nu(\textbf{r}_{1}) r^{-1}_{12} P(\textbf{r}_{2}) d\textbf{r}_{1} d\textbf{r}_{2} \\
+[J]_{PQ} &= \int \int P(\textbf{r}_1)r_{12}^{-1}Q(\textbf{r}_2) d{\textbf{r}_{1}}d{\textbf{r}_{2}} \\
+(\mu \nu|\lambda \sigma) &\approx (\mu \nu| P)[J]_{PQ}^{-1}(Q|\lambda \sigma)  
+\end{align} 
+
+\noindent Here we have introduced an auxiliary basis $P, Q$ and the Coloumb fitting metric $[J]_{PQ}^{-1}$. 
+In practice, permuational symmetry is almost always used so that only one set of these 3-center integrals need be built:
+\begin{align} 
+B_{\mu \nu}^P &= [J]_{PQ}^{-\frac{1}{2}}(\mu \nu | Q)  \\ 
+(\lambda \sigma | \mu \nu) &\approx  B_{\mu \nu}^P B_{\lambda \sigma}^P  \end{align} 
+
+\noindent The $B$ tensors indicate integrals that have been contracted with the fitting metric.
+The rank-reduced 3-center ERIs yield a space complexity of $\mathcal{O}(N_{aux}N_{AO}^2)$, 
+which allows many more investigations to be run in-core.  
+Using the 3-center ERIsi, the Coulomb and exchange matrices are evaluated as: 
+\begin{align}
+J[D_{\lambda \sigma}]_{\mu \nu} &= B_{\mu \nu}^P B_{\lambda \sigma}^PD_{\lambda \sigma} \\
+K[D_{\lambda \sigma}]_{\mu \nu} &= B_{\mu \lambda}^P B_{\nu \sigma}^PD_{\lambda \sigma}
+\end{align}
+
+\noindent Using (1.8), the Coulomb matrix is evaluated in $\mathcal{O}(N_{aux}N_{AO}^2)$ operations, which is a great success
+for reducing computational complexity. On the other hand, (1.9) still requires $\mathcal{O}(N_{aux}N^3)$ operations. 
+Since $N_{aux}$ is always larger than $N_{AO}$, evaluating (1.13) is actually more expensive than evaluating (1.10).
+This leaves exchange matrix evaluation as the major bottleck for most density-fitted procedures.
+One method for alleviating this bottleneck involves employing knowledge 
+of the form of the density matrix:
+\begin{align}
+D_{\lambda \sigma} &= C_{p\lambda}C_{p\sigma} 
+\end{align}
+
+\noindent Since MO spaces are often much smaller than AO spaces, it is possible to lower the complexity prefactor when 
+building the exchange matrix.  
+Decomposing the density matrix and rewriting the Coulomb and exchange matrix evaluations, we get:
+\begin{align}
+J[D_{\lambda \sigma}]_{\mu \nu} &= B_{\mu \nu}^P B_{\lambda \sigma}C_{p\lambda}C_{p\sigma} \\
+K[D_{\lambda \sigma}]_{\mu \nu} &= B_{\mu \lambda}^P B_{\nu \sigma}C_{p\lambda}C_{p\sigma}
+\end{align}
+
+\noindent Evaluating both (1.13) and (1.14) requires $\mathcal{O}(N_{aux}N_{AO}^2N_p)$ operations.
+This technique is not benificial for Coulomb matrix evaluations, since the complexity of (1.13) is actually
+higher than that of (1.10). However, (1.14) reduces the complexity of exchange matrix evaluation by  
+$\frac{N_{aux}}{p}$, which provides moderate speedups in practice.
+
+Moreover, density fitting also improves the cost of integral transformations. Applying (1.8) to (1.4), we have:
+\begin{align}
+B^Q_{pq} = B^Q_{\mu \nu}C_{p \mu}C_{q \nu} \\
+(pq | rs) \approx B^Q_{pq}B^Q_{rs}
+\end{align}
+
+The formal computational scaling of this operations is $\mathcal{O}(N_{aux}N_pN_qN_rN_s)$.  However, in practice,
+algorithms based on density fitting often involve contracting the transformed 3-index integrals, $B^Q_{pq}$, with other terms, 
+rather than explicity ofrmulation of $(pq|rs)$ as actual intermediates. Therefore, optimizing these procedures will primarily
+focus on optimizing the computation of $B^Q_{pq}$. 
+
+Although density fitting makes considerable progress towards reducing the space and computation complexity when
+using the ERIs, there is still work to be done. Importantly, (1.14) and (1.15) still serve as major computational
+bottlenecks for iterative and perturbative methods, respectively. In my research, I have sought out and implemented various 
+optimizations to further improve the density fitting regime. The essense of my work involves the marriage of sparsity screening,
+parallel scaling, minimizing disk IO, and optimal contraction paths. This thesis details the progress made via my research.
+In Chapter 2, I discuss the spatial sparsity of the 3-index integrals and the utilization of such sparsity for integral 
+construction, metric contractions, and integral transformations.
+In Chapter 3, I focus on (1.15) by discussing its implementation, blocking procedures, disk implications,
+and detail how the context in which transformations occur dictate which of two unique algorithms is superior.
+Finally, Chapter 4 focuses on (1.14) and displays the impact of my work for improving the state of the art. 
+
+%Chapter 5 discusses a failed attempt at obtaining speedups in second order SCF (SOSCF) procedures by 
+%evaluating Coulomb and exchange matrices directly in the MO basis.
+
+

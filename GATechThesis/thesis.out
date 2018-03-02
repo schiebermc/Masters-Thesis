@@ -1,0 +1,19 @@
+\BOOKMARK [0][-]{titlePage.0}{Title Page}{}% 1
+\BOOKMARK [0][-]{Doc-Start}{Acknowledgments}{}% 2
+\BOOKMARK [0][-]{TOC.0}{Table of Contents}{}% 3
+\BOOKMARK [0][-]{chapter*.1}{List of Tables}{}% 4
+\BOOKMARK [0][-]{chapter*.2}{List of Figures}{}% 5
+\BOOKMARK [0][-]{chapter.1}{Introduction and Background}{}% 6
+\BOOKMARK [0][-]{chapter.2}{Utilizing Spatial Sparsity}{}% 7
+\BOOKMARK [1][-]{section.2.1}{Sparsity Masks}{chapter.2}% 8
+\BOOKMARK [1][-]{section.2.2}{Integral Construction}{chapter.2}% 9
+\BOOKMARK [1][-]{section.2.3}{Integral Transformation}{chapter.2}% 10
+\BOOKMARK [1][-]{section.2.4}{Proof of Implementation}{chapter.2}% 11
+\BOOKMARK [0][-]{chapter.3}{Optimizing Integral Transformations}{}% 12
+\BOOKMARK [1][-]{section.3.1}{A note on disk-bound blocking}{chapter.3}% 13
+\BOOKMARK [0][-]{chapter.4}{Discussion}{}% 14
+\BOOKMARK [0][-]{chapter.5}{Conclusion}{}% 15
+\BOOKMARK [0][-]{Appendix.1.A}{Experimental Equipment}{}% 16
+\BOOKMARK [0][-]{Appendix.1.B}{Data Processing}{}% 17
+\BOOKMARK [0][-]{Appendix.1.B}{References}{}% 18
+\BOOKMARK [0][-]{chapter*.8}{Vita}{}% 19
