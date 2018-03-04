@@ -11,9 +11,19 @@
 \BOOKMARK [1][-]{section.2.4}{Proof of Implementation}{chapter.2}% 11
 \BOOKMARK [0][-]{chapter.3}{Optimizing Integral Transformations}{}% 12
 \BOOKMARK [1][-]{section.3.1}{A note on disk-bound blocking}{chapter.3}% 13
-\BOOKMARK [0][-]{chapter.4}{Discussion}{}% 14
-\BOOKMARK [0][-]{chapter.5}{Conclusion}{}% 15
-\BOOKMARK [0][-]{Appendix.1.A}{Experimental Equipment}{}% 16
-\BOOKMARK [0][-]{Appendix.1.B}{Data Processing}{}% 17
-\BOOKMARK [0][-]{Appendix.1.B}{References}{}% 18
-\BOOKMARK [0][-]{chapter*.8}{Vita}{}% 19
+\BOOKMARK [1][-]{section.3.2}{Memory layout for sparsity-utilized transformations}{chapter.3}% 14
+\BOOKMARK [1][-]{section.3.3}{Context Dependent Workflows}{chapter.3}% 15
+\BOOKMARK [1][-]{section.3.4}{Intermediate Recycling}{chapter.3}% 16
+\BOOKMARK [0][-]{chapter.4}{Evaluating Coulomb and Exchange Matrices}{}% 17
+\BOOKMARK [0][-]{chapter.5}{Results}{}% 18
+\BOOKMARK [1][-]{section.5.1}{Sparsity Screening}{chapter.5}% 19
+\BOOKMARK [1][-]{section.5.2}{Parallel Scaling of Transformations}{chapter.5}% 20
+\BOOKMARK [1][-]{section.5.3}{Context Dependent Workflows}{chapter.5}% 21
+\BOOKMARK [2][-]{subsection.5.3.1}{Performace Crossover Through Number of Iterations}{section.5.3}% 22
+\BOOKMARK [2][-]{subsection.5.3.2}{Superior Workflows in Practice}{section.5.3}% 23
+\BOOKMARK [1][-]{section.5.4}{Coloumb and Exchange Builds}{chapter.5}% 24
+\BOOKMARK [0][-]{chapter.6}{Conclusions}{}% 25
+\BOOKMARK [0][-]{Appendix.1.A}{Experimental Equipment}{}% 26
+\BOOKMARK [0][-]{Appendix.1.B}{Data Processing}{}% 27
+\BOOKMARK [0][-]{Appendix.1.B}{References}{}% 28
+\BOOKMARK [0][-]{chapter*.18}{Vita}{}% 29

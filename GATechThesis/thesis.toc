@@ -22,18 +22,38 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {3.1}A note on disk-bound blocking}{13}{section.3.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {4}Discussion}{15}{chapter.4}
+\contentsline {section}{\numberline {3.2}Memory layout for sparsity-utilized transformations}{15}{section.3.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {5}Conclusion}{16}{chapter.5}
+\contentsline {section}{\numberline {3.3}Context Dependent Workflows}{17}{section.3.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {3.4}Intermediate Recycling}{19}{section.3.4}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {4}Evaluating Coulomb and Exchange Matrices}{21}{chapter.4}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {5}Results}{24}{chapter.5}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {5.1}Sparsity Screening}{24}{section.5.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {5.2}Parallel Scaling of Transformations}{27}{section.5.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {5.3}Context Dependent Workflows}{30}{section.5.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {5.3.1}Performace Crossover Through Number of Iterations}{30}{subsection.5.3.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {5.3.2}Superior Workflows in Practice}{32}{subsection.5.3.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {5.4}Coloumb and Exchange Builds}{33}{section.5.4}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {6}Conclusions}{34}{chapter.6}
 \defcounter {refsection}{0}\relax 
 \renewcommand {\cftchappresnum }{Appendix }
 \defcounter {refsection}{0}\relax 
 \renewcommand {\cftchapnumwidth }{6em}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {A}Experimental Equipment}{18}{Appendix.1.A}
+\contentsline {chapter}{\numberline {A}Experimental Equipment}{36}{Appendix.1.A}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {B}Data Processing}{19}{Appendix.1.B}
+\contentsline {chapter}{\numberline {B}Data Processing}{37}{Appendix.1.B}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{References}{19}{Appendix.1.B}
+\contentsline {chapter}{References}{37}{Appendix.1.B}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{Vita}{20}{chapter*.8}
+\contentsline {chapter}{Vita}{38}{chapter*.18}

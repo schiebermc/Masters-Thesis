@@ -33,9 +33,9 @@
 \@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\defcounter {refsection}{0}\relax }\@writefile{lot}{\addvspace {10\p@ }}
 \@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {section}{\numberline {2.1}Sparsity Masks}{5}{section.2.1}}
-\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {figure}{\numberline {2.1}{\ignorespaces Schwarz sparsity masks used for benzene stacks containing 1, 5, and 10 benzenes spaced 3Å apart. Sparsity masks were obtained by evaluating $\sqrt  {\mu (i)\mu (j)\nu (i)\nu (j)}<\tau $.\relax }}{6}{figure.caption.4}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {figure}{\numberline {2.1}{\ignorespaces Schwarz sparsity masks used for benzene stacks containing 1, 5, and 10 benzenes spaced 3Å apart. Sparsity masks were obtained by evaluating $(\mu \nu |\mu \nu )<\frac  {\tau ^2}{(\mu \nu |\mu \nu )_{max}}$.\relax }}{6}{figure.caption.4}}
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:databases}{{2.1}{6}{Schwarz sparsity masks used for benzene stacks containing 1, 5, and 10 benzenes spaced 3Å apart. Sparsity masks were obtained by evaluating $\sqrt {\mu (i)\mu (j)\nu (i)\nu (j)}<\tau $.\relax }{figure.caption.4}{}}
+\newlabel{fig:databases}{{2.1}{6}{Schwarz sparsity masks used for benzene stacks containing 1, 5, and 10 benzenes spaced 3Å apart. Sparsity masks were obtained by evaluating $(\mu \nu |\mu \nu )<\frac {\tau ^2}{(\mu \nu |\mu \nu )_{max}}$.\relax }{figure.caption.4}{}}
 \@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {section}{\numberline {2.2}Integral Construction}{7}{section.2.2}}
 \@writefile{loa}{\defcounter {refsection}{0}\relax }\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Prune $A_{\mu \nu }^P$ using sparsity\relax }}{7}{algorithm.1}}
 \@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {section}{\numberline {2.3}Integral Transformation}{8}{section.2.3}}
@@ -60,19 +60,94 @@
 \@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\defcounter {refsection}{0}\relax }\@writefile{lot}{\addvspace {10\p@ }}
 \@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {section}{\numberline {3.1}A note on disk-bound blocking}{13}{section.3.1}}
-\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {chapter}{\numberline {4}Discussion}{15}{chapter.4}}
+\@writefile{loa}{\defcounter {refsection}{0}\relax }\@writefile{loa}{\contentsline {algorithm}{\numberline {3}{\ignorespaces Construct the full AO integrals $B_{\mu \nu }^P$ by blocking accross the $P$ index.\relax }}{14}{algorithm.3}}
+\@writefile{loa}{\defcounter {refsection}{0}\relax }\@writefile{loa}{\contentsline {algorithm}{\numberline {4}{\ignorespaces Construct the full AO integrals $B_{\mu \nu }^P$ by blocking accross the $\mu $ index.\relax }}{14}{algorithm.4}}
+\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {section}{\numberline {3.2}Memory layout for sparsity-utilized transformations}{15}{section.3.2}}
+\@writefile{loa}{\defcounter {refsection}{0}\relax }\@writefile{loa}{\contentsline {algorithm}{\numberline {5}{\ignorespaces Transforming sparse integrals using $A_{P \mu \nu ^\mu }$ form.\relax }}{16}{algorithm.5}}
+\@writefile{loa}{\defcounter {refsection}{0}\relax }\@writefile{loa}{\contentsline {algorithm}{\numberline {6}{\ignorespaces Transforming sparse integrals using $A_{\mu P \nu ^\mu }$ form.\relax }}{16}{algorithm.6}}
+\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {section}{\numberline {3.3}Context Dependent Workflows}{17}{section.3.3}}
+\@writefile{lot}{\defcounter {refsection}{0}\relax }\@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces Speedups obtainable via pre-transforming the 3-center integrals prior to metric contraction for common occupied-virtual transformations.\relax }}{18}{table.caption.8}}
+\@writefile{loa}{\defcounter {refsection}{0}\relax }\@writefile{loa}{\contentsline {algorithm}{\numberline {7}{\ignorespaces "Store" algorithm - contract metric then transform.\relax }}{19}{algorithm.7}}
+\@writefile{loa}{\defcounter {refsection}{0}\relax }\@writefile{loa}{\contentsline {algorithm}{\numberline {8}{\ignorespaces "Direct" algorithm - transform then contract metric.\relax }}{19}{algorithm.8}}
+\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {section}{\numberline {3.4}Intermediate Recycling}{19}{section.3.4}}
+\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {chapter}{\numberline {4}Evaluating Coulomb and Exchange Matrices}{21}{chapter.4}}
 \@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\defcounter {refsection}{0}\relax }\@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {chapter}{\numberline {5}Conclusion}{16}{chapter.5}}
+\@writefile{loa}{\defcounter {refsection}{0}\relax }\@writefile{loa}{\contentsline {algorithm}{\numberline {9}{\ignorespaces Building the $K$ matrix.\relax }}{22}{algorithm.9}}
+\@writefile{loa}{\defcounter {refsection}{0}\relax }\@writefile{loa}{\contentsline {algorithm}{\numberline {10}{\ignorespaces Building the $K$ matrix using $A_{\mu P \nu ^\mu }$, blocking accross $P$\relax }}{22}{algorithm.10}}
+\@writefile{loa}{\defcounter {refsection}{0}\relax }\@writefile{loa}{\contentsline {algorithm}{\numberline {11}{\ignorespaces Building the $K$ matrix using $A_{P \mu \nu ^\mu }$, blocking accross $P$\relax }}{23}{algorithm.11}}
+\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {chapter}{\numberline {5}Results}{24}{chapter.5}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\addvspace {10\p@ }}
+\@writefile{lot}{\defcounter {refsection}{0}\relax }\@writefile{lot}{\addvspace {10\p@ }}
+\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {section}{\numberline {5.1}Sparsity Screening}{24}{section.5.1}}
+\@writefile{lot}{\defcounter {refsection}{0}\relax }\@writefile{lot}{\contentsline {table}{\numberline {5.1}{\ignorespaces Characteristics of benzene stack systems. $N$ and $N_{aux}$ refer to the number of primary and auxiliary basis functions, respectively. Mask sparsity refers to the percentage of significant AO function pairs in the sparsity mask. Mask sparsity increases with additional benzenes added to the stack.\relax }}{25}{table.caption.9}}
+\newlabel{fig:f1}{{5.1a}{26}{Subfigure 5 5.1a}{subfigure.5.1.1}{}}
+\newlabel{sub@fig:f1}{{(a)}{a}{Subfigure 5 5.1a\relax }{subfigure.5.1.1}{}}
+\newlabel{fig:f1}{{5.1b}{26}{Subfigure 5 5.1b}{subfigure.5.1.2}{}}
+\newlabel{sub@fig:f1}{{(b)}{b}{Subfigure 5 5.1b\relax }{subfigure.5.1.2}{}}
+\newlabel{fig:f1}{{5.1c}{26}{Subfigure 5 5.1c}{subfigure.5.1.3}{}}
+\newlabel{sub@fig:f1}{{(c)}{c}{Subfigure 5 5.1c\relax }{subfigure.5.1.3}{}}
+\newlabel{fig:f2}{{5.1d}{26}{Subfigure 5 5.1d}{subfigure.5.1.4}{}}
+\newlabel{sub@fig:f2}{{(d)}{d}{Subfigure 5 5.1d\relax }{subfigure.5.1.4}{}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {figure}{\numberline {5.1}{\ignorespaces Comparison of execution times using sparsity screening (blue) against no sparsity screening (orange). Execution time is plotted against number of benzenes in a benzene stack from one to ten benzenes. Transformations involved computing $(ib|Q)$, where $i$ and $b$ denote occupied and virtual indices, respectively. Cutoff refers to the Schwarz screening threshold. (a) Computing the integrals. (b) Contracting AO integrals with the fitting metric. (c) first transformation times only. (d) total transformation times.\relax }}{26}{figure.caption.10}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {}}}{26}{subfigure.1.1}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {}}}{26}{subfigure.1.2}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {}}}{26}{subfigure.1.3}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {}}}{26}{subfigure.1.4}}
+\@writefile{lot}{\defcounter {refsection}{0}\relax }\@writefile{lot}{\contentsline {table}{\numberline {5.2}{\ignorespaces Speedups obtained from sparsity screening at ten benzenes from data in Figure 2.\relax }}{26}{table.caption.11}}
+\citation{Lec:2016:768}
+\citation{Lec:2016:768}
+\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {section}{\numberline {5.2}Parallel Scaling of Transformations}{27}{section.5.2}}
+\@writefile{lot}{\defcounter {refsection}{0}\relax }\@writefile{lot}{\contentsline {table}{\numberline {5.3}{\ignorespaces Characteristics of organoboron catalyst. $N$ and $N_{aux}$ refer to the number of primary and auxiliary basis functions, respectively. Mask sparsity refers to the percentage of significant AO function pairs in the sparsity mask.\relax }}{27}{table.caption.13}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {figure}{\numberline {5.2}{\ignorespaces Transition state for organoboron addition to trifluooroacetone. Taken from Ref. \cite {Lec:2016:768}\relax }}{28}{figure.caption.12}}
+\newlabel{fig:databases}{{5.2}{28}{Transition state for organoboron addition to trifluooroacetone. Taken from Ref. \cite {Lec:2016:768}\relax }{figure.caption.12}{}}
+\newlabel{fig:f1}{{5.3a}{29}{Subfigure 5 5.3a}{subfigure.5.3.1}{}}
+\newlabel{sub@fig:f1}{{(a)}{a}{Subfigure 5 5.3a\relax }{subfigure.5.3.1}{}}
+\newlabel{fig:f2}{{5.3b}{29}{Subfigure 5 5.3b}{subfigure.5.3.2}{}}
+\newlabel{sub@fig:f2}{{(b)}{b}{Subfigure 5 5.3b\relax }{subfigure.5.3.2}{}}
+\newlabel{fig:f1}{{5.3c}{29}{Subfigure 5 5.3c}{subfigure.5.3.3}{}}
+\newlabel{sub@fig:f1}{{(c)}{c}{Subfigure 5 5.3c\relax }{subfigure.5.3.3}{}}
+\newlabel{fig:f2}{{5.3d}{29}{Subfigure 5 5.3d}{subfigure.5.3.4}{}}
+\newlabel{sub@fig:f2}{{(d)}{d}{Subfigure 5 5.3d\relax }{subfigure.5.3.4}{}}
+\newlabel{fig:f1}{{5.3e}{29}{Subfigure 5 5.3e}{subfigure.5.3.5}{}}
+\newlabel{sub@fig:f1}{{(e)}{e}{Subfigure 5 5.3e\relax }{subfigure.5.3.5}{}}
+\newlabel{fig:f2}{{5.3f}{29}{Subfigure 5 5.3f}{subfigure.5.3.6}{}}
+\newlabel{sub@fig:f2}{{(f)}{f}{Subfigure 5 5.3f\relax }{subfigure.5.3.6}{}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {figure}{\numberline {5.3}{\ignorespaces Speedup and execution time plots obtained using our optimized memory layout from Section 3 for sparsity screened 3-center integrals. Execution times involve computing three common transformations: $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$, where $i,j$ and $a,b$ denote occupied and virtual indices, respectively. Graphs (a), (c), and (e) include speedups for constructing the integrals (orange), transforming (blue), total time (red), and ideal (black). Graphs (b), (d), and (f) plot total execution times. Problem sizes were increased by increasing basis set size using cc-pVXZ, X = D,T,Q.\relax }}{29}{figure.caption.14}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {}}}{29}{subfigure.3.1}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {}}}{29}{subfigure.3.2}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {}}}{29}{subfigure.3.3}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {}}}{29}{subfigure.3.4}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(e)}{\ignorespaces {}}}{29}{subfigure.3.5}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(f)}{\ignorespaces {}}}{29}{subfigure.3.6}}
+\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {section}{\numberline {5.3}Context Dependent Workflows}{30}{section.5.3}}
+\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.1}Performace Crossover Through Number of Iterations}{30}{subsection.5.3.1}}
+\@writefile{lot}{\defcounter {refsection}{0}\relax }\@writefile{lot}{\contentsline {table}{\numberline {5.4}{\ignorespaces Characteristics of organoboron catalyst systems across the cc-pVDZ, cc-pVTZ, and cc-pVQZ basis sets.\relax }}{31}{table.caption.15}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {figure}{\numberline {5.4}{\ignorespaces Comparison of execution times for the Store and Direct algorithms to complete $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$ transformations across the cc-pVDZ, cc-pVTZ, and cc-pVQZ basis sets. A scan from one to ten transformations was performed. In each case, a crossover occurs as the Direct algorithm becomes more expensive. The crossover occurs in fewer iterations for transformations involving larger MO spaces. With increasing basis set size, the crossover point is shifted to the right for the $(ij|Q)$ and $(ib|Q)$ transformations and it is shifted slightly to the left for the $(ab|Q)$ transformation.\relax }}{31}{figure.caption.16}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {}}}{31}{subfigure.4.1}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {}}}{31}{subfigure.4.2}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(c)}{\ignorespaces {}}}{31}{subfigure.4.3}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(d)}{\ignorespaces {}}}{31}{subfigure.4.4}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(e)}{\ignorespaces {}}}{31}{subfigure.4.5}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(f)}{\ignorespaces {}}}{31}{subfigure.4.6}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(g)}{\ignorespaces {}}}{31}{subfigure.4.7}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(h)}{\ignorespaces {}}}{31}{subfigure.4.8}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(i)}{\ignorespaces {}}}{31}{subfigure.4.9}}
+\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {subsection}{\numberline {5.3.2}Superior Workflows in Practice}{32}{subsection.5.3.2}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {figure}{\numberline {5.5}{\ignorespaces Systems used for context dependent investigation of the Store and Direct workflows. (a) Hexatriene. (b) Ethylene in 50 methanol solvent molecules. \relax }}{33}{figure.caption.17}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {}}}{33}{subfigure.5.1}}
+\@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {}}}{33}{subfigure.5.2}}
+\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {section}{\numberline {5.4}Coloumb and Exchange Builds}{33}{section.5.4}}
+\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {chapter}{\numberline {6}Conclusions}{34}{chapter.6}}
 \@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\defcounter {refsection}{0}\relax }\@writefile{lot}{\addvspace {10\p@ }}
 \@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\renewcommand {\cftchappresnum }{Appendix }}
 \@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\renewcommand {\cftchapnumwidth }{6em}}
-\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {chapter}{\numberline {A}Experimental Equipment}{18}{Appendix.1.A}}
+\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {chapter}{\numberline {A}Experimental Equipment}{36}{Appendix.1.A}}
 \@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\defcounter {refsection}{0}\relax }\@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {chapter}{\numberline {B}Data Processing}{19}{Appendix.1.B}}
+\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {chapter}{\numberline {B}Data Processing}{37}{Appendix.1.B}}
 \@writefile{lof}{\defcounter {refsection}{0}\relax }\@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\defcounter {refsection}{0}\relax }\@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {chapter}{References}{19}{Appendix.1.B}}
-\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {chapter}{Vita}{20}{chapter*.8}}
+\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {chapter}{References}{37}{Appendix.1.B}}
+\@writefile{toc}{\defcounter {refsection}{0}\relax }\@writefile{toc}{\contentsline {chapter}{Vita}{38}{chapter*.18}}

@@ -30,17 +30,20 @@ For efficiency, it is common to compute batches of integrals in \textit{shell tr
 (M N | Q) = \{(\mu \nu|P), \mu \in M, \nu \in N, Q \in P\} 
 \end{align} 
 
-\noindent A shell pair ($M$, $N$) is significant if
-\begin{align} 
-\max\sqrt{\mu(M)\mu(N)\nu(M)\nu(N)}<\tau. 
-\end{align} 
+\noindent An individual integral $(\mu \nu | P)$ is bounded by the Schwarz inequality $(\mu \nu | P) \leq 
+\sqrt{(\mu \nu | \mu \nu)(P|P)}$. We can eliminate entire shells of integrals , $(MN|P)$, where $M$ and $N$ denote AO shells, by computing
+and storing the maximum $(\mu \nu | \mu \nu)$ that occurs for a given shell $\mu \in M, \nu \in N$. We use a relative cutoff tolerance
+$\tau$ and neglect shells for which 
+\begin{align}
+MN_{max} < \frac{\tau^2}{(\mu \nu | \mu \nu)_{max}},
+\end{align}
 
-\noindent Where $\tau$ is the screening threshold.  This is known as Schwarz screening.
-Moreover, additional sparsity can be achieved if the screening is applied to function pairs rather than entire shell pairs.
-Then, a function pair ($i$, $j$) is significant if 
-\begin{align} 
-\sqrt{\mu(i)\mu(j)\nu(i)\nu(j)}<\tau.
-\end{align} 
+where $MN_{max}$ is the maximum $(\mu \nu | \mu \nu)$
+within a shell pair $(M, N)$ and $(\mu \nu | \mu \nu)_{max}$ is the global maximum $(\mu \nu | \mu \nu)$. In addition, even for shell pairs
+that are not screened out, we can apply function-level screening and avoid computation of $(\mu \nu | P)$, where
+\begin{align}
+(\mu \nu | \mu \nu) < \frac{\tau^2}{(\mu \nu | \mu \nu)_{max}}.
+\end{align}
 
 Using this strategy, a sparsity mask can be easily constructed. Figure 1 includes
 illustrations of sparsity masks for benzene stacks with 1, 5, and 10 benzenes spaced 3 {\AA} apart. As sparsity increases, the number of
@@ -50,7 +53,7 @@ sufficiently sparse systems.
 \begin{figure}[H] 
 \centering
 \includegraphics[scale=0.2]{figures/sparsity_plots/sparsity_masks.png} \caption{Schwarz sparsity masks used for benzene stacks containing 
-1, 5, and 10 benzenes spaced 3Å apart. Sparsity masks were obtained by evaluating $\sqrt{\mu(i)\mu(j)\nu(i)\nu(j)}<\tau$.}
+1, 5, and 10 benzenes spaced 3Å apart. Sparsity masks were obtained by evaluating $(\mu\nu|\mu\nu)<\frac{\tau^2}{(\mu\nu|\mu\nu)_{max}}$.}
 \label{fig:databases} \end{figure}
 
 
