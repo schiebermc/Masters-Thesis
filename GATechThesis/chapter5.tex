@@ -111,8 +111,15 @@ typically require transformation to local orbitals.
 \section{Parallel Scaling of Transformations}
 
 To measure parallel scaling, we performed integral transformations for the boron catalyst system shown in Figure 3. 
+We varied the problem size by adjusting the $\zeta$ level for the Dunning basis sets with $\zeta$ = D, T, Q.
+The characteristics of these systems are included in Table 4. Note that while parallel scaling typically improves
+for larger systems (i.e. due to larger workloads),
+this is not gauranteed in a sparsity regime. Larger systems may contain more sparsity;
+more sparsity will result in more striding, copying, and irregular sizing,
+which will hinder parallel scaling. Nonetheless, our method outlined in Algorithm 2 is designed to utilize sparsity while also
+obtaining maximum parallel efficiency. 
 
-\begin{figure} 
+\begin{figure}[H] 
 \centering
 \includegraphics[width=80mm]{geometries/boron_catalyst.png} \caption{Transition state for organoboron addition to trifluooroacetone. Taken from Ref. \cite{Lec:2016:768}} 
 \label{fig:databases} \end{figure}
@@ -137,13 +144,7 @@ cc-pVQZ   & 3040 & 5593 & 50.2 \\
 \end{table}
 \endgroup
 
-\noindent We varied the problem size by adjusting the $\zeta$ level for the Dunning basis sets with $\zeta$ = D, T, Q.
-The characteristics of these systems are included in Table 4. Note that while parallel scaling typically improves
-for larger systems (i.e. due to larger workloads),
-this is not gauranteed in a sparsity regime. Larger systems may contain more sparsity;
-more sparsity will result in more striding, copying, and irregular sizing,
-which will hinder parallel scaling. Nonetheless, our method outlined in Algorithm 2 is designed to utilize sparsity while also
-obtaining maximum parallel efficiency. For each system, we performed the three common transformations:
+\noindent For each system, we performed the three common transformations:
 
 \begin{align} 
 (i j | Q) = (\lambda \sigma | Q) C_{\sigma i} C_{\lambda j} \\
@@ -151,7 +152,7 @@ obtaining maximum parallel efficiency. For each system, we performed the three c
 (a b | Q) = (\lambda \sigma | Q) C_{\sigma a} C_{\lambda b} 
 \end{align}
 
-The experiment was carried out using one node consisting of an Intel Xeon E5-2630 processor 
+\noindent The experiment was carried out using one node consisting of an Intel Xeon E5-2630 processor 
 (10 cores at 2.20GHz) and 24GB DRAM. Figure 4 includes plots of both speedups and execution times for each system.
 
 \begin{figure}[H]
@@ -273,24 +274,110 @@ In the previous section, we determined the Direct algorithm will be superior in 
 algorithm will be superior in methods such as MCSCF.
 After determing the contexts in which either algorithm prevail, we sought to reveal their benefits when applied in practice. 
 To do so, we employed either algorithm
-in the contexts of different procedures and systems.  For procedures, we tested MCSCF, DFMP2, and FSAPT.  We ran these 
-procedures on the systems included in Figure 6.
-Figure 6 (a) is a hexatriene molecule.  Figure 6 (b) is ethylene molecule surrounded by 50 methanol solvent molecules.
-Table 6 lists the characteristics of each system,
+in the contexts of different procedures and systems.  For procedures, we tested DFMCSCF and DFMP2.  We ran these 
+procedures on the systems included in Figure 5.5.
+Figure 5.5 (a) is a hexatriene molecule.  Figure 5.5 (b) is benzene and toluene solvated by 20 water molecules.
+Table 5.5 lists the characteristics of each system,
 which includes the basis set, the number of primary and auxiliary basis functions, and the mask sparsity. 
+
 
 \begin{figure}[H]
   \captionsetup[subfigure]{}
   \centering
   \subfloat[]{\includegraphics[width=55mm]{geometries/hexatriene.png}}
-  \subfloat[]{\includegraphics[width=55mm]{geometries/ethylene_50meth.png}} 
+  \subfloat[]{\includegraphics[width=55mm]{geometries/benzene-toluene-solvated.png}} 
   \hfill
-  \caption{Systems used for context dependent investigation of the Store and Direct workflows. (a) Hexatriene. (b) Ethylene in 50 methanol solvent molecules. }
+  \caption{Systems used for context dependent investigation of the Store and Direct workflows. (a) Hexatriene. (b) Benzene and toluene 
+in 20 water solvent molecules. }
 \end{figure}
+
+\begingroup
+\begin{table}[H]
+\centering
+\renewcommand{\baselinestretch}{1}
+\caption{Characteristics of systems for Store vs Direct algorithm comparisons.}
+\begin{tabular}{l cccc}
+\multicolumn{1}{l}{\textbf{System}} &
+\multicolumn{1}{c}{\textbf{Basis}} &
+\multicolumn{1}{c}{\textbf{$N_{aux}$}} &
+\multicolumn{1}{c}{\textbf{$N_{occ}$}} &
+\multicolumn{1}{c}{\textbf{$N_{virt}$}} \\
+\hline
+Hexatriene        & cc-pVQZ     & 3277      & 129       & 542        \\ 
+Benzene-Toluene   & jun-cc-pVDZ & 3856      & 129       & 1437       \\ 
+\end{tabular}
+\end{table}
+\endgroup
+
+The experiments were carried out using one node consisting of an Intel Core i7-5930K processor
+(6 cores at 3.50GHz) and 60GB DRAM. The results are included in Tables 5.6 and 5.7. Table 5.6 includes
+the total computation time spent in operations involving the three-index integrals. These times will
+reflect the algorithmic benifits illustrated in Table 5.4. Table 5.7 includes the total time required
+to exectue the program. These times reflect total procedure times, which include many operations extraneous
+to the three-index integrals.
+
+\begingroup
+\begin{table}[H]
+\centering
+\renewcommand{\baselinestretch}{1}
+\caption{Computatoinal times comparing the Direct and Store algorithms for three-index integral transformations}
+\begin{tabular}{l cccc}
+\multicolumn{1}{l}{\textbf{System}} &
+\multicolumn{1}{c}{\textbf{Procedure}} &
+\multicolumn{1}{c}{\textbf{DIRECT}} &
+\multicolumn{1}{c}{\textbf{STORE}} &
+\multicolumn{1}{c}{\textbf{Speedup}} \\ 
+\hline
+Hexatriene        & DFMCSCF & 42.32s  & 7.839s  &  5.4x  \\ 
+Hexatriene        & DFMP2   & 2.728s  & 6.559s  &  2.4x  \\ 
+Benzene-Toluene   & DFMCSCF & 438.1s  & 104.8s  &  4.2x  \\ 
+Benzene-Toluene   & DFMP2   &      &   &    \\ 
+\end{tabular}
+\end{table}
+\endgroup
+
+
+\begingroup
+\begin{table}[H]
+\centering
+\renewcommand{\baselinestretch}{1}
+\caption{Total procedure wall clock times comparing the Direct and Store algorithms for three-index integral transformations}
+\begin{tabular}{l cccc}
+\multicolumn{1}{l}{\textbf{System}} &
+\multicolumn{1}{c}{\textbf{Procedure}} &
+\multicolumn{1}{c}{\textbf{DIRECT}} &
+\multicolumn{1}{c}{\textbf{STORE}} &
+\multicolumn{1}{c}{\textbf{Speedup}} \\ 
+\hline
+Hexatriene        & DFMCSCF & 173.0   & 145.6   &  1.2x  \\ 
+Hexatriene        & DFMP2   & 1299.4s & 1307.3s &  1.0x  \\ 
+Benzene-Toluene   & DFMCSCF & 5138.7s & 4811.8s &  1.1x  \\ 
+Benzene-Toluene   & DFMP2   &   &   &    \\ 
+\end{tabular}
+\end{table}
+\endgroup
+
+Both Tables 5.6 and 5.7 reveal that the Direct algorithm is superior for DFMP2 whereas the Store algorithm is superior for
+DFMCSCF. The computational speedups can be substantial, reaching 5.4x for DFMCSCF with the hexatriene system. However, Table 5.7
+reveals these speedups are considerably dampened for the overall procedure time. This is true because 
+the operations invovling the three-index integrals ar enot the most expensive compoutations occurring within these procedures.
 
 
 \section{Coloumb and Exchange Builds}
 
- 
+Here, we present the performance of Algorithms 10 and 11 for various systems. Currently, the state of the art in the 
+open-source electronic structure package, Psi4, is Algorithm 11. However, we conjecture that Algorithm 10 could provide 
+considerable speedups as it eliminates entirely a strided, level 1 BLAS copy.   
 
+We implemented Algorithm 10 and incorporated it into a development version of Psi4. Then, we used Psi4's Self-Consistent-Field
+procedure to produce energies for various systems and basis set combinations. The systems used involved a protein-drug complex,
+where the drug molecule is ommitted and the atoms of the protien are added in a series according to distance from the center of
+the drug molecule. 
+
+The experiments were carried out using one node consisting of an Intel Core i7-5930K processor
+(6 cores at 3.50GHz) and 60GB DRAM. The results are included in Table 5.7:
+
+
+ 
+ 
 

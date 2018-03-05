@@ -1,7 +1,7 @@
 \chapter{Utilizing Spatial Sparsity}
 
 For all but the smallest molecules, spatial sparsity is very important for achieving computational savings
-in quantum chemistry. There exists two primary forms of spatial sparsity in (1.3). The first form
+in quantum chemistry. There exists two primary forms of spatial sparsity in (1.5). The first form
 results from the Gaussian product $\mu(\textbf{r}_{1}) \nu(\textbf{r}_{1})$ diminishing with the overlap of the 
 two AO Gaussians. This product diminishes rapidly with distance between the Gaussian function centers and is also 
 highly sensitive to their degree of locality.
@@ -13,7 +13,7 @@ computing the 3-center integrals becomes $\mathcal{O}(N_{aux}N_{AO}^{1-2})$, whe
 sparse systems. Another type of spatial sparsity in (1.3) involves the auxiliary function, which is more complicated to 
 take advantage of. see Ref. \cite{Werner:2003:8149}. In this thesis, I focus on the former, pairwise sparsity which is featured
 in the product $\mu(\textbf{r}_{1}) \nu(\textbf{r}_{1})$. 
-Utilizing this sparsity not only speeds up the compoutation of the three-index integrals, but stored in a sparse format,
+Utilizing this sparsity not only speeds up the computation of the three-index integrals, but stored in a sparse format,
 then this sparsity can be utilized in later operations such as the fitting metric contraction and basis transformations.
 
 \section{Sparsity Masks}
@@ -38,22 +38,22 @@ $\tau$ and neglect shells for which
 MN_{max} < \frac{\tau^2}{(\mu \nu | \mu \nu)_{max}},
 \end{align}
 
-where $MN_{max}$ is the maximum $(\mu \nu | \mu \nu)$
+\noindent where $MN_{max}$ is the maximum $(\mu \nu | \mu \nu)$
 within a shell pair $(M, N)$ and $(\mu \nu | \mu \nu)_{max}$ is the global maximum $(\mu \nu | \mu \nu)$. In addition, even for shell pairs
 that are not screened out, we can apply function-level screening and avoid computation of $(\mu \nu | P)$, where
 \begin{align}
 (\mu \nu | \mu \nu) < \frac{\tau^2}{(\mu \nu | \mu \nu)_{max}}.
 \end{align}
 
-Using this strategy, a sparsity mask can be easily constructed. Figure 1 includes
-illustrations of sparsity masks for benzene stacks with 1, 5, and 10 benzenes spaced 3 {\AA} apart. As sparsity increases, the number of
+Using this strategy, a sparsity mask can be easily constructed. Figure 2.1 includes
+illustrations of sparsity masks for benzene stacks with 1, 5, and 10 benzenes spaced 3\text{\AA} apart. As sparsity increases, the number of
 significant AO functin pairs contained in these masks becomes $\mathcal{O}(N_{AO}^{1-2})$, where the lower bound is obtained for 
 sufficiently sparse systems. 
 
 \begin{figure}[H] 
 \centering
 \includegraphics[scale=0.2]{figures/sparsity_plots/sparsity_masks.png} \caption{Schwarz sparsity masks used for benzene stacks containing 
-1, 5, and 10 benzenes spaced 3Å apart. Sparsity masks were obtained by evaluating $(\mu\nu|\mu\nu)<\frac{\tau^2}{(\mu\nu|\mu\nu)_{max}}$.}
+1, 5, and 10 benzenes spaced 3\text{\AA}  apart. Sparsity masks were obtained by evaluating $(\mu\nu|\mu\nu)<\frac{\tau^2}{(\mu\nu|\mu\nu)_{max}}$.}
 \label{fig:databases} \end{figure}
 
 
@@ -98,7 +98,7 @@ chemistry procedures. The operation requires two MO matrices: $C_{\mu p}, C_{\nu
 indices. A first contraction $A_{p \nu}^P=A_{\mu \nu}^PC_{\mu p}$ will half-transform the integrals and costs 
 $\mathcal{O}(N_{aux}N_{AO}^2N_p)$. The second contraction $A_{p q}^P=A_{p \nu}^PC_{\nu q}$ will cost
 $\mathcal{O}(N_{aux}N_{AO}N_pN_q)$.
-Note the first contraction should involve the smaller of $N_p, N_q$ in order to reduce complexity. Also, the first contraction
+Note the first contraction should involve the smaller of $N_p$ and $N_q$ in order to reduce complexity. Also, the first contraction
 is comparably more expensive than the latter since the size of the AO space is larger than most MO spaces. Therefore,
 reducing the cost of the first contraction would alleviate a bottleneck overall. 
 Thankfully, we can exploit the sparsity of $A_{\mu \nu^\mu}^P$.
@@ -110,10 +110,9 @@ Algorithm 2 illustrates the resulting process:
 \begin{algorithmic}
 \REQUIRE Sparse AO integrals: $A_{\mu \nu^\mu}^P$, orbital matrices: $C_{\mu p}, C_{\nu q}$, screening mask: $S_{\mu \nu}^b$
 \FOR {$\mu = 0$ to $\mu = N_{AO}-1$}  
-    \STATE $C_{\nu p}S_{\mu \nu}^b \rightarrow C_{\nu^{\mu} p}$
-    \STATE $A_{\mu \nu^{\mu}}^P C_{\nu^{\mu} p} \rightarrow A_{\mu p}^P$
+    \STATE $C_{\nu q}S_{\mu \nu}^b \rightarrow C_{\nu^{\mu} q}$
+    \STATE $A_{\mu \nu^{\mu}}^P C_{\nu^{\mu} q} \rightarrow A_{\mu q}^P$
 \ENDFOR
-\RETURN $A_{\mu q}^P$
 \STATE $A_{\mu q}^PC_{\mu p} \rightarrow A_{p q}$
 \RETURN $A_{p q}^P$
 \end{algorithmic}
@@ -121,112 +120,5 @@ Algorithm 2 illustrates the resulting process:
 
 \noindent The cost of the first contraction becomes $\mathcal{O}(N_{aux}N_{AO}^{1-2}N_p)$. 
 The remaining sparsity in the half-transformed $A_{\nu q}^P$ is unrelated to the original sparsity mask.
-
-
-\section{Proof of Implementation}
-All methods were implemented in the {\sc Psi4} electronic structure software package.
-The parallelism in {\sc Psi4} relies on the shared memory programming model using OpenMP 
-and carries out matrix multiplications using Intel's Math Kernel
-Library. 
-
-We first demonstrate the performance of our Schwarz screening implementation 
-by measuring the performance when computing the 3-center integrals, contracting the fitting metric,
-and transforming the integrals into an MO basis.
-The experiment employed an ideal sparse system: stacked benzenes. Execution times were recorded for each successive benzene
-added to the stack, from one to ten benzenes, with each benzene spaced 5\AA\ apart.
-Transformation time involved the wall time required to carry out the common occupied-virtual
-transformation, as would be required by density-fitted MP2: 
-\begin{align} 
-(i b | Q) = (\lambda \sigma | Q) C_{\sigma i} C_{\lambda b} 
-\end{align}
-
-\noindent Where $i, j$ and $a, b$ denote occupied and virtual spaces, respectively. 
-Algorithm 4 was implemented and used to carry out these transformations.
-The cc-pVTZ and cc-pVTZ-jkfit basis sets were used for primary 
-and auxiliary basis sets, respectively. The characteristics
-of each system are listed in Table 2. The mask sparsity listed in Table 2 refers to the percentage of non-significant AO function pairs appearing in the sparsity mask.
-The experiment was carried out using one node consisting of an Intel Core i7-5930K processor 
-(6 cores at 3.50GHz) and 50GB DRAM. The results are plotted in Figure 2. Figure 2 (a), (b), (c), and (d) involve time to compute the 3-index integrals, contract the fitting metric,
-perform the first transformation step: $(\mu \nu | Q)C_{i \mu} \rightarrow (i \nu | Q)$,
-and total transform time, respectively.
-Note that our novel contribution involves the application of the sparsity screening in the transformation step.
-
-\begingroup
-\begin{table}[H]
-\centering
-\renewcommand{\baselinestretch}{1}
-\caption{Characteristics of benzene stack systems. $N$ and $N_{aux}$ refer to the number of primary and auxiliary basis functions, respectively.
- Mask sparsity refers to the percentage of significant AO function pairs in the sparsity mask. Mask sparsity increases with additional benzenes added to the stack.}
-\begin{tabular}{l ccc}
-\multicolumn{1}{l}{\textbf{Benzenes}} &
-\multicolumn{1}{c}{\textbf{$N$}} &
-\multicolumn{1}{c}{\textbf{$N_{aux}$}} &
-\multicolumn{1}{c}{\textbf{Mask Sparsity (\%)}} \\
-\hline
-1        & 264  & 654       & 2.6              \\ 
-2        & 528  & 1308      & 24.7             \\ 
-3        & 792  & 1962      & 43.6             \\ 
-4        & 1056 & 2616      & 55.3             \\ 
-5        & 1320 & 3270      & 63.1             \\ 
-6        & 1584 & 3924      & 68.6             \\ 
-7        & 1848 & 4578      & 72.7             \\ 
-8        & 2112 & 5232      & 75.9             \\ 
-9        & 2376 & 5886      & 78.4             \\ 
-10       & 2640 & 6540      & 80.4             \\ 
-\end{tabular}
-\end{table}
-\endgroup
-
-\begin{figure}[H]
-  \centering
-  \subfloat[]{\includegraphics[width=0.5\textwidth]{figures/sparsity_plots/construction_wall.png}\label{fig:f1}}
-  \hfill
-  \subfloat[]{\includegraphics[width=0.5\textwidth]{figures/sparsity_plots/metric_contraction.png}\label{fig:f1}}
-  \hfill \\
-  \subfloat[]{\includegraphics[width=0.5\textwidth]{figures/sparsity_plots/first_transform_wall.png}\label{fig:f1}}
-  \hfill
-  \subfloat[]{\includegraphics[width=0.5\textwidth]{figures/sparsity_plots/total_transform_wall.png}\label{fig:f2}}
-  \caption{Comparison of execution times using sparsity screening (blue) against no sparsity screening (orange).  Execution time is plotted against number of benzenes
- in a benzene stack from one to ten benzenes. Transformations involved computing $(ib|Q)$, where $i$ and $b$ denote occupied and virtual indices, respectively.
- Cutoff refers to the Schwarz screening threshold. (a) Computing the integrals. (b) Contracting AO integrals with the fitting metric. 
-(c) first transformation times only. (d) total transformation times.}
-\end{figure}
-
-\begingroup
-\begin{table}[H]
-\centering
-\renewcommand{\baselinestretch}{1}
-\caption{Speedups obtained from sparsity screening at ten benzenes from data in Figure 2.}
-\begin{tabular}{l c}
-\multicolumn{1}{l}{\textbf{Operation}} &
-\multicolumn{1}{c}{\textbf{Speedup at 10 benzenes}} \\ 
-\hline
-Construction          & 10.6  \\          
-Metric Contraction    & 37.8  \\          
-First Transformation  & 25.8  \\          
-Total Transformation  & 5.5  \\          
-\end{tabular}
-\end{table}
-\endgroup
-
-
-Clearly, Figure 2 reveals significant time reductions for all procedures measured.
-Table 3 reinforces that operations with higher complexity scaling have the largest time
-reduction, with the caveat that total transformation time includes portions without sparsity utilization.
-In the integral computations (Figure 2 (a)), we construct the sparse integrals using
-function screening; however, we still compute them in shell triplets for effeciency.
-Therefore the acquired speedup is slightly less dramatic compared to the metric contraction and
-transformation procedures (Figure 2 (b) and (c), respectively) due to select functions being 
-screened in cases where the entire shell is not screened. 
-Note that the metric contraction is by far the most expensive operation, which should in one part
-highlight the boon of sparsity utilization and in another part
-illustrate the pertinence of our workflow investigation later in this paper.
-Last, our proposal outlined in Algorithm 2 for applying sparsity screening to integral transformations
-is proven viable by Figure 2 (c).  Note that significant reductions are obtained for the
-first transformation; however, the sparsity thereafter is unrelated to the initial sparsity
-mask. With sparsity utilization, the first step scales as $\mathcal{O}(N_{aux}N_{AO}^{1-2}p)$,
-whereas the second transformation step will still scale as $\mathcal{O}(N_{aux}N_pN_q)$.
-In this work we have not gone on to consider sparsity of the MO indices, which would 
-typically require transformation to local orbitals.
 
 

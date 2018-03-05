@@ -4,10 +4,10 @@ Electron repulsion integrals (ERIs) and operations involving them pose a fundame
 computational problem for quantum chemistry. These 2-electron, 4-center integrals take the form:
 \begin{align}(\mu \nu | \lambda \sigma) = \int \int \mu(\textbf{r}_{1}) 
 \nu(\textbf{r}_{1}) r^{-1}_{12} \lambda(\textbf{r}_{2}) \sigma(\textbf{r}_{2}) 
-d{\textbf{r}_{1}}d{\textbf{r}_{2}}
+d{\textbf{r}_{1}}d{\textbf{r}_{2}},
 \end{align}
 
-Where $\mu, \nu, \lambda, \sigma$ are atomic orbital (AO) basis functions and $\textbf{r}_{1}$ and $\textbf{r}_{2}$
+\noindent where $\mu, \nu, \lambda, \sigma$ are atomic orbital (AO) basis functions and $\textbf{r}_{1}$ and $\textbf{r}_{2}$
 are electron coordinates. For simplicity, we have assumed the orbitals are real functions, as is usually
 the case in practice. Immediately, one should note the $\mathcal{O}(N_{AO}^4)$ storage costs (where $N_{AO}$ is
 the number of AO basis functions), which quickly 
@@ -54,15 +54,15 @@ B_{\mu \nu}^P &= [J]_{PQ}^{-\frac{1}{2}}(\mu \nu | Q)  \\
 \noindent The $B$ tensors indicate integrals that have been contracted with the fitting metric.
 The rank-reduced 3-center ERIs yield a space complexity of $\mathcal{O}(N_{aux}N_{AO}^2)$, 
 which allows many more investigations to be run in-core.  
-Using the 3-center ERIsi, the Coulomb and exchange matrices are evaluated as: 
+Using the 3-center ERIs, the Coulomb and exchange matrices are evaluated as: 
 \begin{align}
 J[D_{\lambda \sigma}]_{\mu \nu} &= B_{\mu \nu}^P B_{\lambda \sigma}^PD_{\lambda \sigma} \\
 K[D_{\lambda \sigma}]_{\mu \nu} &= B_{\mu \lambda}^P B_{\nu \sigma}^PD_{\lambda \sigma}
 \end{align}
 
-\noindent Using (1.8), the Coulomb matrix is evaluated in $\mathcal{O}(N_{aux}N_{AO}^2)$ operations, which is a great success
-for reducing computational complexity. On the other hand, (1.9) still requires $\mathcal{O}(N_{aux}N^3)$ operations. 
-Since $N_{aux}$ is always larger than $N_{AO}$, evaluating (1.13) is actually more expensive than evaluating (1.10).
+\noindent Using (1.10), the Coulomb matrix is evaluated in $\mathcal{O}(N_{aux}N_{AO}^2)$ operations, which is a great success
+for reducing computational complexity. On the other hand, (1.11) still requires $\mathcal{O}(N_{aux}N_{AO}^3)$ operations. 
+Since $N_{aux}$ is always larger than $N_{AO}$, evaluating (1.13) is actually more expensive than evaluating (1.3).
 This leaves exchange matrix evaluation as the major bottleck for most density-fitted procedures.
 One method for alleviating this bottleneck involves employing knowledge 
 of the form of the density matrix:
@@ -89,21 +89,23 @@ B^Q_{pq} = B^Q_{\mu \nu}C_{p \mu}C_{q \nu} \\
 (pq | rs) \approx B^Q_{pq}B^Q_{rs}
 \end{align}
 
-The formal computational scaling of this operations is $\mathcal{O}(N_{aux}N_pN_qN_rN_s)$.  However, in practice,
-algorithms based on density fitting often involve contracting the transformed 3-index integrals, $B^Q_{pq}$, with other terms, 
-rather than explicity ofrmulation of $(pq|rs)$ as actual intermediates. Therefore, optimizing these procedures will primarily
-focus on optimizing the computation of $B^Q_{pq}$. 
+\noindent The formal computational scaling of this operations is $\mathcal{O}(N_{aux}N_pN_qN_rN_s)$.  However, in practice,
+algorithms based on density fitting often involve contracting the transformed three-index integrals, $B^Q_{pq}$, with other terms, 
+rather than explicit formulation of $(pq|rs)$ as actual intermediates. Therefore, optimizing these procedures will primarily
+focus on optimizing the computation of $B^Q_{pq}$ via (1.15). 
 
 Although density fitting makes considerable progress towards reducing the space and computation complexity when
 using the ERIs, there is still work to be done. Importantly, (1.14) and (1.15) still serve as major computational
 bottlenecks for iterative and perturbative methods, respectively. In my research, I have sought out and implemented various 
 optimizations to further improve the density fitting regime. The essense of my work involves the marriage of sparsity screening,
 parallel scaling, minimizing disk IO, and optimal contraction paths. This thesis details the progress made via my research.
-In Chapter 2, I discuss the spatial sparsity of the 3-index integrals and the utilization of such sparsity for integral 
+In Chapter 2, I discuss the spatial sparsity of the three-index integrals and the utilization of such sparsity for integral 
 construction, metric contractions, and integral transformations.
 In Chapter 3, I focus on (1.15) by discussing its implementation, blocking procedures, disk implications,
 and detail how the context in which transformations occur dictate which of two unique algorithms is superior.
-Finally, Chapter 4 focuses on (1.14) and displays the impact of my work for improving the state of the art. 
+Chapter 4 focuses on (1.14) and displays different forumulations of exchange matrix builds and the scalability of their performance.
+Chapter 5 quantifies the results of my investigations and the impact of my work for improving the state of the art. 
+Finally, Chapter 6 discusses the results from Chapter 5 and makes suggestions for future work.
 
 %Chapter 5 discusses a failed attempt at obtaining speedups in second order SCF (SOSCF) procedures by 
 %evaluating Coulomb and exchange matrices directly in the MO basis.

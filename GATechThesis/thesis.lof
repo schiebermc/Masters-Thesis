@@ -4,17 +4,7 @@
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {2.1}{\ignorespaces Schwarz sparsity masks used for benzene stacks containing 1, 5, and 10 benzenes spaced 3Å apart. Sparsity masks were obtained by evaluating $(\mu \nu |\mu \nu )<\frac {\tau ^2}{(\mu \nu |\mu \nu )_{max}}$.\relax }}{6}{figure.caption.4}
-\defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {2.2}{\ignorespaces Comparison of execution times using sparsity screening (blue) against no sparsity screening (orange). Execution time is plotted against number of benzenes in a benzene stack from one to ten benzenes. Transformations involved computing $(ib|Q)$, where $i$ and $b$ denote occupied and virtual indices, respectively. Cutoff refers to the Schwarz screening threshold. (a) Computing the integrals. (b) Contracting AO integrals with the fitting metric. (c) first transformation times only. (d) total transformation times.\relax }}{11}{figure.caption.6}
-\defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{11}{subfigure.2.1}
-\defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{11}{subfigure.2.2}
-\defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{11}{subfigure.2.3}
-\defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{11}{subfigure.2.4}
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Schwarz sparsity masks used for benzene stacks containing 1, 5, and 10 benzenes spaced 3\text {\r A} apart. Sparsity masks were obtained by evaluating $(\mu \nu |\mu \nu )<\frac {\tau ^2}{(\mu \nu |\mu \nu )_{max}}$.\relax }}{6}{figure.caption.4}
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 
@@ -22,57 +12,57 @@
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Comparison of execution times using sparsity screening (blue) against no sparsity screening (orange). Execution time is plotted against number of benzenes in a benzene stack from one to ten benzenes. Transformations involved computing $(ib|Q)$, where $i$ and $b$ denote occupied and virtual indices, respectively. Cutoff refers to the Schwarz screening threshold. (a) Computing the integrals. (b) Contracting AO integrals with the fitting metric. (c) first transformation times only. (d) total transformation times.\relax }}{26}{figure.caption.10}
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Comparison of execution times using sparsity screening (blue) against no sparsity screening (orange). Execution time is plotted against number of benzenes in a benzene stack from one to ten benzenes. Transformations involved computing $(ib|Q)$, where $i$ and $b$ denote occupied and virtual indices, respectively. Cutoff refers to the Schwarz screening threshold. (a) Computing the integrals. (b) Contracting AO integrals with the fitting metric. (c) first transformation times only. (d) total transformation times.\relax }}{23}{figure.caption.7}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{26}{subfigure.1.1}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{23}{subfigure.1.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{26}{subfigure.1.2}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{23}{subfigure.1.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{26}{subfigure.1.3}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{23}{subfigure.1.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{26}{subfigure.1.4}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{23}{subfigure.1.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {5.2}{\ignorespaces Transition state for organoboron addition to trifluooroacetone. Taken from Ref. \cite {Lec:2016:768}\relax }}{28}{figure.caption.12}
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Transition state for organoboron addition to trifluooroacetone. Taken from Ref. \cite {Lec:2016:768}\relax }}{25}{figure.caption.9}
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {5.3}{\ignorespaces Speedup and execution time plots obtained using our optimized memory layout from Section 3 for sparsity screened 3-center integrals. Execution times involve computing three common transformations: $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$, where $i,j$ and $a,b$ denote occupied and virtual indices, respectively. Graphs (a), (c), and (e) include speedups for constructing the integrals (orange), transforming (blue), total time (red), and ideal (black). Graphs (b), (d), and (f) plot total execution times. Problem sizes were increased by increasing basis set size using cc-pVXZ, X = D,T,Q.\relax }}{29}{figure.caption.14}
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Speedup and execution time plots obtained using our optimized memory layout from Section 3 for sparsity screened 3-center integrals. Execution times involve computing three common transformations: $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$, where $i,j$ and $a,b$ denote occupied and virtual indices, respectively. Graphs (a), (c), and (e) include speedups for constructing the integrals (orange), transforming (blue), total time (red), and ideal (black). Graphs (b), (d), and (f) plot total execution times. Problem sizes were increased by increasing basis set size using cc-pVXZ, X = D,T,Q.\relax }}{26}{figure.caption.11}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{29}{subfigure.3.1}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{26}{subfigure.3.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{29}{subfigure.3.2}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{26}{subfigure.3.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{29}{subfigure.3.3}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{26}{subfigure.3.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{29}{subfigure.3.4}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{26}{subfigure.3.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {}}}{29}{subfigure.3.5}
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {}}}{26}{subfigure.3.5}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {}}}{29}{subfigure.3.6}
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {}}}{26}{subfigure.3.6}
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {5.4}{\ignorespaces Comparison of execution times for the Store and Direct algorithms to complete $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$ transformations across the cc-pVDZ, cc-pVTZ, and cc-pVQZ basis sets. A scan from one to ten transformations was performed. In each case, a crossover occurs as the Direct algorithm becomes more expensive. The crossover occurs in fewer iterations for transformations involving larger MO spaces. With increasing basis set size, the crossover point is shifted to the right for the $(ij|Q)$ and $(ib|Q)$ transformations and it is shifted slightly to the left for the $(ab|Q)$ transformation.\relax }}{31}{figure.caption.16}
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Comparison of execution times for the Store and Direct algorithms to complete $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$ transformations across the cc-pVDZ, cc-pVTZ, and cc-pVQZ basis sets. A scan from one to ten transformations was performed. In each case, a crossover occurs as the Direct algorithm becomes more expensive. The crossover occurs in fewer iterations for transformations involving larger MO spaces. With increasing basis set size, the crossover point is shifted to the right for the $(ij|Q)$ and $(ib|Q)$ transformations and it is shifted slightly to the left for the $(ab|Q)$ transformation.\relax }}{28}{figure.caption.13}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{31}{subfigure.4.1}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{28}{subfigure.4.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{31}{subfigure.4.2}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{28}{subfigure.4.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{31}{subfigure.4.3}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{28}{subfigure.4.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{31}{subfigure.4.4}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{28}{subfigure.4.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {}}}{31}{subfigure.4.5}
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {}}}{28}{subfigure.4.5}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {}}}{31}{subfigure.4.6}
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {}}}{28}{subfigure.4.6}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(g)}{\ignorespaces {}}}{31}{subfigure.4.7}
+\contentsline {subfigure}{\numberline {(g)}{\ignorespaces {}}}{28}{subfigure.4.7}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(h)}{\ignorespaces {}}}{31}{subfigure.4.8}
+\contentsline {subfigure}{\numberline {(h)}{\ignorespaces {}}}{28}{subfigure.4.8}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(i)}{\ignorespaces {}}}{31}{subfigure.4.9}
+\contentsline {subfigure}{\numberline {(i)}{\ignorespaces {}}}{28}{subfigure.4.9}
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {5.5}{\ignorespaces Systems used for context dependent investigation of the Store and Direct workflows. (a) Hexatriene. (b) Ethylene in 50 methanol solvent molecules. \relax }}{33}{figure.caption.17}
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Systems used for context dependent investigation of the Store and Direct workflows. (a) Hexatriene. (b) Benzene and toluene in 20 water solvent molecules. \relax }}{30}{figure.caption.14}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{33}{subfigure.5.1}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{30}{subfigure.5.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{33}{subfigure.5.2}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{30}{subfigure.5.2}
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 

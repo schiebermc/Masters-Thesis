@@ -1,6 +1,6 @@
 \chapter{Evaluating Coulomb and Exchange Matrices}
 
-From Chapter 1, we wrote the evaluations of the three-index ERIs to build the Coulomb and Exchange matrices as:
+From Chapter 1, we wrote the evaluations of the three-index ERIs to build the Coulomb and exchange matrices as:
 
 \begin{align}
 J[D_{\lambda \sigma}]_{\mu \nu} &= B_{\mu \nu}^P B_{\lambda \sigma}^PD_{\lambda \sigma} \\
@@ -10,70 +10,93 @@ K[D_{\lambda \sigma}]_{\mu \nu} &= B_{\mu \lambda}^P B_{\nu \sigma}C_{p\lambda}C
 \noindent where (4.1) and (4.2) are evaluated in $\mathcal{O}(N_{AO}^2N_{aux})$ and $\mathcal{O}(N_{AO}^2N_{aux}N_p)$ operations, respectively.
 The exchange matrix evaluation is a major bottleneck within the density fitting regime. As such, it is imperitive to take advantage of sparsity
 and optimize parallel scaling. Thankfully, it turns out that Algorithm 6 is easily 
-extendible to (4.1). In fact, if one uses orbital matrices to build the exchange matrix as in (4.2), the half-transformed 
-intermediate of integral transformations, $A_{\mu Pq}$, is actually identical to the intermediate when building the exchange matrix. 
+extendible to (4.2). In fact, if one uses orbital matrices to build the exchange matrix as in (4.2), the half-transformed 
+intermediate generated during integral transformations, $A_{\mu Pq}$, is actually identical to the intermediate when building the exchange matrix. 
 Moreover, the memory layout of $A_{\mu Pq}$ is ideal for the subsequent contraction to form $K$. The following algorithm results:
 
 \begin{algorithm}[H]
 \caption{Building the $K$ matrix.}
 \begin{algorithmic}
-\REQUIRE Sparse AO integrals: $A_{\mu P \nu^\mu}$, orbital matrices: $C_{\mu p}, C_{\nu q}$, screening mask: $S_{\mu \nu}^b$
+\REQUIRE Sparse AO integrals: $A_{\mu P \nu^\mu}$, orbital matrices: $C_{\mu p}, C_{\nu p}$, screening mask: $S_{\mu \nu}^b$
 \FOR {$\mu = 0$ to $\mu = N_{AO}-1$}  
-    \STATE Trim from dense to sparse: $C_{\nu q}S_{\mu \nu}^b \rightarrow C_{\nu^{\mu} q}$
-    \STATE $A_{\mu P \nu^{\mu}} C_{\nu^{\mu} q} \rightarrow A_{\mu Pq}$
+    \STATE Trim from dense to sparse: $C_{\nu p}S_{\mu \nu}^b \rightarrow C_{\nu^{\mu} p}$
+    \STATE $A_{\mu P \nu^{\mu}} C_{\nu^{\mu} p} \rightarrow A_{\mu Pp}$
+    \IF {$C_{\mu p} != C_{\nu p}$}
+        \STATE Trim from dense to sparse: $C_{\mu p}S_{\mu \nu}^b \rightarrow C_{\mu^{\nu} p}$
+        \STATE $A_{\nu P \mu^{\nu}} C_{\mu^{\nu} p} \rightarrow A_{\nu P p}$
+    \ELSE
+        \STATE $A_{\nu P p} = A_{\mu P p}$ 
+    \ENDIF
 \ENDFOR
-\RETURN $A_{\mu P q}$
-\STATE $A_{\mu P q} A_{\mu P q} \rightarrow K $
-\RETURN $K$
+\STATE $A_{\mu P q} A_{\nu P q} \rightarrow K_{\mu \nu} $
+\RETURN $K_{\mu \nu}$
 \end{algorithmic}
 \end{algorithm}
 
-Algorithm 9 is an ideal condidate for building the $K$ matrix. However, we must still consider how Algorithm 9 behaves when the 
-in-core memory is constrained such that it becoems necessary to perform blocking operations accross the $P$ index. Then, the algorithm
+Algorithm 9 is an ideal condidate for building the $K$ matrix, as it both utilizes sparsity and maximizes concurrency.
+However, while it may be assumed that both $J$ and $K$ can always fit within in-core memory constraints, the same is not true 
+for the three-index AO integrals.  Therefore, we must consider the behavior of Algorithm 9 when the 
+in-core memory is constrained such that it becomes necessary to perform blocking operations accross the $P$ index. Then, the algorithm
 becomes: 
 
 \begin{algorithm}[H]
-\caption{Building the $K$ matrix using $A_{\mu P \nu^\mu}$, blocking accross $P$}
+\caption{Building the $K$ matrix.}
 \begin{algorithmic}
-\REQUIRE Sparse AO integrals: $A_{\mu P \nu^\mu}$, orbital matrices: $C_{\mu p}, C_{\nu q}$, screening mask: $S_{\mu \nu}^b$
-\FOR {$P^i \in P$}
-    \STATE Read from disk: $A_{\mu P^i \nu^{\mu}}$
+\REQUIRE Sparse AO integrals: $A_{\mu P \nu^\mu}$, orbital matrices: $C_{\mu p}, C_{\nu p}$, screening mask: $S_{\mu \nu}^b$
+\FOR {$P_i \in P$}    
+    \STATE Read from memory: $A_{\mu P_i \nu^{\mu}}$
     \FOR {$\mu = 0$ to $\mu = N_{AO}-1$}  
-        \STATE Trim from dense to sparse: $C_{\nu q}S_{\mu \nu}^b \rightarrow C_{\nu^{\mu} q}$
-        \STATE $A_{\mu P^i \nu^{\mu}} C_{\nu^{\mu} q} \rightarrow A_{\mu P^i \nu^{\mu}}$
+        \STATE Trim from dense to sparse: $C_{\nu p}S_{\mu \nu}^b \rightarrow C_{\nu^{\mu} p}$
+        \STATE $A_{\mu P_i \nu^{\mu}} C_{\nu^{\mu} p} \rightarrow A_{\mu P_i p}$
+        \IF {$C_{\mu p} != C_{\nu p}$}
+            \STATE Trim from dense to sparse: $C_{\mu p}S_{\mu \nu}^b \rightarrow C_{\mu^{\nu} p}$
+            \STATE $A_{\nu P_i \mu^{\nu}} C_{\mu^{\nu} p} \rightarrow A_{\nu P_i p}$
+        \ELSE
+            \STATE $A_{\nu P_i p} = A_{\mu P_i p}$ 
+        \ENDIF
     \ENDFOR
-    \STATE $K = K +  A_{\mu P^i q} A_{\mu P^i q} $
+    \STATE $K_{\mu \nu} = K_{\mu \nu} + A_{\mu P_i q} A_{\nu P_i q}$
 \ENDFOR
-\RETURN $K$
+\RETURN $K_{\mu \nu}$
 \end{algorithmic}
 \end{algorithm}
 
-\noindent Unfortunately, this algorithm will require strided disk reads when reading the $A_{\mu Q^i \nu^{\mu}}$ tensor into memory.
+\noindent Unfortunately, this algorithm will require strided disk operations when reading the $A_{\mu P^i \nu^{\mu}}$ tensor into memory.
 Since poor disk IO can drastically decrease performance, it is often better to force disk operations 
-to be contiguous and any tensors are transposed as necessary in memory. Since it is best to block accross the $P$ index, a better
-memory layout for the sparse integrals is the $A_{P \mu \nu^\mu}$ form. Another possible algorithm can then be formualted:
+to be contiguous and transpose any tensors as necessary in core memory. Since it is best to block accross the $P$ index, a better
+memory layout for the sparse integrals is the $A_{P \mu \nu^\mu}$ form, since this form will allow for completely 
+contiguous reads from disk memory. Another possible algorithm can then be formualted:
 
 \begin{algorithm}[H]
 \caption{Building the $K$ matrix using $A_{P \mu \nu^\mu}$, blocking accross $P$}
 \begin{algorithmic}
-\REQUIRE Sparse AO integrals: $A_{P \mu \nu^\mu}$, orbital matrices: $C_{\mu p}, C_{\nu q}$, screening mask: $S_{\mu \nu}^b$
-\FOR {$P^i \in P$}
-    \STATE Read from disk: $A_{P^i \mu \nu^{\mu}}$
+\REQUIRE Sparse AO integrals: $A_{P \mu \nu^\mu}$, orbital matrices: $C_{\mu p}, C_{\nu p}$, screening mask: $S_{\mu \nu}^b$
+\FOR {$P_i \in P$}
+    \STATE Read from disk: $A_{P_i \mu \nu^{\mu}}$
     \FOR {$\mu = 0$ to $\mu = N_{AO}-1$}  
-        \STATE Trim from dense to sparse: $C_{\nu q}S_{\mu \nu}^b \rightarrow C_{\nu^{\mu} q}$
-        \STATE Copy: $A_{P^i \mu \nu^{\mu}} \rightarrow B_{P^i \nu^{\mu}}$
-        \STATE $B_{P^i \nu^{\mu}} C_{\nu^{\mu} q} \rightarrow A_{\mu P^i \nu^{\mu}}$
+        \STATE Copy: $A_{P_i \mu \nu^{\mu}} \rightarrow B_{P_i \nu^{\mu}}$
+        \STATE Trim from dense to sparse: $C_{\nu p}S_{\mu \nu}^b \rightarrow C_{\nu^{\mu} p}$
+        \STATE $B_{P_i \nu^{\mu}} C_{\nu^{\mu} p} \rightarrow A_{\mu P_i p}$
+        \IF {$C_{\mu p} != C_{\nu p}$}
+            \STATE Trim from dense to sparse: $C_{\mu p}S_{\mu \nu}^b \rightarrow C_{\mu^{\nu} p}$
+            \STATE $B_{P_i \mu^{\nu}} C_{\mu^{\nu} p} \rightarrow A_{\nu P_i p}$
+        \ELSE
+            \STATE $A_{\nu P_i p} = A_{\mu P_i p}$ 
+        \ENDIF
     \ENDFOR
-    \STATE $K = K +  A_{\mu P^i q} A_{\mu P^i q} $
+    \STATE $K = K +  A_{\mu P_i p} A_{\mu P_i p} $
 \ENDFOR
 \RETURN $K$
 \end{algorithmic}
 \end{algorithm}
 
-\noindent Here, we used a buffer, $B_{P^i \nu^{\mu}}$ to transpose pieces of $A_{P^i \mu \nu^{\mu}}$ into while looping over $\mu$.
-While this algorithm may involve a strided copy and more additional memory usage, the disk reads for the $A_{P^i \mu \nu^{\mu}}$ 
+\noindent Here, we used a buffer, $B_{P^i \nu^{\mu}}$, to transpose pieces of $A_{P^i \mu \nu^{\mu}}$ into the necessary form
+while looping over $\mu$.
+Although this algorithm may involve a strided copy and additional memory usage, the disk reads for the $A_{P^i \mu \nu^{\mu}}$ 
 tensor are completely contiguous.  
 
-When the investigation is completely in-core, then Algorithm 10 should yield superior performance. However, for larger systems,
-the strided disk reads in Algorithm 10 may cause performance degredation to the point that Algorithm 11 may become superior.
+For smaller investigations, the three-index AO integrals can be fit completely in-core and Algorithm 10 should yield superior 
+performance. However, for larger systems,
+the strided disk reads in Algorithm 10 may cause performance degredation to the point that Algorithm 11 will become superior.
+
  

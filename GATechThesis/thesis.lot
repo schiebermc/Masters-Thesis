@@ -4,25 +4,27 @@
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {2.1}{\ignorespaces Characteristics of benzene stack systems. $N$ and $N_{aux}$ refer to the number of primary and auxiliary basis functions, respectively. Mask sparsity refers to the percentage of significant AO function pairs in the sparsity mask. Mask sparsity increases with additional benzenes added to the stack.\relax }}{10}{table.caption.5}
-\defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {2.2}{\ignorespaces Speedups obtained from sparsity screening at ten benzenes from data in Figure 2.\relax }}{11}{table.caption.7}
-\defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {3.1}{\ignorespaces Speedups obtainable via pre-transforming the 3-center integrals prior to metric contraction for common occupied-virtual transformations.\relax }}{18}{table.caption.8}
+\contentsline {table}{\numberline {3.1}{\ignorespaces Speedups obtainable via pre-transforming the 3-center integrals prior to metric contraction for common occupied-virtual transformations.\relax }}{14}{table.caption.5}
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {5.1}{\ignorespaces Characteristics of benzene stack systems. $N$ and $N_{aux}$ refer to the number of primary and auxiliary basis functions, respectively. Mask sparsity refers to the percentage of significant AO function pairs in the sparsity mask. Mask sparsity increases with additional benzenes added to the stack.\relax }}{25}{table.caption.9}
+\contentsline {table}{\numberline {5.1}{\ignorespaces Characteristics of benzene stack systems. $N$ and $N_{aux}$ refer to the number of primary and auxiliary basis functions, respectively. Mask sparsity refers to the percentage of significant AO function pairs in the sparsity mask. Mask sparsity increases with additional benzenes added to the stack.\relax }}{22}{table.caption.6}
 \defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {5.2}{\ignorespaces Speedups obtained from sparsity screening at ten benzenes from data in Figure 2.\relax }}{26}{table.caption.11}
+\contentsline {table}{\numberline {5.2}{\ignorespaces Speedups obtained from sparsity screening at ten benzenes from data in Figure 2.\relax }}{23}{table.caption.8}
 \defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {5.3}{\ignorespaces Characteristics of organoboron catalyst. $N$ and $N_{aux}$ refer to the number of primary and auxiliary basis functions, respectively. Mask sparsity refers to the percentage of significant AO function pairs in the sparsity mask.\relax }}{27}{table.caption.13}
+\contentsline {table}{\numberline {5.3}{\ignorespaces Characteristics of organoboron catalyst. $N$ and $N_{aux}$ refer to the number of primary and auxiliary basis functions, respectively. Mask sparsity refers to the percentage of significant AO function pairs in the sparsity mask.\relax }}{25}{table.caption.10}
 \defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {5.4}{\ignorespaces Characteristics of organoboron catalyst systems across the cc-pVDZ, cc-pVTZ, and cc-pVQZ basis sets.\relax }}{31}{table.caption.15}
+\contentsline {table}{\numberline {5.4}{\ignorespaces Characteristics of organoboron catalyst systems across the cc-pVDZ, cc-pVTZ, and cc-pVQZ basis sets.\relax }}{28}{table.caption.12}
+\defcounter {refsection}{0}\relax 
+\contentsline {table}{\numberline {5.5}{\ignorespaces Characteristics of systems for Store vs Direct algorithm comparisons.\relax }}{30}{table.caption.15}
+\defcounter {refsection}{0}\relax 
+\contentsline {table}{\numberline {5.6}{\ignorespaces Computatoinal times comparing the Direct and Store algorithms for three-index integral transformations\relax }}{31}{table.caption.16}
+\defcounter {refsection}{0}\relax 
+\contentsline {table}{\numberline {5.7}{\ignorespaces Total procedure wall clock times comparing the Direct and Store algorithms for three-index integral transformations\relax }}{31}{table.caption.17}
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 

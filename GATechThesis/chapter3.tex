@@ -1,12 +1,12 @@
 \chapter{Optimizing Integral Transformations}
 
-\section{A note on disk-bound blocking}
+\section{A note on disk-bound index blocking}
 
 The size of tensors grow rapidly in quantum chemistry.  The 3-center integrals of density fitting are no exception.
 Often, the size of the AO three-index integrals will exceed 50GB of RAM for systems as small as 40 atoms when
 a moderate basis set such as aug-cc-pVQZ is used, even with sparsity screening.  At that point, it is necessary for
 any implementation to begin reading and writing these tensors to and from disk-based memory. For any field this can
-be a major slowdown, but it is especially critical to performance when high dimensional data is involved. To illustrate
+be a major slowdown, but it is especially critical to performance when high-dimensional data is involved. To illustrate
 this issue, I will introduce an adapted tensor notation which better indicates memory layout.
 
 We denote an $n$-dimensional tensor as $T_{ab\hdots n}$, where the indices from left to right go from the slowest-running
@@ -15,18 +15,19 @@ index, and $n$ is the fastest-running index. The choice of memory layout plays a
 Iterating through the slowest-running index, $a$, would require the largest memory strides whereas the elements 
 of the fastest-running index, $n$, are contiguous in memory. 
 
-Now, we can consider two possible forms for the 3-index integrals: $A_{P\mu\nu}$ or $A_{\mu P\mu}$.
+Now, we can consider two possible forms for the three-center integrals: $A_{P\mu\nu}$ or $A_{\mu P\mu}$.
 If these tensors are too large to fit into memory, we must read and write pieces of them to and from disk-based memory.
 To accomplish this, we must choose an index to block accross. Primarily, this will involve either the $P$ or $\mu$ index.
-For example, if we choose to block accross the $P$ index, then we will partition the basis of $P$ into discrete blocks.
-Then, we will read and write only those blocks of $P$ along with all of $\mu$ and $\nu$. The latency of these operations is
+For example, if we choose to block accross the $P$ index, then we will partition the basis of $P$ into discrete blocks: $P_i \in P$.
+Then, we will read and write only those blocks of $P$ along with all of $\mu$ and $\nu$.
+The latency of these operations is
 bounded by the movement of a physical read-write head, so it is critically important to ensure that read and writes are as
 contiguous as possible. In the case of $P$ blocking, the $A_{P\mu\nu}$ tensor is far superior to $A_{\mu P\mu}$ since the 
 former will yield entirely contiguous operations whereas the latter will require strided operations.  
 
 Unfortunately, within the density fitting regime, different operations are optimal under different blocking schemes. For example,
 consider the construction of the full three-index AO integrals according to (1.8). To accomplish this, 
-the initial integrals, $(\mu \nu|Q)$, are computed and then contracted with the fitting metric. If the AOs are too large to fully 
+the initial integrals, $A_{\mu \nu}^P$, are computed and then contracted with the fitting metric. If the AOs are too large to fully 
 fit in-core, then we must choose an index, $P$ or $\mu$, to block accross. Consider the following two algorithms
 that block accross either index, respectively:
 
@@ -35,9 +36,9 @@ that block accross either index, respectively:
 \begin{algorithmic}
 \REQUIRE Coulomb metric: $[J]_{PQ}^{-\frac{1}{2}}$
 \FOR {block $P_i \in P$}  
-    \STATE Compute:  $(\mu \nu | P_i)$
-    \STATE Contract: $(\mu \nu | P_i)[J]_{P_iQ}^{-\frac{1}{2}} \rightarrow B_{\mu \nu}^Q$
-    \STATE Accumulate Write:    $B_{\mu \nu}^Q$
+    \STATE Compute:  $A_{\mu \nu}^{P_i}$
+    \STATE Contract: $A_{\mu \nu}^{P_i} [J]_{P_iQ}^{-\frac{1}{2}} \rightarrow B_{\mu \nu}^Q$
+    \STATE Reduction Write:    $B_{\mu \nu}^Q$
 \ENDFOR
 \RETURN $B_{\mu \nu}^Q$
 \end{algorithmic}
@@ -48,8 +49,8 @@ that block accross either index, respectively:
 \begin{algorithmic}
 \REQUIRE Coulomb metric: $[J]_{PQ}^{-\frac{1}{2}}$
 \FOR {block $\mu_i \in \mu$}  
-    \STATE Compute:  $(\mu_i \nu | P)$
-    \STATE Contract: $(\mu_i \nu | P)[J]_{PQ}^{-\frac{1}{2}} \rightarrow B_{\mu_i \nu}^Q$
+    \STATE Compute:  $A_{\mu^i \nu}^{P}$
+    \STATE Contract: $A_{\mu^i \nu}^{P}[J]_{PQ}^{-\frac{1}{2}} \rightarrow B_{\mu_i \nu}^Q$
     \STATE Write:    $B_{\mu_i \nu}^Q$
 \ENDFOR
 \RETURN $B_{\mu \nu}^Q$
@@ -57,17 +58,18 @@ that block accross either index, respectively:
 \end{algorithm}
 
 Of the two algorithms, only Algorithm 4 would respect the memory constraints of a blocking procedure. Note that after the 
-contraction $(\mu \nu | P_i)[J]_{P_iQ}^{-\frac{1}{2}} \rightarrow B_{\mu \nu}^Q$ in Algorithm 3, the full 3-dimensional quantity
+contraction $A_{\mu \nu}^{P_i} [J]_{P_iQ}^{-\frac{1}{2}} \rightarrow B_{\mu \nu}^Q$ in Algorithm 3, the full 3-dimensional quantity
 $B_{\mu \nu}^Q$ is returned, which would immediately violate memory constraints. For this operation, only one blocking method is
-\textit{possible}. If we are constrained to blocking accross the $\mu$ index, then the tensor form $A_{\mu P\mu}$ will yield
-superior disk performance. The purpose of this illustration is to remind the reader that for large enough systems, disk performance
+\textit{possible}. If we are constrained to blocking accross the $\mu$ index, then the tensor form $A_{\mu P \nu}$ will yield
+superior disk performance, as it would allow for completely contiguous read operations. The purpose of this illustration is
+to remind the reader that for large enough systems, disk performance
 is crucially important, therefore memory layout should be considered carefully.
 
 \section{Memory layout for sparsity-utilized transformations}
 
 Algorithm 2 revealed a technique that can be used to utilize sparsity when carrying out three-index integral transformations.
 Although utilizing sparsity is imperitive for cost reduction, an optimal implementation must be tailored to
-fully exploit modern computing hardware. The trending paradigm of multicore processors must be respected.
+fully exploit modern computing hardware.
 Multicore processors consisting of upwards of ten cores are found commonly both at the desk of computational
 chemists and in commodity computing clusters.
 Moreover, the birth of Intel's manycore architecture further necessitates that scientific computing
@@ -82,10 +84,10 @@ Coupling the cost reduction of sparsity approximations with a finely tuned paral
 
 Maximizing parallelism in Algorithm 2 will require careful implementation design. 
 The choice of memory layout for the sparse 3-dimensional integral tensors will affect both algorithmic 
-complexity and parallel scalability. For the 3-index integrals, we use $A_{P\mu \nu}$ to denote a memory 
+complexity and parallel scalability. For the three-center integrals, we use $A_{P\mu \nu}$ to denote a memory 
 layout with the auxiliary index $P$ as the slowest-running index. 
 The $A_{P \mu \nu}$ layout is intuitive, as it allows looping through $P$ and directly apply a sparsity mask 
-for each submatrix. The resulting sparse form $A_{P \mu \nu^\mu}$ would yield submatrices of identical structure.
+for each submatrix. The resulting sparse form $A_{P \mu \nu^\mu}$ contains submatrices of identical structure.
 However, another form, $A_{\mu P \nu}$, must be considered. The sparse form $A_{\mu P \nu^\mu}$
 results in submatrices of differing sizes. However, some advantages may be ascertained.
 We sought to determine which of these two sparse memory layouts, $A_{P \nu \mu^\nu}$ or 
@@ -123,8 +125,8 @@ Algorithms 5 and 6 illustrate the difference:
 
 To carry out the first step of the transformation, both algorithms must loop through the slowest-running index of the integrals.
 Operations within this loop should be parallelized.
-The number of iterations for this step are greater in Algorithm 3 than in Algorithm 4 since the auxiliary index will always be 
-larger than the AO index.
+The number of iterations for this step are greater in Algorithm 3 than in Algorithm 4 since $N_{aux}$ will always be 
+larger than $N_{AO}$.
 Conversely, the matrix-matrix multiplications occuring in Algorithm 4 are larger. As a result, Algorithm 4 will benefit from delegating
 larger problem sizes to highly optimized level 3 BLAS routines. 
 
@@ -132,13 +134,13 @@ However, the crucial difference is acertained when one considers which index, $\
 for a disk-bound implementation. If we choose to block accross $\mu$, the result of the final transformation, $A_{pq}^P$, would be incomplete,
 and a full cummulative disk write of $\mathcal{O}(N_{aux}N_pN_p)$ size would be necessary for each block of $\mu$. Moreover, there is a chance
 this operation could be altogether impossible if memory constraints would be violated by having a full $A_{pq}^P$ tensor. On the other hand, 
-blocking accross the $P$ index would not pose this problem, as not contractions are occuring accros the $P$ index. Therefore, blocking accross 
+blocking accross the $P$ index would not pose this problem, as no contractions occur accros the $P$ index. Therefore, blocking accross 
 $P$ is the only scalable solution.
 
 Now, if it is necessary to block accross $P$, consider the implications for Algorithms 5 and 6. For Algorithm 5, this means that if the blocks
-over $P$ are very small, e.g. $<10$, then the parallelized loops will have very few iterations. Typically, the fewere the iterations the worse
+over $P$ are very small, e.g. $<10$, then the parallelized loops will have very few iterations. Typically, the fewer the iterations the worse
 the parallel scalability as the workloads are much more succeptible to being unbalanced. To the contrary, Algorithm 6 will not suffer this 
-drawback and is therefore the better option. Since Algorithm 4 contains higher concurrency and utilizes larger matrix-matrix multiplications, 
+drawback and is therefore the better option. Since Algorithm 6 contains higher concurrency and utilizes larger matrix-matrix multiplications, 
 we propose that it will yield enhanced parallel scaling.  
 
 \section{Context Dependent Workflows}
@@ -149,13 +151,13 @@ Considering that $N_{aux}$ can be 2-3x larger
 than $N_{AO}$, this can be an extremely costly operation. One remedy for cost reduction is to transform the 3-center integrals prior to contracting
 them with the metric:
 \begin{align} 
-(p q | Q) &= (\mu \nu | Q) C_{\mu p}C_{\nu q} \\
-B_{pq}^Q &= [J]_{PQ}^{-\frac{1}{2}}(pq | Q)  
+A_{p q}^Q &= A_{\mu \nu}^Q C_{\mu p}C_{\nu q} \\
+B_{pq}^Q &= [J]_{PQ}^{-\frac{1}{2}}A_{p q}^Q
 \end{align}
  
 \noindent Since $N_p$ and $N_q$ are often much smaller than $N_{AO}$, the speedup of 
 $\mathcal{O}(\frac{N_{AO}^2}{N_pN_q})$ can be substantial. 
-Table 1 illustrates the potential benefit for some commonly used transformed integrals using occupied and virtual spaces.
+Table 3.1 illustrates the potential benefit for some commonly used transformed integrals using occupied and virtual spaces.
 Orbital indices $i,j$ denote occupied spaces and $a,b$ denote virtual spaces.
 
 \begingroup
@@ -187,19 +189,25 @@ out 3-center integral transformations. Algorithm 7 and 8 illustrate the correspo
 \begin{algorithm}[H]
 \caption{"Store" algorithm - contract metric then transform.}
 \begin{algorithmic}
-\REQUIRE AO integrals: $A_{\mu \nu}^P$, fitting metric: $[J]_{PQ}^{-\frac{1}{2}}$, orbital matrices: $C_{\sigma p}, C_{\nu q}$
-\STATE Contract metric: $A_{\mu \nu}^P [J]_{PQ}^{-\frac{1}{2}} \rightarrow B_{\sigma \nu}^Q$
-\STATE Transform: $B_{\mu \nu}^QC_{\sigma p}C_{\nu q} \rightarrow B_{p q}^Q$
+\REQUIRE AO integrals: $A_{\mu \nu}^P$, fitting metric: $[J]_{PQ}^{-\frac{1}{2}}$, orbital matrices: $C_{\mu p}, C_{\nu q}$
+\STATE Contract metric: $A_{\mu \nu}^P [J]_{PQ}^{-\frac{1}{2}} \rightarrow B_{\mu \nu}^Q$
+\STATE Save: $B_{\mu \nu}^Q$
+\FOR {all transformation spaces: $C_{\mu p}, C_{\nu q}$}  
+    \STATE Transform: $B_{\mu \nu}^QC_{\mu p}C_{\nu q} \rightarrow B_{p q}^Q$
+\ENDFOR
 \RETURN $B_{p q}^Q$
 \end{algorithmic}
 \end{algorithm}
-\begin{algorithm}
 
+\begin{algorithm}[H]
 \caption{"Direct" algorithm - transform then contract metric.}
 \begin{algorithmic}
-\REQUIRE AO integrals: $A_{\mu \nu}^P$, fitting metric: $[J]_{PQ}^{-\frac{1}{2}}$, orbital matrices: $C_{\sigma p}, C_{\nu q}$
-\STATE Transform: $A_{\mu \nu}^PC_{\sigma p}C_{\nu q} \rightarrow A_{p q}^P$
-\STATE Contract metric: $A_{p q}^P [J]_{PQ}^{-\frac{1}{2}} \rightarrow B_{p q}^Q$
+\REQUIRE AO integrals: $A_{\mu \nu}^P$, fitting metric: $[J]_{PQ}^{-\frac{1}{2}}$, orbital matrices: $C_{\mu p}, C_{\nu q}$
+\STATE Compute: $A_{\mu \nu}^Q$
+\FOR {all transformation spaces: $C_{\mu p}, C_{\nu q}$}  
+    \STATE Transform: $A_{\mu \nu}^PC_{\mu p}C_{\nu q} \rightarrow A_{p q}^P$
+    \STATE Contract metric: $A_{p q}^P [J]_{PQ}^{-\frac{1}{2}} \rightarrow B_{p q}^Q$
+\ENDFOR
 \RETURN $B_{p q}^Q$
 \end{algorithmic}
 \end{algorithm}
