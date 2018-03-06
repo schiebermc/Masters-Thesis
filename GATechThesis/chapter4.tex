@@ -1,6 +1,6 @@
 \chapter{Evaluating Coulomb and Exchange Matrices}
 
-From Chapter 1, we wrote the evaluations of the three-index ERIs to build the Coulomb and exchange matrices as:
+From Chapter 1, we wrote the most efficient evaluations of the three-index ERIs to build the Coulomb and exchange matrices as:
 
 \begin{align}
 J[D_{\lambda \sigma}]_{\mu \nu} &= B_{\mu \nu}^P B_{\lambda \sigma}^PD_{\lambda \sigma} \\
@@ -44,7 +44,7 @@ becomes:
 \begin{algorithmic}
 \REQUIRE Sparse AO integrals: $A_{\mu P \nu^\mu}$, orbital matrices: $C_{\mu p}, C_{\nu p}$, screening mask: $S_{\mu \nu}^b$
 \FOR {$P_i \in P$}    
-    \STATE Read from memory: $A_{\mu P_i \nu^{\mu}}$
+    \STATE Read from disk: $A_{\mu P_i \nu^{\mu}}$
     \FOR {$\mu = 0$ to $\mu = N_{AO}-1$}  
         \STATE Trim from dense to sparse: $C_{\nu p}S_{\mu \nu}^b \rightarrow C_{\nu^{\mu} p}$
         \STATE $A_{\mu P_i \nu^{\mu}} C_{\nu^{\mu} p} \rightarrow A_{\mu P_i p}$
@@ -99,4 +99,97 @@ For smaller investigations, the three-index AO integrals can be fit completely i
 performance. However, for larger systems,
 the strided disk reads in Algorithm 10 may cause performance degredation to the point that Algorithm 11 will become superior.
 
+
+\section{Results}
+
+All methods were implemented in the {\sc Psi4} electronic structure software package.
+The parallelism in {\sc Psi4} relies on the shared memory programming model using OpenMP 
+and carries out matrix multiplications using Intel's Math Kernel
+Library. Currently, the state of the art in the 
+Psi4 is Algorithm 11. However, we conjecture that Algorithm 10 could provide 
+considerable speedups as it eliminates entirely a strided, level 1 BLAS copy.   
+
+We implemented Algorithm 10 and incorporated it into a development version of Psi4. Then, we used Psi4's Self-Consistent-Field
+procedure to produce energies for various systems and basis set combinations. The systems used involved a protein-drug complex,
+where the drug molecule is ommitted and the atoms of the protien are added in a series according to distance from the center of
+the drug molecule. 
+
+The experiments were carried out using one node consisting of an Intel Core i7-5930K processor
+(6 cores at 3.50GHz) and 60GB DRAM. The results are included in Table 4.1:
+
+\begingroup
+%\squeezetable
+\renewcommand{\arraystretch}{0.7}
+\begin{table}[H]
+\footnotesize
+\centering
+\renewcommand{\baselinestretch}{1}
+\caption{Total execution times for SCF procedures accross various systems using Algorithms 10 and 11. Total wall times include 
+wall time for the entire program to execute. J and K compute time indicates the total time spent in the Coulomb and Exchange matrix
+evaluation kernels, respectively. System descriptions including number of AO basis functions, $N_{AO}$, number of auxiliary basis functions,
+$N_{aux}$, Basis, and number of atoms, $N_{at.}$ are included in the leftmost columns.  All rows are sorted by the product: $N_{aux}N_{AO}$.
+A speedup column is included for total wall time and is calculated as the time spent using Algorithm 11 dived by the time spent using
+Algorithm 10.
+\label{tbl:practical_speedups}}
+\begin{tabular}{lrrrrrrrrrr}
+  \multicolumn{1}{c}{\textbf{}} 
+& \multicolumn{1}{c}{\textbf{}} 
+& \multicolumn{1}{c}{\textbf{}} 
+& \multicolumn{1}{c}{\textbf{}} 
+& \multicolumn{3}{c}{\textbf{Total Wall Time}}  
+& \multicolumn{2}{c}{\textbf{J Compute Time}}  
+& \multicolumn{2}{c}{\textbf{K Compute Time}} \\ 
+\cline{5-7}
+\cline{8-9}
+\cline{10-11}
+  \multicolumn{1}{c}{\textbf{$N_{AO}$}} 
+& \multicolumn{1}{c}{\textbf{$N_{aux}$}} 
+& \multicolumn{1}{c}{\textbf{Basis}} 
+& \multicolumn{1}{c}{\textbf{$N_{at.}$}} 
+& \multicolumn{1}{c}{\textbf{Alg. 10}} 
+& \multicolumn{1}{c}{\textbf{Alg. 11}} 
+& \multicolumn{1}{c}{\textbf{spdup}} 
+& \multicolumn{1}{c}{\textbf{Alg. 10}} 
+& \multicolumn{1}{c}{\textbf{Alg. 11}} 
+& \multicolumn{1}{c}{\textbf{Alg. 10}} 
+& \multicolumn{1}{c}{\textbf{Alg. 11}} \\ 
+\hline
+147 &  721  &  DZ  &  15 &                  3.8 &                4.7 &  1.2   &               0.1 &               0.0 &                0.5 &                0.6\\ 
+ 247 &  912  & aDZ  &  15 &                  5.8 &                7.7 &  1.3   &               0.2 &               0.1 &                1.4 &                2.1\\
+ 338 &  842  &  TZ  &  15 &                  7.5 &                9.9 &  1.3   &               0.2 &               0.2 &                2.3 &                3.3\\
+ 294 & 1442  &  DZ  &  30 &                 12.4 &               18.1 &  1.5   &               0.3 &               0.3 &                5.6 &                7.1\\
+ 529 & 1154  & aTZ  &  15 &                 18.7 &               29.9 &  1.6   &               0.8 &               0.8 &                7.4 &               13.1\\
+ 375 & 1837  &  DZ  &  39 &                 25.4 &               36.8 &  1.4   &               0.5 &               0.5 &               13.3 &               16.6\\
+ 494 & 1824  & aDZ  &  30 &                 35.3 &               54.8 &  1.6   &               1.0 &               0.9 &               18.1 &               25.7\\
+ 676 & 1684  &  TZ  &  30 &                 46.0 &               74.7 &  1.6   &               1.2 &               1.2 &               28.2 &               38.6\\
+ 522 & 2558  &  DZ  &  54 &                 72.3 &              109.2 &  1.5   &               1.1 &               0.9 &               48.8 &               56.8\\
+ 631 & 2328  & aDZ  &  39 &                 81.5 &              132.9 &  1.6   &               2.1 &               2.0 &               46.8 &               65.1\\
+ 603 & 2953  &  DZ  &  63 &                117.2 &              166.9 &  1.4   &               1.3 &               1.1 &               83.2 &               92.4\\
+ 866 & 2150  &  TZ  &  39 &                109.3 &              176.6 &  1.6   &               2.5 &               2.4 &               74.7 &               97.6\\
+1058 & 2308  & aTZ  &  30 &                145.5 &              278.9 &  1.9   &               4.6 &               4.7 &               91.0 &              138.6\\
+ 756 & 3696  &  DZ  &  81 &                231.3 &              328.3 &  1.4   &               1.8 &               1.6 &              176.3 &              190.9\\
+ 878 & 3240  & aDZ  &  54 &                232.0 &              394.4 &  1.7   &               4.6 &               4.4 &              161.9 &              206.3\\
+1204 & 2992  &  TZ  &  54 &                332.5 &              504.1 &  1.5   &               4.9 &               4.7 &              256.8 &              302.4\\
+1015 & 3744  & aDZ  &  63 &                403.1 &              640.8 &  1.6   &               6.3 &               6.1 &              305.2 &              361.9\\
+1357 & 2954  & aTZ  &  39 &                385.9 &              726.9 &  1.9   &              10.5 &              12.3 &              259.2 &              376.6\\
+ 974 & 4766  &  DZ  & 103 &                629.3 &              845.3 &  1.3   &               3.6 &               3.2 &              520.0 &              549.7\\
+1394 & 3458  &  TZ  &  63 &                601.7 &              850.5 &  1.4   &               6.6 &               6.2 &              492.8 &              551.2\\
+1275 & 4698  & aDZ  &  81 &                898.9 &             1379.0 &  1.5   &              10.6 &              10.7 &              711.5 &              813.2\\
+1758 & 4341  &  TZ  &  81 &               1372.3 &             1839.0 &  1.3   &              10.2 &               9.8 &             1176.8 &             1269.1\\
+1886 & 4108  & aTZ  &  54 &   3811.0$^{\dagger}$ &             2164.0 &  0.6   &  25.8$^{\dagger}$ &              26.2 &  931.2$^{\dagger}$ &             1183.4\\
+1641 & 6050  & aDZ  & 103 &   4406.9$^{\dagger}$ &             3528.3 &  0.8   &  23.9$^{\dagger}$ &              24.6 & 1958.4$^{\dagger}$ &             2161.9\\
+2185 & 4754  & aTZ  &  63 &   5744.9$^{\dagger}$ & 4594.0$^{\dagger}$ &  0.8   &  37.3$^{\dagger}$ &  37.0$^{\dagger}$ & 1727.3$^{\dagger}$ & 2063.1$^{\dagger}$\\
+2258 & 5589  &  TZ  & 103 &   5474.8$^{\dagger}$ &             4710.6 &  0.9   &  23.5$^{\dagger}$ &              20.2 & 3228.0$^{\dagger}$ &             3381.7\\
+2760 & 5988  & aTZ  &  81 &  11294.6$^{\dagger}$ & 9350.0$^{\dagger}$ &  0.8   &  64.6$^{\dagger}$ &  63.4$^{\dagger}$ & 4003.6$^{\dagger}$ & 4669.9$^{\dagger}$\\
+3542 & 7696  & aTZ  & 103 &  28136.3$^{\dagger}$ &23132.6$^{\dagger}$ &  0.8   & 144.4$^{\dagger}$ & 124.7$^{\dagger}$ &11201.2$^{\dagger}$ &12464.4$^{\dagger}$\\
+
+\hline
+\end{tabular}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\footnote[2]{} Indicates a disk-based implementation was used.
+\end{table}
+\endgroup
+
+The results in Table 4.1 confirm our analysis of Algorithms 10 and 11. For small enough investigations, Algorithm 10 will always be more
+efficient.
  

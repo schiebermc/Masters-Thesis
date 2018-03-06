@@ -8,7 +8,7 @@ d{\textbf{r}_{1}}d{\textbf{r}_{2}},
 \end{align}
 
 \noindent where $\mu, \nu, \lambda, \sigma$ are atomic orbital (AO) basis functions and $\textbf{r}_{1}$ and $\textbf{r}_{2}$
-are electron coordinates. For simplicity, we have assumed the orbitals are real functions, as is usually
+are electron coordinates \cite{ref1}. For simplicity, we have assumed the orbitals are real functions, as is usually
 the case in practice. Immediately, one should note the $\mathcal{O}(N_{AO}^4)$ storage costs (where $N_{AO}$ is
 the number of AO basis functions), which quickly 
 limits the size of in-core investigations. Moreover, the two fundamental operations involving ERIs 
@@ -45,7 +45,7 @@ density fitting reduces the rank of the 4-center ERIs and approximates them usin
 (\mu \nu|\lambda \sigma) &\approx (\mu \nu| P)[J]_{PQ}^{-1}(Q|\lambda \sigma)  
 \end{align} 
 
-\noindent Here we have introduced an auxiliary basis $P, Q$ and the Coloumb fitting metric $[J]_{PQ}$. 
+\noindent Here we have introduced an auxiliary basis $P, Q$ and the Coloumb fitting metric $[J]_{PQ}$ \cite{ref2}. 
 In practice, permuational symmetry is almost always used so that only one set of these 3-center integrals need be built:
 \begin{align} 
 B_{\mu \nu}^P &= [J]_{PQ}^{-\frac{1}{2}}(\mu \nu | Q)  \\ 
