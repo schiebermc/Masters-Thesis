@@ -3,11 +3,34 @@
 \section{A note on disk-bound index blocking}
 
 The size of tensors grow rapidly in quantum chemistry.  The 3-center integrals of density fitting are no exception.
-Often, the size of the AO three-index integrals will exceed 50GB of RAM for systems as small as 40 atoms when
-a moderate basis set such as aug-cc-pVQZ is used, even with sparsity screening.  At that point, it is necessary for
+Often, the size of the AO three-index integrals will exceed 64GB of RAM for small systems when
+a moderate basis set such as aug-cc-pVTZ is used, even with sparsity screening. Table 3.1 illustrates this point by listing
+the total memory required for sparse three-index AO integrals for adenine-thymine dimer accross various a basis sets. Once the memory required
+exceeds what is available, it is necessary for
 any implementation to begin reading and writing these tensors to and from disk-based memory. For any field this can
 be a major slowdown, but it is especially critical to performance when high-dimensional data is involved. To illustrate
-this issue, I will introduce an adapted tensor notation which better indicates memory layout.
+this issue, we will introduce an adapted tensor notation which better indicates memory layout.
+
+\begingroup
+\begin{table}[H]
+\centering
+\renewcommand{\baselinestretch}{1}
+\caption{Total memory required for sparse three-index AO integrals for adenine-thymine dimer accross various basis sets.}
+\begin{tabular}{l ccc}
+\multicolumn{1}{l}{\textbf{Basis}} &
+\multicolumn{1}{c}{\textbf{Memory Required}} &
+\multicolumn{1}{c}{\textbf{$N_{AO}$}} &
+\multicolumn{1}{c}{\textbf{$N_{aux}$}} \\
+\hline
+   cc-pVDZ   &      9.2GB    &    671   &    3277 \\   
+aug-cc-pVDZ  &     41.6GB   &    1133  &     4172\\
+   cc-pVTZ   &     49.5GB    &   1566   &    3856 \\
+aug-cc-pVTZ  &    222.9GB   &    2461  &     5330\\
+   cc-pVQZ   &    228.8GB    &   3040   &    5593 \\
+aug-cc-pVQZ  &    965.2GB   &    4514  &     7792\\
+\end{tabular}
+\end{table}
+\endgroup
 
 We denote an $n$-dimensional tensor as $T_{ab\hdots n}$, where the indices from left to right go from the slowest-running
 to the fastest-running indices. Here, $a$ is the slowest-running index, $b$ is the next slowest-running
@@ -26,7 +49,7 @@ contiguous as possible. In the case of $P$ blocking, the $A_{P\mu\nu}$ tensor is
 former will yield entirely contiguous operations whereas the latter will require strided operations.  
 
 Unfortunately, within the density fitting regime, different operations are optimal under different blocking schemes. For example,
-consider the construction of the full three-index AO integrals according to (1.8). To accomplish this, 
+consider the construction of the full three-index AO integrals according to (1.9). To accomplish this, 
 the initial integrals, $A_{\mu \nu}^P$, are computed and then contracted with the fitting metric. If the AOs are too large to fully 
 fit in-core, then we must choose an index, $P$ or $\mu$, to block accross. Consider the following two algorithms
 that block accross either index, respectively:
@@ -75,7 +98,7 @@ chemists and in commodity computing clusters.
 Moreover, the birth of Intel's manycore architecture further necessitates that scientific computing
 exploit every means of parallelism.
 Although the density fitting technique has been shown to be challenging to exploit in massively parallel
-algorithms (cite K computer paper), it remains an essential technique for accelerating computations of 
+algorithms \cite{ref3}, it remains an essential technique for accelerating computations of 
 small to intermediate size chemical systems.
 The communication overhead that hinders large scale parallelism for density
 fitting is nominal for single node investigations, but even a single multicore processor contains viable
@@ -217,10 +240,10 @@ we refer to the Direct algorithm as the workflow which transforms the integrals 
 
 Depending on the context, either the Store or Direct algorithm may be superior. We propose the Store algorithm 
 will be superior for procedures requiring
-many transformations. This includes contexts which iteratively recompute transformations, such as DFMCSCF \cite{ref3}, as well as contexts 
-involving a large number of spaces, such as FSAPT and USAPT \cite{ref4} \cite{ref5}. 
+many transformations. This includes contexts which iteratively recompute transformations, such as DFMCSCF \cite{??}, as well as contexts 
+involving a large number of transformations spaces, such as FSAPT and USAPT \cite{ref6} \cite{ref7}. 
 Conversely, the Direct algorithm will be superior in contexts requiring a small number of transformations. Most notably, 
-this includes DFMP2 \cite{ref3}.
+this includes DFMP2 \cite{ref4}.
 
 %
 %\section{Disk IO considerations for transformed integrals}
@@ -403,9 +426,9 @@ number of transformations increase, the expense of these contractions
 overtakes the speedups of pre-transforming the integrals. Note that a crossover between the two algorithms occurs in each system. 
 This finding supports our conjecture that the Store algorithm is advantageous in contexts where many transformations occur. 
 This includes iterative methods where the transformations
-are carried out in each iteration, such as MCSCF \cite{}, as well as methods which require many transformations, such as FSAPT and 
+are carried out in each iteration, such as MCSCF, as well as methods which require many transformations, such as FSAPT and 
 USAPT. Conversely, the Direct algorithm is advantageous for methods
-requiring few transformations, such as DFMP2 \cite{}.
+requiring few transformations, such as DFMP2.
 
 Additionally, the crossover point shifts to the left as the transformation spaces get larger ($ij, ia, ab$), occuring in fewer transforamtions.
 This finding is supportive of the proposed speedups in Table 1.
@@ -451,13 +474,12 @@ in 20 water solvent molecules. }
 \multicolumn{1}{c}{\textbf{Primary Basis}} &
 \multicolumn{1}{c}{\textbf{Auxiliary Basis}} &
 \multicolumn{1}{c}{\textbf{$N_{aux}$}} &
-\multicolumn{1}{c}{\textbf{$N_{occ}$}} &
 \multicolumn{1}{c}{\textbf{$N_{virt}$}} \\
 \hline
-Hexatriene        & cc-pVQZ     & cc-pVQZ-jkfit & 3277      & 129       & 542        \\ 
-Hexatriene        & cc-pVQZ     & cc-pVQZ-rifit & 3277      & 129       & 542        \\ 
-Benzene-Toluene   & jun-cc-pVDZ & jun-cc-pVDZ-jkfit & 3856  & 129       & 1437       \\ 
-Benzene-Toluene   & jun-cc-pVDZ & jun-cc-pVDZ-rifit & 3856  & 129       & 1437       \\ 
+Hexatriene        & cc-pVQZ     & cc-pVQZ-jkfit     & 570   &  1044        \\ 
+Hexatriene        & cc-pVQZ     & cc-pVQZ-rifit     & 570   &  1232        \\ 
+Benzene-Toluene   & jun-cc-pVDZ & jun-cc-pVDZ-jkfit & 867   &  3849       \\ 
+Benzene-Toluene   & jun-cc-pVDZ & jun-cc-pVDZ-rifit & 867   &  2901       \\ 
 \end{tabular}
 \end{table}
 \endgroup
@@ -468,7 +490,6 @@ the total computation time spent in operations involving the three-index integra
 reflect the algorithmic benifits illustrated in Figure 3.3. Table 3.6 includes the total time required
 to exectue the program. These times reflect total procedure times, which include many operations extraneous
 to the three-index integrals.
-
 
 \begingroup
 \begin{table}[H]
@@ -482,10 +503,10 @@ to the three-index integrals.
 \multicolumn{1}{c}{\textbf{STORE}} &
 \multicolumn{1}{c}{\textbf{Speedup}} \\ 
 \hline
-Hexatriene        & DFMCSCF & 42.32s  & 7.839s  &  5.4x  \\ 
-Hexatriene        & DFMP2   & 2.728s  & 6.559s  &  2.4x  \\ 
+Hexatriene        & DFMCSCF & 42.3s   &   7.8s  &  5.4x  \\ 
+Hexatriene        & DFMP2   &  2.9s   &   6.0s  &  2.1x  \\ 
 Benzene-Toluene   & DFMCSCF & 438.1s  & 104.8s  &  4.2x  \\ 
-Benzene-Toluene   & DFMP2   &      &   &    \\ 
+Benzene-Toluene   & DFMP2   & 31.4s   &  61.2s  &  1.9x  \\ 
 \end{tabular}
 \end{table}
 \endgroup
@@ -503,18 +524,18 @@ Benzene-Toluene   & DFMP2   &      &   &    \\
 \multicolumn{1}{c}{\textbf{STORE}} &
 \multicolumn{1}{c}{\textbf{Speedup}} \\ 
 \hline
-Hexatriene        & DFMCSCF & 173.0   & 145.6   &  1.2x  \\ 
-Hexatriene        & DFMP2   & 1299.4s & 1307.3s &  1.0x  \\ 
-Benzene-Toluene   & DFMCSCF & 5138.7s & 4811.8s &  1.1x  \\ 
-Benzene-Toluene   & DFMP2   &   &   &    \\ 
+Hexatriene        & DFMCSCF & 173.0s   & 145.6s  &  1.2x  \\ 
+Hexatriene        & DFMP2   & 35.1s    &  40.5s  &  1.2x  \\ 
+Benzene-Toluene   & DFMCSCF & 5138.7s  & 4811.8s &  1.1x  \\ 
+Benzene-Toluene   & DFMP2   & 852.7s   & 856.0s  &  1.0x  \\ 
 \end{tabular}
 \end{table}
 \endgroup
 
-Both Tables 5.6 and 5.7 reveal that the Direct algorithm is superior for DFMP2 whereas the Store algorithm is superior for
-DFMCSCF. The computational speedups can be substantial, reaching 5.4x for DFMCSCF with the hexatriene system. However, Table 3.6
+Both Tables 3.6 and 3.7 reveal that the Direct algorithm is superior for DFMP2 whereas the Store algorithm is superior for
+DFMCSCF. The computational speedups can be substantial, reaching 5.4x for DFMCSCF with the hexatriene system. However, Table 3.7
 reveals these speedups are considerably dampened for the overall procedure time. This is true because 
-the operations invovling the three-index integrals ar enot the most expensive compoutations occurring within these procedures.
+the operations involving the three-index integrals are not the most expensive computations occurring within these procedures.
 
 
 

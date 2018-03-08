@@ -4,6 +4,19 @@
 \vspace{\baselineskip}
 \end{centering}
 
-TODO
+Density fitting is a rank reduction technique popularly used in quantum chemistry in order to reduce the computational cost 
+of evaluating, transforming, and processing the 4-center electron repulsion integrals (ERIs). By utilizing the resolution of the 
+identity technique, density fitting reduces the 4-center ERIs into a 3-center form. Doing so not only alleviates the high storage cost
+of the ERIs, but it also reduces the computational cost of their involving operations. Still, these operations remain as computational
+bottlenecks which commonly plague quantum chemistry procedures. The goal of this thesis is to investigate various optimizations for 
+these computational kernels used ubiquitously throughout quantum chemistry. First, we detail the spatial sparsity available to the
+3-center integrals and the application of such sparsity to various operations, including integral computation, metric 
+contractions, and integral transformations. Next, we investigate sparse memory layouts and their implication 
+on the performance of the integral transformation kernel. Next, we analyze two transformation algorithms and how 
+their performance will vary depending on the context in which they are used. Then, we propose two sparse memory 
+layouts and the resulting performance of Coulomb and exchange evaluations. Since the memory required for these 
+tensors grows rapidly, we frame these discussions in the context of their in-core and disk performance. 
+We implement these methods in the {\sc Psi4} electronic structure package and reveal that the exchange 
+matrix evaluation kernel should vary depending on whether a disk-based implementation must be used.
 
 %\pagenumbering{gobble}  %remove page number on summary page

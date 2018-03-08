@@ -1,5 +1,7 @@
 \chapter{Evaluating Coulomb and Exchange Matrices}
 
+\section{Coulomb and Exchange Evaluations}
+
 From Chapter 1, we wrote the most efficient evaluations of the three-index ERIs to build the Coulomb and exchange matrices as:
 
 \begin{align}
@@ -8,8 +10,9 @@ K[D_{\lambda \sigma}]_{\mu \nu} &= B_{\mu \lambda}^P B_{\nu \sigma}C_{p\lambda}C
 \end{align}
 
 \noindent where (4.1) and (4.2) are evaluated in $\mathcal{O}(N_{AO}^2N_{aux})$ and $\mathcal{O}(N_{AO}^2N_{aux}N_p)$ operations, respectively.
-The exchange matrix evaluation is a major bottleneck within the density fitting regime. As such, it is imperitive to take advantage of sparsity
-and optimize parallel scaling. Thankfully, it turns out that Algorithm 6 is easily 
+The exchange matrix evaluation is a major bottleneck within the density fitting regime. The focus of this chapter is on analyzing and improving
+exchange builds to take advantage of sparsity, optimize parallel scaling, and to minimize disk operations.
+Thankfully, it turns out that Algorithm 6 is easily 
 extendible to (4.2). In fact, if one uses orbital matrices to build the exchange matrix as in (4.2), the half-transformed 
 intermediate generated during integral transformations, $A_{\mu Pq}$, is actually identical to the intermediate when building the exchange matrix. 
 Moreover, the memory layout of $A_{\mu Pq}$ is ideal for the subsequent contraction to form $K$. The following algorithm results:
@@ -17,22 +20,23 @@ Moreover, the memory layout of $A_{\mu Pq}$ is ideal for the subsequent contract
 \begin{algorithm}[H]
 \caption{Building the $K$ matrix.}
 \begin{algorithmic}
-\REQUIRE Sparse AO integrals: $A_{\mu P \nu^\mu}$, orbital matrices: $C_{\mu p}, C_{\nu p}$, screening mask: $S_{\mu \nu}^b$
+\REQUIRE Sparse AO integrals: $B_{\mu P \nu^\mu}$, orbital matrices: $C_{\mu p}, C_{\nu p}$, screening mask: $S_{\mu \nu}^b$
 \FOR {$\mu = 0$ to $\mu = N_{AO}-1$}  
     \STATE Trim from dense to sparse: $C_{\nu p}S_{\mu \nu}^b \rightarrow C_{\nu^{\mu} p}$
-    \STATE $A_{\mu P \nu^{\mu}} C_{\nu^{\mu} p} \rightarrow A_{\mu Pp}$
+    \STATE $B_{\mu P \nu^{\mu}} C_{\nu^{\mu} p} \rightarrow T_{\mu Pp}$
     \IF {$C_{\mu p} != C_{\nu p}$}
         \STATE Trim from dense to sparse: $C_{\mu p}S_{\mu \nu}^b \rightarrow C_{\mu^{\nu} p}$
-        \STATE $A_{\nu P \mu^{\nu}} C_{\mu^{\nu} p} \rightarrow A_{\nu P p}$
+        \STATE $B_{\nu P \mu^{\nu}} C_{\mu^{\nu} p} \rightarrow T_{\nu P p}$
     \ELSE
-        \STATE $A_{\nu P p} = A_{\mu P p}$ 
+        \STATE $T_{\nu P p} = T_{\mu P p}$ 
     \ENDIF
 \ENDFOR
-\STATE $A_{\mu P q} A_{\nu P q} \rightarrow K_{\mu \nu} $
+\STATE $T_{\mu P q} T_{\nu P q} \rightarrow K_{\mu \nu} $
 \RETURN $K_{\mu \nu}$
 \end{algorithmic}
 \end{algorithm}
 
+We have used $T$ tensors to indicate intermediates.
 Algorithm 9 is an ideal condidate for building the $K$ matrix, as it both utilizes sparsity and maximizes concurrency.
 However, while it may be assumed that both $J$ and $K$ can always fit within in-core memory constraints, the same is not true 
 for the three-index AO integrals.  Therefore, we must consider the behavior of Algorithm 9 when the 
@@ -42,74 +46,149 @@ becomes:
 \begin{algorithm}[H]
 \caption{Building the $K$ matrix.}
 \begin{algorithmic}
-\REQUIRE Sparse AO integrals: $A_{\mu P \nu^\mu}$, orbital matrices: $C_{\mu p}, C_{\nu p}$, screening mask: $S_{\mu \nu}^b$
+\REQUIRE Sparse AO integrals: $B_{\mu P \nu^\mu}$, orbital matrices: $C_{\mu p}, C_{\nu p}$, screening mask: $S_{\mu \nu}^b$
 \FOR {$P_i \in P$}    
-    \STATE Read from disk: $A_{\mu P_i \nu^{\mu}}$
+    \STATE Read from disk: $B_{\mu P_i \nu^{\mu}}$
     \FOR {$\mu = 0$ to $\mu = N_{AO}-1$}  
         \STATE Trim from dense to sparse: $C_{\nu p}S_{\mu \nu}^b \rightarrow C_{\nu^{\mu} p}$
-        \STATE $A_{\mu P_i \nu^{\mu}} C_{\nu^{\mu} p} \rightarrow A_{\mu P_i p}$
+        \STATE $B_{\mu P_i \nu^{\mu}} C_{\nu^{\mu} p} \rightarrow T_{\mu P_i p}$
         \IF {$C_{\mu p} != C_{\nu p}$}
             \STATE Trim from dense to sparse: $C_{\mu p}S_{\mu \nu}^b \rightarrow C_{\mu^{\nu} p}$
-            \STATE $A_{\nu P_i \mu^{\nu}} C_{\mu^{\nu} p} \rightarrow A_{\nu P_i p}$
+            \STATE $B_{\nu P_i \mu^{\nu}} C_{\mu^{\nu} p} \rightarrow T_{\nu P_i p}$
         \ELSE
-            \STATE $A_{\nu P_i p} = A_{\mu P_i p}$ 
+            \STATE $T_{\nu P_i p} = T_{\mu P_i p}$ 
         \ENDIF
     \ENDFOR
-    \STATE $K_{\mu \nu} = K_{\mu \nu} + A_{\mu P_i q} A_{\nu P_i q}$
+    \STATE $K_{\mu \nu} = K_{\mu \nu} + T_{\mu P_i q} T_{\nu P_i q}$
 \ENDFOR
 \RETURN $K_{\mu \nu}$
 \end{algorithmic}
 \end{algorithm}
 
-\noindent Unfortunately, this algorithm will require strided disk operations when reading the $A_{\mu P^i \nu^{\mu}}$ tensor into memory.
+\noindent Unfortunately, this algorithm will require strided disk operations when reading the $B_{\mu P^i \nu^{\mu}}$ tensor into memory.
 Since poor disk IO can drastically decrease performance, it is often better to force disk operations 
-to be contiguous and transpose any tensors as necessary in core memory. Since it is best to block accross the $P$ index, a better
+to be contiguous and transpose any tensors as necessary in core memory. Since it is best to block accross the $P$ index (as discussed in
+Chapter 3), a better
 memory layout for the sparse integrals is the $A_{P \mu \nu^\mu}$ form, since this form will allow for completely 
 contiguous reads from disk memory. Another possible algorithm can then be formualted:
 
 \begin{algorithm}[H]
-\caption{Building the $K$ matrix using $A_{P \mu \nu^\mu}$, blocking accross $P$}
+\caption{Building the $K$ matrix using $B_{P \mu \nu^\mu}$, blocking accross $P$}
 \begin{algorithmic}
-\REQUIRE Sparse AO integrals: $A_{P \mu \nu^\mu}$, orbital matrices: $C_{\mu p}, C_{\nu p}$, screening mask: $S_{\mu \nu}^b$
+\REQUIRE Sparse AO integrals: $B_{P \mu \nu^\mu}$, orbital matrices: $C_{\mu p}, C_{\nu p}$, screening mask: $S_{\mu \nu}^b$
 \FOR {$P_i \in P$}
-    \STATE Read from disk: $A_{P_i \mu \nu^{\mu}}$
+    \STATE Read from disk: $B_{P_i \mu \nu^{\mu}}$
     \FOR {$\mu = 0$ to $\mu = N_{AO}-1$}  
-        \STATE Copy: $A_{P_i \mu \nu^{\mu}} \rightarrow B_{P_i \nu^{\mu}}$
+        \STATE Copy: $B_{P_i \mu \nu^{\mu}} \rightarrow b_{P_i \nu^{\mu}}$
         \STATE Trim from dense to sparse: $C_{\nu p}S_{\mu \nu}^b \rightarrow C_{\nu^{\mu} p}$
-        \STATE $B_{P_i \nu^{\mu}} C_{\nu^{\mu} p} \rightarrow A_{\mu P_i p}$
+        \STATE $b_{P_i \nu^{\mu}} C_{\nu^{\mu} p} \rightarrow T_{\mu P_i p}$
         \IF {$C_{\mu p} != C_{\nu p}$}
             \STATE Trim from dense to sparse: $C_{\mu p}S_{\mu \nu}^b \rightarrow C_{\mu^{\nu} p}$
-            \STATE $B_{P_i \mu^{\nu}} C_{\mu^{\nu} p} \rightarrow A_{\nu P_i p}$
+            \STATE $b_{P_i \mu^{\nu}} C_{\mu^{\nu} p} \rightarrow T_{\nu P_i p}$
         \ELSE
-            \STATE $A_{\nu P_i p} = A_{\mu P_i p}$ 
+            \STATE $T_{\nu P_i p} = T_{\mu P_i p}$ 
         \ENDIF
     \ENDFOR
-    \STATE $K = K +  A_{\mu P_i p} A_{\mu P_i p} $
+    \STATE $K = K +  T_{\mu P_i p} T_{\mu P_i p} $
 \ENDFOR
 \RETURN $K$
 \end{algorithmic}
 \end{algorithm}
 
-\noindent Here, we used a buffer, $B_{P^i \nu^{\mu}}$, to transpose pieces of $A_{P^i \mu \nu^{\mu}}$ into the necessary form
-while looping over $\mu$.
-Although this algorithm may involve a strided copy and additional memory usage, the disk reads for the $A_{P^i \mu \nu^{\mu}}$ 
+\noindent Here, we used a buffer, $b_{P^i \nu^{\mu}}$, to transpose pieces of $B_{P^i \mu \nu^{\mu}}$ while looping over $\mu$.
+Although this algorithm may involve a strided copy and additional memory usage, the disk reads for the $B_{P^i \mu \nu^{\mu}}$ 
 tensor are completely contiguous.  
 
 For smaller investigations, the three-index AO integrals can be fit completely in-core and Algorithm 10 should yield superior 
 performance. However, for larger systems,
 the strided disk reads in Algorithm 10 may cause performance degredation to the point that Algorithm 11 will become superior.
 
+Although the exchange matrix evaluation is the primary computational bottleneck, it is important to note how the above integral
+formats will affect Coulomb matrix evaluations. To build the Coulomb matrix, the sparsity mask can be applied
+directly to the density matrix. The following algorithm results:
+
+\begin{algorithm}[H]
+\caption{Building the $J$ matrix.}
+\begin{algorithmic}
+\REQUIRE Sparse AO integrals: $B_{\mu \nu^{\mu}}^P$, density matrix: $D_{\mu \nu}$, screening mask: $S_{\mu \nu}^b$
+\STATE Trim from dense to sparse: $D_{\mu \nu}S_{\mu \nu}^b \rightarrow D_{\mu \nu^{\mu} }$
+\STATE $B^P_{\mu\nu^{\mu}} D_{\mu \nu^{\mu}} \rightarrow T^{P}$
+\STATE $T^{P} B^P_{\mu \nu^{\mu}} \rightarrow J_{\mu \nu^{\mu}} $
+\STATE Unpack from sparse to dense: $J_{\mu \nu^{\mu}} \rightarrow J_{\mu \nu}$
+\RETURN $J_{\mu \nu}$
+\end{algorithmic}
+\end{algorithm}
+
+\noindent Moreover, the corresponding disk-based implementations for the $B_{\mu P \nu^\mu}$ and $B_{P \mu \nu^\mu}$ integral
+layouts are listed in Algorithms 13 and 14, respectively.
+
+\begin{algorithm}[H]
+\caption{Building the $J$ matrix using $B_{\mu P \nu^\mu}$, blocking accross $P$}
+\begin{algorithmic}
+\REQUIRE Sparse AO integrals: $B_{\mu P \nu^{\mu}}$, density matrix: $D_{\mu \nu}$, screening mask: $S_{\mu \nu}^b$
+\FOR {$P_i \in P$}
+    \STATE Read from disk: $B_{\mu P_i \nu^{\mu}}$
+    \STATE Initialize: $T_{P_i} = 0$
+    \FOR {$\mu = 0$ to $\mu = N_{AO}-1$}  
+        \STATE Copy to sparse: $D_{\mu \nu}S_{\mu \nu}^b \rightarrow d_{\nu^{\mu} }$
+        \STATE $T_{P_i} = T_{P_i} + B_{\mu P_i \nu^{\mu}}d_{\nu^{\mu}}$
+    \ENDFOR    
+    \STATE $T_{P_i} B_{P_i \mu \nu^{\mu}} \rightarrow J_{\mu \nu^{\mu}} $
+    \STATE Unpack from sparse to dense: $J_{\mu \nu^{\mu}} \rightarrow J_{\mu \nu}^{\{P_i\}}$
+    \STATE $J_{\mu \nu} = J_{\mu \nu} + J_{\mu \nu}^{\{P_i\}}$
+\ENDFOR
+\RETURN $J_{\mu \nu}$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{Building the $J$ matrix using $B_{P \mu \nu^\mu}$, blocking accross $P$}
+\begin{algorithmic}
+\REQUIRE Sparse AO integrals: $B_{P \mu \nu^{\mu}}$, density matrix: $D_{\mu \nu}$, screening mask: $S_{\mu \nu}^b$
+\FOR {$P_i \in P$}
+    \STATE Read from disk: $B_{P_i \mu \nu^{\mu}}$
+    \STATE Trim from dense to sparse: $D_{\mu \nu}S_{\mu \nu}^b \rightarrow D_{\mu \nu^{\mu} }$
+    \STATE $B_{P_i \mu\nu^{\mu}} D_{\mu \nu^{\mu}} \rightarrow T^{P_i}$
+    \STATE $T^{P_i} B_{P_i \mu \nu^{\mu}} \rightarrow J_{\mu \nu^{\mu}} $
+    \STATE Unpack from sparse to dense: $J_{\mu \nu^{\mu}} \rightarrow J_{\mu \nu}$
+\ENDFOR
+\RETURN $J_{\mu \nu}$
+\end{algorithmic}
+\end{algorithm}
+
+\noindent Note that Algorithm 13 is likely inferior to Algorithm 14, with both necessary loops and copies as well as non-contiguous disk reads.
+However, since Coulomb matrix evaluation requires considerably less compute time than the exchange matrix evaluations, 
+the performance of Algorithms 13 and 14 will be nearly trivial. Moreover, note that the disk reads in Algorithms 10 and 13 as well as 
+in Algorithms 11 and 14 will be occuring simulataneously. The J and K computational kernel will generally take this form:
+
+\begin{algorithm}[H]
+\caption{Coulomb and exchange matrix evaluation kernel.}
+\begin{algorithmic}
+\REQUIRE Sparse AO integrals: $B_{P \mu \nu^{\mu}}$, density matrix: $D_{\mu \nu}$, orbital matrices: $C_{\mu p}, C_{\nu p}$, screening mask: $S_{\mu \nu}^b$
+\STATE Initialize temps.
+\FOR {$P_i \in P$}
+    \STATE Read from disk: $B_{P_i \mu \nu^{\mu}}$
+    \STATE J = ComputeJ($B_{P_i \mu \nu^{\mu}}$, $S_{\mu \nu}^b$, $D_{\mu \nu}$)
+    \STATE K = ComputeK($B_{P_i \mu \nu^{\mu}}$, $S_{\mu \nu}^b$, $C_{\mu p}, C_{\nu p}$)
+\ENDFOR
+\RETURN $J_{\mu \nu}$, $K_{\mu \nu}$
+\end{algorithmic}
+\end{algorithm}
+
+\noindent An implementation of this kernel will involve using the $B_{\mu P \nu^\mu}$ integral form with Algorithms 10 and 13 or the 
+$B_{\mu P \nu^\mu}$ integral form with Algorithms 11 and 14. In the next section, we discuss the performance of these choices in practice.
 
 \section{Results}
 
 All methods were implemented in the {\sc Psi4} electronic structure software package.
 The parallelism in {\sc Psi4} relies on the shared memory programming model using OpenMP 
 and carries out matrix multiplications using Intel's Math Kernel
-Library. Currently, the state of the art in the 
-Psi4 is Algorithm 11. However, we conjecture that Algorithm 10 could provide 
+Library. Currently, the state of the art for exchange matrix evaluations in
+{\sc Psi4} is Algorithm 11. However, we conjecture that Algorithm 10 could provide 
 considerable speedups as it eliminates entirely a strided, level 1 BLAS copy.   
 
-We implemented Algorithm 10 and incorporated it into a development version of Psi4. Then, we used Psi4's Self-Consistent-Field
+We implemented Algorithms 10 and 13 and incorporated them into a development version of {\sc Psi4}. 
+Then, we used {\sc Psi4}'s Self-Consistent Field
 procedure to produce energies for various systems and basis set combinations. The systems used involved a protein-drug complex,
 where the drug molecule is ommitted and the atoms of the protien are added in a series according to distance from the center of
 the drug molecule. 
@@ -124,10 +203,11 @@ The experiments were carried out using one node consisting of an Intel Core i7-5
 \footnotesize
 \centering
 \renewcommand{\baselinestretch}{1}
-\caption{Total execution times for SCF procedures accross various systems using Algorithms 10 and 11. Total wall times include 
-wall time for the entire program to execute. J and K compute time indicates the total time spent in the Coulomb and Exchange matrix
+\caption{Total execution times for SCF procedures accross various systems using Algorithms 10 and 11 for exchange matrix evaluations. 
+The corresponding Coulomb matrix evaluations were performed using Algorithms 13 and 14, respectively. Total wall times include 
+wall time for the entire program to execute. J and K compute time indicates the total time spent in the Coulomb and exchange matrix
 evaluation kernels, respectively. System descriptions including number of AO basis functions, $N_{AO}$, number of auxiliary basis functions,
-$N_{aux}$, Basis, and number of atoms, $N_{at.}$ are included in the leftmost columns.  All rows are sorted by the product: $N_{aux}N_{AO}$.
+$N_{aux}$, basis, and number of atoms, $N_{at.}$, are included in the leftmost columns.  All rows are sorted by the product: $N_{aux}N_{AO}$.
 A speedup column is included for total wall time and is calculated as the time spent using Algorithm 11 dived by the time spent using
 Algorithm 10.
 \label{tbl:practical_speedups}}
@@ -146,42 +226,48 @@ Algorithm 10.
 & \multicolumn{1}{c}{\textbf{$N_{aux}$}} 
 & \multicolumn{1}{c}{\textbf{Basis}} 
 & \multicolumn{1}{c}{\textbf{$N_{at.}$}} 
-& \multicolumn{1}{c}{\textbf{Alg. 10}} 
-& \multicolumn{1}{c}{\textbf{Alg. 11}} 
+& \multicolumn{1}{c}{\textbf{10 \& 13}} 
+& \multicolumn{1}{c}{\textbf{11 \& 14}} 
 & \multicolumn{1}{c}{\textbf{spdup}} 
 & \multicolumn{1}{c}{\textbf{Alg. 10}} 
 & \multicolumn{1}{c}{\textbf{Alg. 11}} 
-& \multicolumn{1}{c}{\textbf{Alg. 10}} 
-& \multicolumn{1}{c}{\textbf{Alg. 11}} \\ 
+& \multicolumn{1}{c}{\textbf{Alg. 13}} 
+& \multicolumn{1}{c}{\textbf{Alg. 14}} \\ 
 \hline
-147 &  721  &  DZ  &  15 &                  3.8 &                4.7 &  1.2   &               0.1 &               0.0 &                0.5 &                0.6\\ 
- 247 &  912  & aDZ  &  15 &                  5.8 &                7.7 &  1.3   &               0.2 &               0.1 &                1.4 &                2.1\\
- 338 &  842  &  TZ  &  15 &                  7.5 &                9.9 &  1.3   &               0.2 &               0.2 &                2.3 &                3.3\\
- 294 & 1442  &  DZ  &  30 &                 12.4 &               18.1 &  1.5   &               0.3 &               0.3 &                5.6 &                7.1\\
- 529 & 1154  & aTZ  &  15 &                 18.7 &               29.9 &  1.6   &               0.8 &               0.8 &                7.4 &               13.1\\
- 375 & 1837  &  DZ  &  39 &                 25.4 &               36.8 &  1.4   &               0.5 &               0.5 &               13.3 &               16.6\\
- 494 & 1824  & aDZ  &  30 &                 35.3 &               54.8 &  1.6   &               1.0 &               0.9 &               18.1 &               25.7\\
- 676 & 1684  &  TZ  &  30 &                 46.0 &               74.7 &  1.6   &               1.2 &               1.2 &               28.2 &               38.6\\
- 522 & 2558  &  DZ  &  54 &                 72.3 &              109.2 &  1.5   &               1.1 &               0.9 &               48.8 &               56.8\\
- 631 & 2328  & aDZ  &  39 &                 81.5 &              132.9 &  1.6   &               2.1 &               2.0 &               46.8 &               65.1\\
- 603 & 2953  &  DZ  &  63 &                117.2 &              166.9 &  1.4   &               1.3 &               1.1 &               83.2 &               92.4\\
- 866 & 2150  &  TZ  &  39 &                109.3 &              176.6 &  1.6   &               2.5 &               2.4 &               74.7 &               97.6\\
-1058 & 2308  & aTZ  &  30 &                145.5 &              278.9 &  1.9   &               4.6 &               4.7 &               91.0 &              138.6\\
- 756 & 3696  &  DZ  &  81 &                231.3 &              328.3 &  1.4   &               1.8 &               1.6 &              176.3 &              190.9\\
- 878 & 3240  & aDZ  &  54 &                232.0 &              394.4 &  1.7   &               4.6 &               4.4 &              161.9 &              206.3\\
-1204 & 2992  &  TZ  &  54 &                332.5 &              504.1 &  1.5   &               4.9 &               4.7 &              256.8 &              302.4\\
-1015 & 3744  & aDZ  &  63 &                403.1 &              640.8 &  1.6   &               6.3 &               6.1 &              305.2 &              361.9\\
-1357 & 2954  & aTZ  &  39 &                385.9 &              726.9 &  1.9   &              10.5 &              12.3 &              259.2 &              376.6\\
- 974 & 4766  &  DZ  & 103 &                629.3 &              845.3 &  1.3   &               3.6 &               3.2 &              520.0 &              549.7\\
-1394 & 3458  &  TZ  &  63 &                601.7 &              850.5 &  1.4   &               6.6 &               6.2 &              492.8 &              551.2\\
-1275 & 4698  & aDZ  &  81 &                898.9 &             1379.0 &  1.5   &              10.6 &              10.7 &              711.5 &              813.2\\
-1758 & 4341  &  TZ  &  81 &               1372.3 &             1839.0 &  1.3   &              10.2 &               9.8 &             1176.8 &             1269.1\\
-1886 & 4108  & aTZ  &  54 &   3811.0$^{\dagger}$ &             2164.0 &  0.6   &  25.8$^{\dagger}$ &              26.2 &  931.2$^{\dagger}$ &             1183.4\\
-1641 & 6050  & aDZ  & 103 &   4406.9$^{\dagger}$ &             3528.3 &  0.8   &  23.9$^{\dagger}$ &              24.6 & 1958.4$^{\dagger}$ &             2161.9\\
-2185 & 4754  & aTZ  &  63 &   5744.9$^{\dagger}$ & 4594.0$^{\dagger}$ &  0.8   &  37.3$^{\dagger}$ &  37.0$^{\dagger}$ & 1727.3$^{\dagger}$ & 2063.1$^{\dagger}$\\
-2258 & 5589  &  TZ  & 103 &   5474.8$^{\dagger}$ &             4710.6 &  0.9   &  23.5$^{\dagger}$ &              20.2 & 3228.0$^{\dagger}$ &             3381.7\\
-2760 & 5988  & aTZ  &  81 &  11294.6$^{\dagger}$ & 9350.0$^{\dagger}$ &  0.8   &  64.6$^{\dagger}$ &  63.4$^{\dagger}$ & 4003.6$^{\dagger}$ & 4669.9$^{\dagger}$\\
-3542 & 7696  & aTZ  & 103 &  28136.3$^{\dagger}$ &23132.6$^{\dagger}$ &  0.8   & 144.4$^{\dagger}$ & 124.7$^{\dagger}$ &11201.2$^{\dagger}$ &12464.4$^{\dagger}$\\
+ 147&  721&    DZ&    15&                 3.8 &                4.7&     1.2 &                0.1 &                0.0&                 0.5&                 0.6\\
+ 247&  912&   aDZ&    15&                 5.8 &                7.7&     1.3 &                0.2 &                0.1&                 1.4&                 2.1\\
+ 338&  842&    TZ&    15&                 7.5 &                9.9&     1.3 &                0.2 &                0.2&                 2.3&                 3.3\\
+ 294& 1442&    DZ&    30&                12.4 &               18.1&     1.5 &                0.3 &                0.3&                 5.6&                 7.1\\
+ 529& 1154&   aTZ&    15&                18.7 &               29.9&     1.6 &                0.8 &                0.8&                 7.4&                13.1\\
+ 375& 1837&    DZ&    39&                25.4 &               36.8&     1.4 &                0.5 &                0.5&                13.3&                16.6\\
+ 650& 1205&    QZ&    15&                24.7 &               43.8&     1.8 &                1.2 &                1.1&                11.1&                19.3\\
+ 494& 1824&   aDZ&    30&                35.3 &               54.8&     1.6 &                1.0 &                0.9&                18.1&                25.7\\
+ 676& 1684&    TZ&    30&                46.0 &               74.7&     1.6 &                1.2 &                1.2&                28.2&                38.6\\
+ 522& 2558&    DZ&    54&                72.3 &              109.2&     1.5 &                1.1 &                0.9&                48.8&                56.8\\
+ 631& 2328&   aDZ&    39&                81.5 &              132.9&     1.6 &                2.1 &                2.0&                46.8&                65.1\\
+ 603& 2953&    DZ&    63&               117.2 &              166.9&     1.4 &                1.3 &                1.1&                83.2&                92.4\\
+ 866& 2150&    TZ&    39&               109.3 &              176.6&     1.6 &                2.5 &                2.4&                74.7&                97.6\\
+1058& 2308&   aTZ&    30&               145.5 &              278.9&     1.9 &                4.6 &                4.7&                91.0&               138.6\\
+ 756& 3696&    DZ&    81&               231.3 &              328.3&     1.4 &                1.8 &                1.6&               176.3&               190.9\\
+ 878& 3240&   aDZ&    54&               232.0 &              394.4&     1.7 &                4.6 &                4.4&               161.9&               206.3\\
+1300& 2410&    QZ&    30&               218.0 &              376.1&     1.7 &                5.6 &                5.8&               148.7&               198.3\\
+1204& 2992&    TZ&    54&               332.5 &              504.1&     1.5 &                4.9 &                4.7&               256.8&               302.4\\
+1015& 3744&   aDZ&    63&               403.1 &              640.8&     1.6 &                6.3 &                6.1&               305.2&               361.9\\
+1357& 2954&   aTZ&    39&               385.9 &              726.9&     1.9 &               10.5 &               12.3&               259.2&               376.6\\
+ 974& 4766&    DZ&   103&               629.3 &              845.3&     1.3 &                3.6 &                3.2&               520.0&               549.7\\
+1394& 3458&    TZ&    63&               601.7 &              850.5&     1.4 &                6.6 &                6.2&               492.8&               551.2\\
+1670& 3089&    QZ&    39&  1153.5$^{\dagger}$ &              933.4&     0.8 &   12.8$^{\dagger}$ &               13.2&   395.5$^{\dagger}$&               504.7\\
+1275& 4698&   aDZ&    81&               898.9 &             1379.0&     1.5 &               10.6 &               10.7&               711.5&               813.2\\
+1758& 4341&    TZ&    81&              1372.3 &             1839.0&     1.3 &               10.2 &                9.8&              1176.8&              1269.1\\
+1886& 4108&   aTZ&    54&  3811.0$^{\dagger}$ &             2164.0&     0.6 &   25.8$^{\dagger}$ &               26.2&   931.2$^{\dagger}$&              1183.4\\
+1641& 6050&   aDZ&   103&  4406.9$^{\dagger}$ &             3528.3&     0.8 &   23.9$^{\dagger}$ &               24.6&  1958.4$^{\dagger}$&              2161.9\\
+2320& 4294&    QZ&    54&  4280.4$^{\dagger}$ &             2741.3&     0.6 &   26.3$^{\dagger}$ &               25.0&  1377.2$^{\dagger}$&              1611.1\\
+2185& 4754&   aTZ&    63&  5744.9$^{\dagger}$ & 4594.0$^{\dagger}$&     0.8 &   37.3$^{\dagger}$ &   37.0$^{\dagger}$&  1727.3$^{\dagger}$&  2063.1$^{\dagger}$\\
+2258& 5589&    TZ&   103&  5474.8$^{\dagger}$ &             4710.6&     0.9 &   23.5$^{\dagger}$ &               20.2&  3228.0$^{\dagger}$&              3381.7\\
+2690& 4973&    QZ&    63&  6892.9$^{\dagger}$ &             4581.9&     0.7 &   39.5$^{\dagger}$ &               33.7&  2598.4$^{\dagger}$&              2893.4\\
+2760& 5988&   aTZ&    81& 11294.6$^{\dagger}$ & 9350.0$^{\dagger}$&     0.8 &   64.6$^{\dagger}$ &   63.4$^{\dagger}$&  4003.6$^{\dagger}$&  4669.9$^{\dagger}$\\
+3405& 6276&    QZ&    81& 14075.7$^{\dagger}$ &11354.3$^{\dagger}$&     0.8 &   70.6$^{\dagger}$ &   54.7$^{\dagger}$&  6318.9$^{\dagger}$&  6829.2$^{\dagger}$\\
+3542& 7696&   aTZ&   103& 28136.3$^{\dagger}$ &23132.6$^{\dagger}$&     0.8 &  144.4$^{\dagger}$ &  124.7$^{\dagger}$& 11201.2$^{\dagger}$& 12464.4$^{\dagger}$\\
 
 \hline
 \end{tabular}
@@ -190,6 +276,21 @@ Algorithm 10.
 \end{table}
 \endgroup
 
-The results in Table 4.1 confirm our analysis of Algorithms 10 and 11. For small enough investigations, Algorithm 10 will always be more
-efficient.
+Note that the $^{\dagger}$ symbol is used to indicate when a disk-based implementation is required. For Algorithm 11, it is possible
+to store up to half of the AO function pairs by applying permuatational symmetry. The necessary copy, 
+$A_{P_i \mu \nu^{\mu}} \rightarrow B_{P_i \nu^{\mu}}$, allows for this. Doing so effectively halves the memory requirement for Algorithm 11
+with respect to Algorithm 10. For this reason, Algorithm 10 is forced to resort to a disk-based implementation sooner than Algorithm 11.
+
+The results in Table 4.1 confirms our analysis of Algorithms 10 and 11. For small enough investigations, Algorithm 10 will always be more
+efficient. Total time spent in the exchange matrix evaluation kernel is always smaller for Algorithm 11. Only when Algorithm 11 switches to 
+a disk-based implementation that requires strided disk reads does it become slower than Algorithm 10 overall. Moreover, since the scaling of
+the Coulomb matrix evaluation is an entire factor smaller than the exchange matrix evaluation, its required time is almost trivial overall.
+
+Last, note that the total time spent in the J and K evaluations does not entirely account for the differences in performance. The 
+remaining difference involves the computation of $B^P_{\mu \nu^\mu}$, which with a metric contraction scaling as 
+$\mathcal{O}(N_{aux}^2N_{AO}^2)$, can be the most expensive operation of an SCF procedure. Even though Algorithm 10 does not 
+apply permuational symmetry, it can be more efficient for this operation as both the contractions and disk writes are contiguous.
  
+
+
+

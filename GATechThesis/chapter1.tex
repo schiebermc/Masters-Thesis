@@ -21,7 +21,15 @@ K[D_{\lambda \sigma}]_{\mu \nu} &= (\mu \lambda|\nu \sigma)D_{\lambda \sigma}
 \noindent Where $J[D_{\lambda \sigma}]_{\mu \nu}$, $K[D_{\lambda \sigma}]_{\mu \nu}$, 
 and $D_{\lambda \sigma}$ are the Coulomb, exchange, and density matrices, respectively.
 Evaluating the 4-center ERIs according to (1.2) and (1.3) requires $\mathcal{O}(N_{AO}^4)$ operations, 
-which is a heavy computational burden that plagues even the most basic quantum chemistry procedures. 
+which is a heavy computational burden that plagues even the most basic quantum chemistry procedures.
+For example, the AO Fock matrix is built as:
+\begin{align}
+F_{\mu \nu} = H_{\mu \nu} + 2J_{\mu \nu} - K_{\mu \nu}
+\end{align} 
+The simplist quantum chemistry procedure, known as the Self-Consistent Field approach, involves iteratively
+reconstructing the Fock matrix until convergence is met. The most compuatationally demanding operation for this
+method is by far the evaluation of the Coulomb and exchange matrices. 
+ 
 The second fundamental operation when using ERIs involves their transformation from the AO basis 
 to the molecular orbital (MO) basis. This operation is written as:
 \begin{align}
@@ -60,10 +68,10 @@ J[D_{\lambda \sigma}]_{\mu \nu} &= B_{\mu \nu}^P B_{\lambda \sigma}^PD_{\lambda 
 K[D_{\lambda \sigma}]_{\mu \nu} &= B_{\mu \lambda}^P B_{\nu \sigma}^PD_{\lambda \sigma}
 \end{align}
 
-\noindent Using (1.10), the Coulomb matrix is evaluated in $\mathcal{O}(N_{aux}N_{AO}^2)$ operations, which is a great success
-for reducing computational complexity. On the other hand, (1.11) still requires $\mathcal{O}(N_{aux}N_{AO}^3)$ operations. 
-Since $N_{aux}$ is always larger than $N_{AO}$, evaluating (1.13) is actually more expensive than evaluating (1.3).
-This leaves exchange matrix evaluation as the major bottleck for most density-fitted procedures.
+\noindent Using (1.11), the Coulomb matrix is evaluated in $\mathcal{O}(N_{aux}N_{AO}^2)$ operations, which is a great success
+for reducing computational complexity. On the other hand, (1.12) still requires $\mathcal{O}(N_{aux}N_{AO}^3)$ operations. 
+Since $N_{aux}$ is always larger than $N_{AO}$, evaluating (1.12) is actually more expensive than evaluating (1.3).
+This leaves the exchange matrix evaluation as the major bottleck for most density-fitted procedures.
 One method for alleviating this bottleneck involves employing knowledge 
 of the form of the density matrix:
 \begin{align}
@@ -74,38 +82,38 @@ D_{\lambda \sigma} &= C_{p\lambda}C_{p\sigma}
 building the exchange matrix.  
 Decomposing the density matrix and rewriting the Coulomb and exchange matrix evaluations, we get:
 \begin{align}
-J[D_{\lambda \sigma}]_{\mu \nu} &= B_{\mu \nu}^P B_{\lambda \sigma}C_{p\lambda}C_{p\sigma} \\
-K[D_{\lambda \sigma}]_{\mu \nu} &= B_{\mu \lambda}^P B_{\nu \sigma}C_{p\lambda}C_{p\sigma}
+J[D_{\lambda \sigma}]_{\mu \nu} &= B_{\mu \nu}^P B_{\lambda \sigma}^PC_{p\lambda}C_{p\sigma} \\
+K[D_{\lambda \sigma}]_{\mu \nu} &= B_{\mu \lambda}^P B_{\nu \sigma}^PC_{p\lambda}C_{p\sigma}
 \end{align}
 
-\noindent Evaluating both (1.13) and (1.14) requires $\mathcal{O}(N_{aux}N_{AO}^2N_p)$ operations.
-This technique is not benificial for Coulomb matrix evaluations, since the complexity of (1.13) is actually
-higher than that of (1.10). However, (1.14) reduces the complexity of exchange matrix evaluation by  
-$\frac{N_{aux}}{p}$, which provides moderate speedups in practice.
+\noindent Evaluating both (1.14) and (1.15) requires $\mathcal{O}(N_{aux}N_{AO}^2N_p)$ operations.
+This technique is not benificial for Coulomb matrix evaluations, since the complexity of (1.14) is actually
+higher than that of (1.11). However, (1.15) reduces the complexity of exchange matrix evaluation by  
+$\frac{N_{aux}}{N_p}$, which provides moderate speedups in practice.
 
-Moreover, density fitting also improves the cost of integral transformations. Applying (1.8) to (1.4), we have:
+Moreover, density fitting also improves the cost of integral transformations. Applying (1.10) to (1.5), we get:
 \begin{align}
-B^Q_{pq} = B^Q_{\mu \nu}C_{p \mu}C_{q \nu} \\
-(pq | rs) \approx B^Q_{pq}B^Q_{rs}
+B^P_{pq} = B^P_{\mu \nu}C_{p \mu}C_{q \nu} \\
+(pq | rs) \approx B^P_{pq}B^P_{rs}
 \end{align}
 
-\noindent The formal computational scaling of this operations is $\mathcal{O}(N_{aux}N_pN_qN_rN_s)$.  However, in practice,
-algorithms based on density fitting often involve contracting the transformed three-index integrals, $B^Q_{pq}$, with other terms, 
+\noindent The formal computational scaling of this operation is $\mathcal{O}(N_{aux}N_pN_qN_rN_s)$.  However, in practice,
+algorithms based on density fitting often involve contracting the transformed three-index integrals, $B^P_{pq}$, with other terms, 
 rather than explicit formulation of $(pq|rs)$ as actual intermediates. Therefore, optimizing these procedures will primarily
-focus on optimizing the computation of $B^Q_{pq}$ via (1.15). 
+focus on optimizing the computation of $B^P_{pq}$ via (1.16). 
 
 Although density fitting makes considerable progress towards reducing the space and computation complexity when
-using the ERIs, there is still work to be done. Importantly, (1.14) and (1.15) still serve as major computational
+using the ERIs, there is still work to be done. Importantly, (1.15) and (1.16) still serve as major computational
 bottlenecks for iterative and perturbative methods, respectively. In my research, I have sought out and implemented various 
 optimizations to further improve the density fitting regime. The essense of my work involves the marriage of sparsity screening,
 parallel scaling, minimizing disk IO, and optimal contraction paths. This thesis details the progress made via my research.
 In Chapter 2, I discuss the spatial sparsity of the three-index integrals and the utilization of such sparsity for integral 
 construction, metric contractions, and integral transformations.
-In Chapter 3, I focus on (1.15) by discussing its implementation, blocking procedures, disk implications,
-and detail how the context in which transformations occur dictate which of two unique algorithms is superior.
-Chapter 4 focuses on (1.14) and displays different forumulations of exchange matrix builds and the scalability of their performance.
-Chapter 5 quantifies the results of my investigations and the impact of my work for improving the state of the art. 
-Finally, Chapter 6 discusses the results from Chapter 5 and makes suggestions for future work.
+In Chapter 3, I focus on (1.15) by discussing blocking procedures, sparse memory layouts, disk mplications,
+and workflow optimizations.
+Chapter 4 focuses on (1.14) by formulating exchange matrix builds based on different sparse memory layouts and details 
+the scalability of the resulting algorithms.
+Finally, Chapter 5 summarizes the results and makes suggestions for future work.
 
 %Chapter 5 discusses a failed attempt at obtaining speedups in second order SCF (SOSCF) procedures by 
 %evaluating Coulomb and exchange matrices directly in the MO basis.

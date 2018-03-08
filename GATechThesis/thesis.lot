@@ -4,30 +4,28 @@
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {2.1}{\ignorespaces Characteristics of benzene stack systems. $N$ and $N_{aux}$ refer to the number of primary and auxiliary basis functions, respectively. Mask sparsity refers to the percentage of significant AO function pairs in the sparsity mask. Mask sparsity increases with additional benzenes added to the stack.\relax }}{10}{table.caption.5}
+\contentsline {table}{\numberline {2.1}{\ignorespaces Characteristics of benzene stack systems. $N$ and $N_{aux}$ refer to the number of primary and auxiliary basis functions, respectively. Mask sparsity refers to the percentage of significant AO function pairs in the sparsity mask. Mask sparsity increases with additional benzenes added to the stack.\relax }}{11}{table.caption.5}
 \defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {2.2}{\ignorespaces Speedups obtained from sparsity screening at ten benzenes from data in Figure 2.2.\relax }}{11}{table.caption.7}
-\defcounter {refsection}{0}\relax 
-\addvspace {10\p@ }
-\defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {3.1}{\ignorespaces Speedups obtainable via pre-transforming the 3-center integrals prior to metric contraction for common occupied-virtual transformations.\relax }}{18}{table.caption.8}
-\defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {3.2}{\ignorespaces Characteristics of organoboron catalyst. $N$ and $N_{aux}$ refer to the number of primary and auxiliary basis functions, respectively. Mask sparsity refers to the percentage of significant AO function pairs in the sparsity mask.\relax }}{21}{table.caption.10}
-\defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {3.3}{\ignorespaces Characteristics of organoboron catalyst systems across the cc-pVDZ, cc-pVTZ, and cc-pVQZ basis sets.\relax }}{25}{table.caption.12}
-\defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {3.4}{\ignorespaces Characteristics of systems for Store vs Direct algorithm comparisons.\relax }}{27}{table.caption.15}
-\defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {3.5}{\ignorespaces Computatoinal times comparing the Direct and Store algorithms for three-index integral transformations\relax }}{28}{table.caption.16}
-\defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {3.6}{\ignorespaces Total procedure wall clock times comparing the Direct and Store algorithms for three-index integral transformations\relax }}{28}{table.caption.17}
+\contentsline {table}{\numberline {2.2}{\ignorespaces Speedups obtained from sparsity screening at ten benzenes from data in Figure 2.2.\relax }}{12}{table.caption.7}
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {4.1}{\ignorespaces Total execution times for SCF procedures accross various systems using Algorithms 10 and 11. Total wall times include wall time for the entire program to execute. J and K compute time indicates the total time spent in the Coulomb and Exchange matrix evaluation kernels, respectively. System descriptions including number of AO basis functions, $N_{AO}$, number of auxiliary basis functions, $N_{aux}$, Basis, and number of atoms, $N_{at.}$ are included in the leftmost columns. All rows are sorted by the product: $N_{aux}N_{AO}$. A speedup column is included for total wall time and is calculated as the time spent using Algorithm 11 dived by the time spent using Algorithm 10. \relax }}{34}{table.caption.18}
+\contentsline {table}{\numberline {3.1}{\ignorespaces Total memory required for sparse three-index AO integrals for adenine-thymine dimer accross various basis sets.\relax }}{14}{table.caption.8}
+\defcounter {refsection}{0}\relax 
+\contentsline {table}{\numberline {3.2}{\ignorespaces Speedups obtainable via pre-transforming the 3-center integrals prior to metric contraction for common occupied-virtual transformations.\relax }}{20}{table.caption.9}
+\defcounter {refsection}{0}\relax 
+\contentsline {table}{\numberline {3.3}{\ignorespaces Characteristics of organoboron catalyst. $N$ and $N_{aux}$ refer to the number of primary and auxiliary basis functions, respectively. Mask sparsity refers to the percentage of significant AO function pairs in the sparsity mask.\relax }}{23}{table.caption.11}
+\defcounter {refsection}{0}\relax 
+\contentsline {table}{\numberline {3.4}{\ignorespaces Characteristics of organoboron catalyst systems across the cc-pVDZ, cc-pVTZ, and cc-pVQZ basis sets.\relax }}{26}{table.caption.13}
+\defcounter {refsection}{0}\relax 
+\contentsline {table}{\numberline {3.5}{\ignorespaces Characteristics of systems for Store vs Direct algorithm comparisons.\relax }}{28}{table.caption.16}
+\defcounter {refsection}{0}\relax 
+\contentsline {table}{\numberline {3.6}{\ignorespaces Computatoinal times comparing the Direct and Store algorithms for three-index integral transformations\relax }}{29}{table.caption.17}
+\defcounter {refsection}{0}\relax 
+\contentsline {table}{\numberline {3.7}{\ignorespaces Total procedure wall clock times comparing the Direct and Store algorithms for three-index integral transformations\relax }}{29}{table.caption.18}
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 
-\addvspace {10\p@ }
+\contentsline {table}{\numberline {4.1}{\ignorespaces Total execution times for SCF procedures accross various systems using Algorithms 10 and 11 for exchange matrix evaluations. The corresponding Coulomb matrix evaluations were performed using Algorithms 13 and 14, respectively. Total wall times include wall time for the entire program to execute. J and K compute time indicates the total time spent in the Coulomb and exchange matrix evaluation kernels, respectively. System descriptions including number of AO basis functions, $N_{AO}$, number of auxiliary basis functions, $N_{aux}$, basis, and number of atoms, $N_{at.}$, are included in the leftmost columns. All rows are sorted by the product: $N_{aux}N_{AO}$. A speedup column is included for total wall time and is calculated as the time spent using Algorithm 11 dived by the time spent using Algorithm 10. \relax }}{37}{table.caption.19}
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
