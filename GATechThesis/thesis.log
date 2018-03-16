@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.8.30)  7 MAR 2018 22:40
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.8.30)  8 MAR 2018 18:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -862,7 +862,17 @@ l.18 \end{titlepage}
  [8
 
 
-] [9] (./thesis.lof)
+] [9] (./thesis.lof
+Overfull \hbox (4.83841pt too wide) in paragraph at lines 23--23
+ \OT1/ptm/m/n/12 volve com-put-ing three com-mon trans-for-ma-tions: $\OT1/cmr/
+m/n/12 (\OML/cmm/m/it/12 ij\OMS/cmsy/m/n/12 j\OML/cmm/m/it/12 Q\OT1/cmr/m/n/12 
+)$\OT1/ptm/m/n/12 , $\OT1/cmr/m/n/12 (\OML/cmm/m/it/12 ib\OMS/cmsy/m/n/12 j\OML
+/cmm/m/it/12 Q\OT1/cmr/m/n/12 )$\OT1/ptm/m/n/12 , and $\OT1/cmr/m/n/12 (\OML/cm
+m/m/it/12 ab\OMS/cmsy/m/n/12 j\OML/cmm/m/it/12 Q\OT1/cmr/m/n/12 )$\OT1/ptm/m/n/
+12 , 
+ []
+
+)
 \tf@lof=\write7
 \openout7 = `thesis.lof'.
 
@@ -872,8 +882,7 @@ l.18 \end{titlepage}
 ] [11] (./summary.tex) [12
 
 
-]
-(./chapter1.tex
+] (./chapter1.tex
 Chapter 1.
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
 been already used, duplicate ignored
@@ -945,158 +954,160 @@ Chapter 3.
 
 ] [15] [16] [17] [18] [19] [20]
 
-LaTeX Warning: Citation '??' on page 21 undefined on input line 243.
+LaTeX Warning: Citation '??' on page 21 undefined on input line 248.
 
-[21] <geometries/boron_catalyst.png, id=459, 642.4pt x 481.8pt>
+[21] <geometries/boron_catalyst.png, id=460, 642.4pt x 481.8pt>
 File: geometries/boron_catalyst.png Graphic file (type png)
 
 <use geometries/boron_catalyst.png>
-Package pdftex.def Info: geometries/boron_catalyst.png used on input line 296.
+Package pdftex.def Info: geometries/boron_catalyst.png used on input line 301.
 (pdftex.def)             Requested size: 227.62204pt x 170.71304pt.
 
 
-LaTeX Warning: Citation 'Lec:2016:768' on page 22 undefined on input line 296.
+LaTeX Warning: Citation '???Lec:2016:768' on page 22 undefined on input line 30
+1.
 
 
-LaTeX Warning: Citation 'Lec:2016:768' on page 22 undefined on input line 296.
+LaTeX Warning: Citation '???Lec:2016:768' on page 22 undefined on input line 30
+1.
 
 [22]
-<figures/parallel_scaling_plots/speedup-cc-pVDZ.png, id=465, 1104.125pt x 620.3
+<figures/parallel_scaling_plots/speedup-cc-pVDZ.png, id=466, 1104.125pt x 620.3
 175pt>
 File: figures/parallel_scaling_plots/speedup-cc-pVDZ.png Graphic file (type png
 )
  <use figures/parallel_scaling_plots/speedup-cc-pVDZ.png>
 Package pdftex.def Info: figures/parallel_scaling_plots/speedup-cc-pVDZ.png use
-d on input line 333.
+d on input line 338.
 (pdftex.def)             Requested size: 216.81pt x 121.80856pt.
 
-<figures/parallel_scaling_plots/times-cc-pVDZ.png, id=466, 1104.125pt x 620.317
+<figures/parallel_scaling_plots/times-cc-pVDZ.png, id=467, 1104.125pt x 620.317
 5pt>
 File: figures/parallel_scaling_plots/times-cc-pVDZ.png Graphic file (type png)
  <use figures/parallel_scaling_plots/times-cc-pVDZ.png>
 Package pdftex.def Info: figures/parallel_scaling_plots/times-cc-pVDZ.png used 
-on input line 335.
+on input line 340.
 (pdftex.def)             Requested size: 216.81pt x 121.80856pt.
 
-<figures/parallel_scaling_plots/speedup-cc-pVTZ.png, id=467, 1104.125pt x 620.3
+<figures/parallel_scaling_plots/speedup-cc-pVTZ.png, id=468, 1104.125pt x 620.3
 175pt>
 File: figures/parallel_scaling_plots/speedup-cc-pVTZ.png Graphic file (type png
 )
  <use figures/parallel_scaling_plots/speedup-cc-pVTZ.png>
 Package pdftex.def Info: figures/parallel_scaling_plots/speedup-cc-pVTZ.png use
-d on input line 337.
+d on input line 342.
 (pdftex.def)             Requested size: 216.81pt x 121.80856pt.
 
-<figures/parallel_scaling_plots/times-cc-pVTZ.png, id=468, 1104.125pt x 620.317
+<figures/parallel_scaling_plots/times-cc-pVTZ.png, id=469, 1104.125pt x 620.317
 5pt>
 File: figures/parallel_scaling_plots/times-cc-pVTZ.png Graphic file (type png)
  <use figures/parallel_scaling_plots/times-cc-pVTZ.png>
 Package pdftex.def Info: figures/parallel_scaling_plots/times-cc-pVTZ.png used 
-on input line 339.
+on input line 344.
 (pdftex.def)             Requested size: 216.81pt x 121.80856pt.
 
-<figures/parallel_scaling_plots/speedup-cc-pVQZ.png, id=469, 1104.125pt x 620.3
+<figures/parallel_scaling_plots/speedup-cc-pVQZ.png, id=470, 1104.125pt x 620.3
 175pt>
 File: figures/parallel_scaling_plots/speedup-cc-pVQZ.png Graphic file (type png
 )
  <use figures/parallel_scaling_plots/speedup-cc-pVQZ.png>
 Package pdftex.def Info: figures/parallel_scaling_plots/speedup-cc-pVQZ.png use
-d on input line 341.
+d on input line 346.
 (pdftex.def)             Requested size: 216.81pt x 121.80856pt.
 
-<figures/parallel_scaling_plots/times-cc-pVQZ.png, id=470, 1104.125pt x 620.317
+<figures/parallel_scaling_plots/times-cc-pVQZ.png, id=471, 1104.125pt x 620.317
 5pt>
 File: figures/parallel_scaling_plots/times-cc-pVQZ.png Graphic file (type png)
  <use figures/parallel_scaling_plots/times-cc-pVQZ.png>
 Package pdftex.def Info: figures/parallel_scaling_plots/times-cc-pVQZ.png used 
-on input line 343.
+on input line 348.
 (pdftex.def)             Requested size: 216.81pt x 121.80856pt.
  [23 <./geometries/boron_catalyst.png>] [24 <./figures/parallel_scaling_plots/s
 peedup-cc-pVDZ.png> <./figures/parallel_scaling_plots/times-cc-pVDZ.png> <./fig
 ures/parallel_scaling_plots/speedup-cc-pVTZ.png> <./figures/parallel_scaling_pl
 ots/times-cc-pVTZ.png> <./figures/parallel_scaling_plots/speedup-cc-pVQZ.png> <
 ./figures/parallel_scaling_plots/times-cc-pVQZ.png>] [25]
-<figures/workflow_plots/input1-cc-pVDZ.png, id=499, 1104.125pt x 620.3175pt>
+<figures/workflow_plots/input1-cc-pVDZ.png, id=500, 1104.125pt x 620.3175pt>
 File: figures/workflow_plots/input1-cc-pVDZ.png Graphic file (type png)
 
 <use figures/workflow_plots/input1-cc-pVDZ.png>
 Package pdftex.def Info: figures/workflow_plots/input1-cc-pVDZ.png used on inpu
-t line 399.
+t line 405.
 (pdftex.def)             Requested size: 151.76964pt x 85.26315pt.
 
-<figures/workflow_plots/input2-cc-pVDZ.png, id=500, 1104.125pt x 620.3175pt>
+<figures/workflow_plots/input2-cc-pVDZ.png, id=501, 1104.125pt x 620.3175pt>
 File: figures/workflow_plots/input2-cc-pVDZ.png Graphic file (type png)
 
 <use figures/workflow_plots/input2-cc-pVDZ.png>
 Package pdftex.def Info: figures/workflow_plots/input2-cc-pVDZ.png used on inpu
-t line 401.
+t line 407.
 (pdftex.def)             Requested size: 151.76964pt x 85.26315pt.
 
-<figures/workflow_plots/input3-cc-pVDZ.png, id=501, 1104.125pt x 620.3175pt>
+<figures/workflow_plots/input3-cc-pVDZ.png, id=502, 1104.125pt x 620.3175pt>
 File: figures/workflow_plots/input3-cc-pVDZ.png Graphic file (type png)
 
 <use figures/workflow_plots/input3-cc-pVDZ.png>
 Package pdftex.def Info: figures/workflow_plots/input3-cc-pVDZ.png used on inpu
-t line 403.
+t line 409.
 (pdftex.def)             Requested size: 151.76964pt x 85.26315pt.
 
-Overfull \hbox (21.6889pt too wide) in paragraph at lines 399--403
+Overfull \hbox (21.6889pt too wide) in paragraph at lines 405--409
  [][][][][][] 
  []
 
-<figures/workflow_plots/input1-cc-pVTZ.png, id=502, 1104.125pt x 620.3175pt>
+<figures/workflow_plots/input1-cc-pVTZ.png, id=503, 1104.125pt x 620.3175pt>
 File: figures/workflow_plots/input1-cc-pVTZ.png Graphic file (type png)
 
 <use figures/workflow_plots/input1-cc-pVTZ.png>
 Package pdftex.def Info: figures/workflow_plots/input1-cc-pVTZ.png used on inpu
-t line 405.
+t line 411.
 (pdftex.def)             Requested size: 151.76964pt x 85.26315pt.
 
-<figures/workflow_plots/input2-cc-pVTZ.png, id=503, 1104.125pt x 620.3175pt>
+<figures/workflow_plots/input2-cc-pVTZ.png, id=504, 1104.125pt x 620.3175pt>
 File: figures/workflow_plots/input2-cc-pVTZ.png Graphic file (type png)
 
 <use figures/workflow_plots/input2-cc-pVTZ.png>
 Package pdftex.def Info: figures/workflow_plots/input2-cc-pVTZ.png used on inpu
-t line 407.
+t line 413.
 (pdftex.def)             Requested size: 151.76964pt x 85.26315pt.
 
-<figures/workflow_plots/input3-cc-pVTZ.png, id=504, 1104.125pt x 620.3175pt>
+<figures/workflow_plots/input3-cc-pVTZ.png, id=505, 1104.125pt x 620.3175pt>
 File: figures/workflow_plots/input3-cc-pVTZ.png Graphic file (type png)
 
 <use figures/workflow_plots/input3-cc-pVTZ.png>
 Package pdftex.def Info: figures/workflow_plots/input3-cc-pVTZ.png used on inpu
-t line 409.
+t line 415.
 (pdftex.def)             Requested size: 151.76964pt x 85.26315pt.
 
-Overfull \hbox (21.6889pt too wide) in paragraph at lines 404--409
+Overfull \hbox (21.6889pt too wide) in paragraph at lines 410--415
  [][][][][][] 
  []
 
-<figures/workflow_plots/input1-cc-pVQZ.png, id=505, 1104.125pt x 620.3175pt>
+<figures/workflow_plots/input1-cc-pVQZ.png, id=506, 1104.125pt x 620.3175pt>
 File: figures/workflow_plots/input1-cc-pVQZ.png Graphic file (type png)
 
 <use figures/workflow_plots/input1-cc-pVQZ.png>
 Package pdftex.def Info: figures/workflow_plots/input1-cc-pVQZ.png used on inpu
-t line 411.
+t line 417.
 (pdftex.def)             Requested size: 151.76964pt x 85.26315pt.
 
-<figures/workflow_plots/input2-cc-pVQZ.png, id=506, 1104.125pt x 620.3175pt>
+<figures/workflow_plots/input2-cc-pVQZ.png, id=507, 1104.125pt x 620.3175pt>
 File: figures/workflow_plots/input2-cc-pVQZ.png Graphic file (type png)
 
 <use figures/workflow_plots/input2-cc-pVQZ.png>
 Package pdftex.def Info: figures/workflow_plots/input2-cc-pVQZ.png used on inpu
-t line 413.
+t line 419.
 (pdftex.def)             Requested size: 151.76964pt x 85.26315pt.
 
-<figures/workflow_plots/input3-cc-pVQZ.png, id=507, 1104.125pt x 620.3175pt>
+<figures/workflow_plots/input3-cc-pVQZ.png, id=508, 1104.125pt x 620.3175pt>
 File: figures/workflow_plots/input3-cc-pVQZ.png Graphic file (type png)
 
 <use figures/workflow_plots/input3-cc-pVQZ.png>
 Package pdftex.def Info: figures/workflow_plots/input3-cc-pVQZ.png used on inpu
-t line 415.
+t line 421.
 (pdftex.def)             Requested size: 151.76964pt x 85.26315pt.
 
-Overfull \hbox (21.6889pt too wide) in paragraph at lines 410--420
+Overfull \hbox (21.6889pt too wide) in paragraph at lines 416--426
  [][][][][][] 
  []
 
@@ -1105,46 +1116,46 @@ ut2-cc-pVDZ.png> <./figures/workflow_plots/input3-cc-pVDZ.png> <./figures/workf
 low_plots/input1-cc-pVTZ.png> <./figures/workflow_plots/input2-cc-pVTZ.png> <./
 figures/workflow_plots/input3-cc-pVTZ.png> <./figures/workflow_plots/input1-cc-
 pVQZ.png> <./figures/workflow_plots/input2-cc-pVQZ.png> <./figures/workflow_plo
-ts/input3-cc-pVQZ.png>] <geometries/hexatriene.png, id=531, 642.4pt x 481.8pt>
+ts/input3-cc-pVQZ.png>] <geometries/hexatriene.png, id=532, 642.4pt x 481.8pt>
 File: geometries/hexatriene.png Graphic file (type png)
 
 <use geometries/hexatriene.png>
-Package pdftex.def Info: geometries/hexatriene.png used on input line 460.
+Package pdftex.def Info: geometries/hexatriene.png used on input line 466.
 (pdftex.def)             Requested size: 156.49014pt x 117.362pt.
 
-<geometries/benzene-toluene-solvated.png, id=532, 642.4pt x 481.8pt>
+<geometries/benzene-toluene-solvated.png, id=533, 642.4pt x 481.8pt>
 File: geometries/benzene-toluene-solvated.png Graphic file (type png)
 
 <use geometries/benzene-toluene-solvated.png>
 Package pdftex.def Info: geometries/benzene-toluene-solvated.png used on input 
-line 461.
+line 467.
 (pdftex.def)             Requested size: 156.49014pt x 117.362pt.
  [27] [28 <./geometries/hexatriene.png> <./geometries/benzene-toluene-solvated.
 png>]) (./chapter4.tex [29]
 Chapter 4.
 [30
 
-] [31] [32] [33] [34] [35]
+] [31] [32] [33] [34] [35] [36]
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 215.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 217.
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <7> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 275.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 277.
 
-Overfull \hbox (15.55559pt too wide) in paragraph at lines 214--276
+Overfull \hbox (15.55559pt too wide) in paragraph at lines 216--278
  [][] 
  []
 
-[36]
+[37]
 Overfull \vbox (17.49335pt too high) has occurred while \output is active []
 
 
-[37]) (./chapter5.tex [38]
+[38]) (./chapter5.tex [39]
 Chapter 5.
-) [39
+) [40
 
 ]
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 228.
- [40
+ [41
 
 ]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 228.
@@ -1171,13 +1182,13 @@ Package logreq Info: Writing requests to 'thesis.run.xml'.
  )
 (\end occurred when \iftrue on line 53 was incomplete) 
 Here is how much of TeX's memory you used:
- 13770 strings out of 494953
- 218355 string characters out of 6180977
- 417357 words of memory out of 5000000
- 16538 multiletter control sequences out of 15000+600000
+ 13774 strings out of 494953
+ 218402 string characters out of 6180977
+ 416357 words of memory out of 5000000
+ 16539 multiletter control sequences out of 15000+600000
  19999 words of font info for 46 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 44i,11n,49p,1004b,965s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 44i,11n,49p,1051b,967s stack positions out of 5000i,500n,10000p,200000b,80000s
 pdfTeX warning (dest): na
 me{Hfootnote.1} has been referenced but does not exist, replaced by a fixed one
 
@@ -1196,10 +1207,10 @@ re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texl
 ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></home/schiebermc/texmf
 /fonts/type1/urw/times/utmb8a.pfb></home/schiebermc/texmf/fonts/type1/urw/times
 /utmr8a.pfb></home/schiebermc/texmf/fonts/type1/urw/times/utmri8a.pfb>
-Output written on thesis.pdf (51 pages, 1910860 bytes).
+Output written on thesis.pdf (52 pages, 1912205 bytes).
 PDF statistics:
- 799 PDF objects out of 1000 (max. 8388607)
- 678 compressed objects within 7 object streams
- 286 named destinations out of 1000 (max. 500000)
+ 807 PDF objects out of 1000 (max. 8388607)
+ 685 compressed objects within 7 object streams
+ 289 named destinations out of 1000 (max. 500000)
  316 words of extra memory for PDF output out of 10000 (max. 10000000)
 

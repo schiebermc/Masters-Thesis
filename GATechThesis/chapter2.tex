@@ -1,7 +1,7 @@
 \chapter{Utilizing Spatial Sparsity}
 
 For all but the smallest molecules, spatial sparsity is very important for achieving computational savings
-in quantum chemistry. There exists two primary forms of spatial sparsity in (1.5). The first form
+in quantum chemistry. There exists two primary forms of spatial sparsity in (1.6). The first form
 results from the Gaussian product $\mu(\textbf{r}_{1}) \nu(\textbf{r}_{1})$ diminishing with the overlap of the 
 two AO Gaussians. This product diminishes rapidly with distance between the Gaussian function centers and is also 
 highly sensitive to their degree of locality.
@@ -10,8 +10,8 @@ this AO Gaussian pair.
 Utilizing this pairwise sparsity requires only an estimation of the significant AO Gaussian pairs.
 Once this spatial sparsity is applied and insignificant AO function pairs are screened, the complexity of 
 computing the 3-center integrals becomes $\mathcal{O}(N_{aux}N_{AO}^{1-2})$, where the lower bound is achieved for sufficiently 
-sparse systems. Another type of spatial sparsity in (1.3) involves the auxiliary function, which is more complicated to 
-take advantage of. see Ref. \cite{ref3}. In this thesis, I focus on the former, pairwise sparsity which is featured
+sparse systems. Another type of spatial sparsity in (1.6) involves the auxiliary function, which is more complicated to 
+take advantage of. see Ref. \cite{ref5}. In this thesis, I focus on the former, pairwise sparsity which is featured
 in the product $\mu(\textbf{r}_{1}) \nu(\textbf{r}_{1})$. 
 Utilizing this sparsity not only speeds up the computation of the three-index integrals, but stored in a sparse format,
 then this sparsity can be utilized in later operations such as the fitting metric contraction and basis transformations.
@@ -183,10 +183,10 @@ Note that our novel contribution involves the application of the sparsity screen
   \subfloat[]{\includegraphics[width=0.5\textwidth]{figures/sparsity_plots/first_transform_wall.png}\label{fig:f1}}
   \hfill
   \subfloat[]{\includegraphics[width=0.5\textwidth]{figures/sparsity_plots/total_transform_wall.png}\label{fig:f2}}
-  \caption{Comparison of execution times using sparsity screening (blue) against no sparsity screening (orange).  Execution time is plotted against number of benzenes
+  \caption{Comparison of execution times using sparsity screening (blue) against no sparsity screening (orange). Execution time is plotted against number of benzenes
  in a benzene stack from one to ten benzenes. Transformations involved computing $(ib|Q)$, where $i$ and $b$ denote occupied and virtual indices, respectively.
  Cutoff refers to the Schwarz screening threshold. (a) Computing the integrals. (b) Contracting AO integrals with the fitting metric. 
-(c) first transformation times only. (d) total transformation times.}
+(c) First transformation times only. (d) Total transformation times.}
 \end{figure}
 
 \noindent The cost of the first contraction becomes $\mathcal{O}(N_{aux}N_{AO}^{1-2}N_p)$. 
@@ -220,9 +220,9 @@ transformation procedures (Figure 2.2 (b) and (c), respectively) due to select f
 screened in cases where the entire shell is not screened. 
 Note that the metric contraction is by far the most expensive operation, which should in one part
 highlight the boon of sparsity utilization and in another part
-illustrate the pertinence of our workflow investigation later in this paper.
+illustrate the pertinence of our workflow investigation in Chapter 3 of this thesis.
 Last, our proposal outlined in Algorithm 2 for applying sparsity screening to integral transformations
-is proven viable by Figure 2.2 (c).  Note that significant reductions are obtained for the
+is proven viable by Figure 2.2 (c). Note that significant reductions are obtained for the
 first transformation; however, the sparsity thereafter is unrelated to the initial sparsity
 mask. With sparsity utilization, the first step scales as $\mathcal{O}(N_{aux}N_{AO}^{1-2}p)$,
 whereas the second transformation step will still scale as $\mathcal{O}(N_{aux}N_pN_q)$.

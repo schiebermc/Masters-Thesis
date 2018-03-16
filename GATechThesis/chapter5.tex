@@ -1,11 +1,11 @@
 \chapter{Conclusions}
 
 The work in this thesis sought to optimize the computational kernels within the density fitting technique.
-Chapter 2 detailed the use of the Schwarz sparsity screening method for integral computations, metric contactions, and integral transformations.
+Chapter 2 introduced the use of the Schwarz sparsity screening method for integral computations, metric contactions, and integral transformations.
 The corresponding implementation and comparison against a non-screening version revealed the drastic importance of 
 utilizing sparsity in quantum chemistry.
-Chapter 3 revealed various optimizations for the integral transformations kernel. First, we identified an ideal sparse memory layout to 
-optimize the parallel scalability and revealed its efficacy on multi-core processors.  Then, we performed a detailed analysis of 
+Chapter 3 detailed various optimizations for the integral transformations kernel. First, we identified an ideal sparse memory layout to 
+optimize the parallel scalability and revealed its efficacy on multi-core processors. Then, we performed an analysis of 
 the Direct and Store workflows and revealed its applications in practice, showing that the Direct workflow is superior in 
 the context of DFMP2 whereas the Store workflow is superior in the context of DFMCSCF. 
 For future work, we recommend that this analyis be applied further to other contexts, such as
@@ -13,6 +13,7 @@ USAPT and FSAPT. In chapter 4 we discussed two sparse memroy layouts, $B_{P \mu 
 evaluation algorithms. Importantly, we showed that Algorithm 10 will always outperform Algorithm 11 if the implementation is entirely in-core.
 If memory is too constrained and a disk-based implementation is necessary, then Algrotihm 11 will become faster 
 it yields more ideal disk operations. The crossover in performance between the two algorithms was revealed via an extensive investigation on
-multi-core proccesors accross various systems and basis sets.
+multi-core proccesors accross various systems and basis sets. For future work, we recommend investigating optimizations of the disk reads
+in Algorithm 10. 
 
 

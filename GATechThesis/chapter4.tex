@@ -5,8 +5,8 @@
 From Chapter 1, we wrote the most efficient evaluations of the three-index ERIs to build the Coulomb and exchange matrices as:
 
 \begin{align}
-J[D_{\lambda \sigma}]_{\mu \nu} &= B_{\mu \nu}^P B_{\lambda \sigma}^PD_{\lambda \sigma} \\
-K[D_{\lambda \sigma}]_{\mu \nu} &= B_{\mu \lambda}^P B_{\nu \sigma}C_{p\lambda}C_{p\sigma},
+J_{\mu \nu} &= B_{\mu \nu}^P B_{\lambda \sigma}^PD_{\lambda \sigma} \\
+K_{\mu \nu} &= B_{\mu \lambda}^P B_{\nu \sigma}C_{p\lambda}C_{p\sigma},
 \end{align}
 
 \noindent where (4.1) and (4.2) are evaluated in $\mathcal{O}(N_{AO}^2N_{aux})$ and $\mathcal{O}(N_{AO}^2N_{aux}N_p)$ operations, respectively.
@@ -14,8 +14,8 @@ The exchange matrix evaluation is a major bottleneck within the density fitting 
 exchange builds to take advantage of sparsity, optimize parallel scaling, and to minimize disk operations.
 Thankfully, it turns out that Algorithm 6 is easily 
 extendible to (4.2). In fact, if one uses orbital matrices to build the exchange matrix as in (4.2), the half-transformed 
-intermediate generated during integral transformations, $A_{\mu Pq}$, is actually identical to the intermediate when building the exchange matrix. 
-Moreover, the memory layout of $A_{\mu Pq}$ is ideal for the subsequent contraction to form $K$. The following algorithm results:
+intermediate generated during integral transformations, $B_{\mu Pq}$, is actually identical to the intermediate when building the exchange matrix. 
+Moreover, the memory layout of $B_{\mu Pq}$ is ideal for the subsequent contraction to form $K$. The following algorithm results:
 
 \begin{algorithm}[H]
 \caption{Building the $K$ matrix.}
@@ -37,17 +37,17 @@ Moreover, the memory layout of $A_{\mu Pq}$ is ideal for the subsequent contract
 \end{algorithm}
 
 We have used $T$ tensors to indicate intermediates.
-Algorithm 9 is an ideal condidate for building the $K$ matrix, as it both utilizes sparsity and maximizes concurrency.
+Algorithm 9 is an ideal candidate for building the $K$ matrix, as it both utilizes sparsity and maximizes concurrency.
 However, while it may be assumed that both $J$ and $K$ can always fit within in-core memory constraints, the same is not true 
-for the three-index AO integrals.  Therefore, we must consider the behavior of Algorithm 9 when the 
+for the three-index AO integrals. Therefore, we must consider the behavior of Algorithm 9 when the 
 in-core memory is constrained such that it becomes necessary to perform blocking operations accross the $P$ index. Then, the algorithm
 becomes: 
 
 \begin{algorithm}[H]
-\caption{Building the $K$ matrix.}
+\caption{Building the $K$ matrix using $B_{\mu P \nu^\mu}$, blocking accross $P$}
 \begin{algorithmic}
 \REQUIRE Sparse AO integrals: $B_{\mu P \nu^\mu}$, orbital matrices: $C_{\mu p}, C_{\nu p}$, screening mask: $S_{\mu \nu}^b$
-\FOR {$P_i \in P$}    
+\FOR {block $P_i \in P$}    
     \STATE Read from disk: $B_{\mu P_i \nu^{\mu}}$
     \FOR {$\mu = 0$ to $\mu = N_{AO}-1$}  
         \STATE Trim from dense to sparse: $C_{\nu p}S_{\mu \nu}^b \rightarrow C_{\nu^{\mu} p}$
@@ -69,14 +69,14 @@ becomes:
 Since poor disk IO can drastically decrease performance, it is often better to force disk operations 
 to be contiguous and transpose any tensors as necessary in core memory. Since it is best to block accross the $P$ index (as discussed in
 Chapter 3), a better
-memory layout for the sparse integrals is the $A_{P \mu \nu^\mu}$ form, since this form will allow for completely 
+memory layout for the sparse integrals is the $B_{P \mu \nu^\mu}$ form, since this form will allow for completely 
 contiguous reads from disk memory. Another possible algorithm can then be formualted:
 
 \begin{algorithm}[H]
 \caption{Building the $K$ matrix using $B_{P \mu \nu^\mu}$, blocking accross $P$}
 \begin{algorithmic}
 \REQUIRE Sparse AO integrals: $B_{P \mu \nu^\mu}$, orbital matrices: $C_{\mu p}, C_{\nu p}$, screening mask: $S_{\mu \nu}^b$
-\FOR {$P_i \in P$}
+\FOR {block $P_i \in P$}
     \STATE Read from disk: $B_{P_i \mu \nu^{\mu}}$
     \FOR {$\mu = 0$ to $\mu = N_{AO}-1$}  
         \STATE Copy: $B_{P_i \mu \nu^{\mu}} \rightarrow b_{P_i \nu^{\mu}}$
@@ -97,8 +97,7 @@ contiguous reads from disk memory. Another possible algorithm can then be formua
 
 \noindent Here, we used a buffer, $b_{P^i \nu^{\mu}}$, to transpose pieces of $B_{P^i \mu \nu^{\mu}}$ while looping over $\mu$.
 Although this algorithm may involve a strided copy and additional memory usage, the disk reads for the $B_{P^i \mu \nu^{\mu}}$ 
-tensor are completely contiguous.  
-
+tensor are completely contiguous. 
 For smaller investigations, the three-index AO integrals can be fit completely in-core and Algorithm 10 should yield superior 
 performance. However, for larger systems,
 the strided disk reads in Algorithm 10 may cause performance degredation to the point that Algorithm 11 will become superior.
@@ -120,13 +119,13 @@ directly to the density matrix. The following algorithm results:
 \end{algorithm}
 
 \noindent Moreover, the corresponding disk-based implementations for the $B_{\mu P \nu^\mu}$ and $B_{P \mu \nu^\mu}$ integral
-layouts are listed in Algorithms 13 and 14, respectively.
+formats are listed in Algorithms 13 and 14, respectively.
 
 \begin{algorithm}[H]
 \caption{Building the $J$ matrix using $B_{\mu P \nu^\mu}$, blocking accross $P$}
 \begin{algorithmic}
 \REQUIRE Sparse AO integrals: $B_{\mu P \nu^{\mu}}$, density matrix: $D_{\mu \nu}$, screening mask: $S_{\mu \nu}^b$
-\FOR {$P_i \in P$}
+\FOR {block $P_i \in P$}
     \STATE Read from disk: $B_{\mu P_i \nu^{\mu}}$
     \STATE Initialize: $T_{P_i} = 0$
     \FOR {$\mu = 0$ to $\mu = N_{AO}-1$}  
@@ -145,31 +144,34 @@ layouts are listed in Algorithms 13 and 14, respectively.
 \caption{Building the $J$ matrix using $B_{P \mu \nu^\mu}$, blocking accross $P$}
 \begin{algorithmic}
 \REQUIRE Sparse AO integrals: $B_{P \mu \nu^{\mu}}$, density matrix: $D_{\mu \nu}$, screening mask: $S_{\mu \nu}^b$
-\FOR {$P_i \in P$}
+\FOR {block $P_i \in P$}
     \STATE Read from disk: $B_{P_i \mu \nu^{\mu}}$
     \STATE Trim from dense to sparse: $D_{\mu \nu}S_{\mu \nu}^b \rightarrow D_{\mu \nu^{\mu} }$
     \STATE $B_{P_i \mu\nu^{\mu}} D_{\mu \nu^{\mu}} \rightarrow T^{P_i}$
     \STATE $T^{P_i} B_{P_i \mu \nu^{\mu}} \rightarrow J_{\mu \nu^{\mu}} $
-    \STATE Unpack from sparse to dense: $J_{\mu \nu^{\mu}} \rightarrow J_{\mu \nu}$
+    \STATE Unpack from sparse to dense: $J_{\mu \nu^{\mu}} \rightarrow J_{\mu \nu}^{\{P_i\}}$
+    \STATE $J_{\mu \nu} = J_{\mu \nu} + J_{\mu \nu}^{\{P_i\}}$
 \ENDFOR
 \RETURN $J_{\mu \nu}$
 \end{algorithmic}
 \end{algorithm}
 
-\noindent Note that Algorithm 13 is likely inferior to Algorithm 14, with both necessary loops and copies as well as non-contiguous disk reads.
+\noindent Here, we have used the superscript in $J_{\mu \nu}^{\{P_i\}}$ to indicate the contribution to 
+$J_{\mu \nu}$ corresponding to the $P_i$ block.
+Note that Algorithm 13 is likely inferior to Algorithm 14, with both necessary loops and copies as well as non-contiguous disk reads.
 However, since Coulomb matrix evaluation requires considerably less compute time than the exchange matrix evaluations, 
 the performance of Algorithms 13 and 14 will be nearly trivial. Moreover, note that the disk reads in Algorithms 10 and 13 as well as 
-in Algorithms 11 and 14 will be occuring simulataneously. The J and K computational kernel will generally take this form:
+in Algorithms 11 and 14 will be occuring simulataneously. The $J$ and $K$ computational kernel will generally take this form:
 
 \begin{algorithm}[H]
 \caption{Coulomb and exchange matrix evaluation kernel.}
 \begin{algorithmic}
-\REQUIRE Sparse AO integrals: $B_{P \mu \nu^{\mu}}$, density matrix: $D_{\mu \nu}$, orbital matrices: $C_{\mu p}, C_{\nu p}$, screening mask: $S_{\mu \nu}^b$
+\REQUIRE Sparse AO integrals: $B^P_{\mu \nu^{\mu}}$, density matrix: $D_{\mu \nu}$, orbital matrices: $C_{\mu p}, C_{\nu p}$, screening mask: $S_{\mu \nu}^b$
 \STATE Initialize temps.
-\FOR {$P_i \in P$}
-    \STATE Read from disk: $B_{P_i \mu \nu^{\mu}}$
-    \STATE J = ComputeJ($B_{P_i \mu \nu^{\mu}}$, $S_{\mu \nu}^b$, $D_{\mu \nu}$)
-    \STATE K = ComputeK($B_{P_i \mu \nu^{\mu}}$, $S_{\mu \nu}^b$, $C_{\mu p}, C_{\nu p}$)
+\FOR {block $P_i \in P$}
+    \STATE Read from disk: $B^{P_i}_{\mu \nu^{\mu}}$
+    \STATE J = ComputeJ($B^{P_i}_{\mu \nu^{\mu}}$, $S_{\mu \nu}^b$, $D_{\mu \nu}$)
+    \STATE K = ComputeK($B^{P_i}_{\mu \nu^{\mu}}$, $S_{\mu \nu}^b$, $C_{\mu p}, C_{\nu p}$)
 \ENDFOR
 \RETURN $J_{\mu \nu}$, $K_{\mu \nu}$
 \end{algorithmic}
@@ -185,7 +187,7 @@ The parallelism in {\sc Psi4} relies on the shared memory programming model usin
 and carries out matrix multiplications using Intel's Math Kernel
 Library. Currently, the state of the art for exchange matrix evaluations in
 {\sc Psi4} is Algorithm 11. However, we conjecture that Algorithm 10 could provide 
-considerable speedups as it eliminates entirely a strided, level 1 BLAS copy.   
+considerable speedups as it eliminates entirely a strided, level 1 BLAS copy. 
 
 We implemented Algorithms 10 and 13 and incorporated them into a development version of {\sc Psi4}. 
 Then, we used {\sc Psi4}'s Self-Consistent Field
@@ -207,9 +209,9 @@ The experiments were carried out using one node consisting of an Intel Core i7-5
 The corresponding Coulomb matrix evaluations were performed using Algorithms 13 and 14, respectively. Total wall times include 
 wall time for the entire program to execute. J and K compute time indicates the total time spent in the Coulomb and exchange matrix
 evaluation kernels, respectively. System descriptions including number of AO basis functions, $N_{AO}$, number of auxiliary basis functions,
-$N_{aux}$, basis, and number of atoms, $N_{at.}$, are included in the leftmost columns.  All rows are sorted by the product: $N_{aux}N_{AO}$.
-A speedup column is included for total wall time and is calculated as the time spent using Algorithm 11 dived by the time spent using
-Algorithm 10.
+$N_{aux}$, basis, and number of atoms, $N_{at.}$, are included in the leftmost columns. All rows are sorted by the product: $N_{aux}N_{AO}$.
+A speedup column is included for total wall time and is calculated as the total prcedure time spent using Algorithms 11 and 14 dived by 
+the total procedure time spent using Algorithms 10 and 13.
 \label{tbl:practical_speedups}}
 \begin{tabular}{lrrrrrrrrrr}
   \multicolumn{1}{c}{\textbf{}} 
@@ -278,15 +280,15 @@ Algorithm 10.
 
 Note that the $^{\dagger}$ symbol is used to indicate when a disk-based implementation is required. For Algorithm 11, it is possible
 to store up to half of the AO function pairs by applying permuatational symmetry. The necessary copy, 
-$A_{P_i \mu \nu^{\mu}} \rightarrow B_{P_i \nu^{\mu}}$, allows for this. Doing so effectively halves the memory requirement for Algorithm 11
+$B_{P_i \mu \nu^{\mu}} \rightarrow b_{P_i \nu^{\mu}}$, allows for this. Doing so effectively halves the memory requirement for Algorithm 11
 with respect to Algorithm 10. For this reason, Algorithm 10 is forced to resort to a disk-based implementation sooner than Algorithm 11.
 
 The results in Table 4.1 confirms our analysis of Algorithms 10 and 11. For small enough investigations, Algorithm 10 will always be more
-efficient. Total time spent in the exchange matrix evaluation kernel is always smaller for Algorithm 11. Only when Algorithm 11 switches to 
-a disk-based implementation that requires strided disk reads does it become slower than Algorithm 10 overall. Moreover, since the scaling of
+efficient. Total time spent in the exchange matrix evaluation kernel is always smaller for Algorithm 10. Only when Algorithm 10 switches to 
+a disk-based implementation that requires strided disk reads does it become slower than Algorithm 11 overall. Moreover, since the scaling of
 the Coulomb matrix evaluation is an entire factor smaller than the exchange matrix evaluation, its required time is almost trivial overall.
 
-Last, note that the total time spent in the J and K evaluations does not entirely account for the differences in performance. The 
+Last, note that the total time spent in the $J$ and $K$ evaluations does not entirely account for the differences in performance. The 
 remaining difference involves the computation of $B^P_{\mu \nu^\mu}$, which with a metric contraction scaling as 
 $\mathcal{O}(N_{aux}^2N_{AO}^2)$, can be the most expensive operation of an SCF procedure. Even though Algorithm 10 does not 
 apply permuational symmetry, it can be more efficient for this operation as both the contractions and disk writes are contiguous.

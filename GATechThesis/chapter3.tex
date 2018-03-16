@@ -2,9 +2,9 @@
 
 \section{A note on disk-bound index blocking}
 
-The size of tensors grow rapidly in quantum chemistry.  The 3-center integrals of density fitting are no exception.
+The size of tensors grow rapidly in quantum chemistry. The 3-center integrals of density fitting are no exception.
 Often, the size of the AO three-index integrals will exceed 64GB of RAM for small systems when
-a moderate basis set such as aug-cc-pVTZ is used, even with sparsity screening. Table 3.1 illustrates this point by listing
+a moderate basis set such as aug-cc-pVQZ is used, even with sparsity screening. Table 3.1 illustrates this point by listing
 the total memory required for sparse three-index AO integrals for adenine-thymine dimer accross various a basis sets. Once the memory required
 exceeds what is available, it is necessary for
 any implementation to begin reading and writing these tensors to and from disk-based memory. For any field this can
@@ -22,12 +22,16 @@ this issue, we will introduce an adapted tensor notation which better indicates 
 \multicolumn{1}{c}{\textbf{$N_{AO}$}} &
 \multicolumn{1}{c}{\textbf{$N_{aux}$}} \\
 \hline
-   cc-pVDZ   &      9.2GB    &    671   &    3277 \\   
-aug-cc-pVDZ  &     41.6GB   &    1133  &     4172\\
-   cc-pVTZ   &     49.5GB    &   1566   &    3856 \\
-aug-cc-pVTZ  &    222.9GB   &    2461  &     5330\\
-   cc-pVQZ   &    228.8GB    &   3040   &    5593 \\
-aug-cc-pVQZ  &    965.2GB   &    4514  &     7792\\
+
+   cc-pVDZ   &      1.0GB    &    321   &     1583\\
+aug-cc-pVDZ  &      4.4GB   &     536  &     1986\\
+   cc-pVTZ   &      5.4GB    &    724   &     1831\\
+aug-cc-pVTZ  &     22.0GB   &    1127  &     2482\\
+   cc-pVQZ   &     24.3GB    &   1375   &     2575\\
+aug-cc-pVQZ  &     91.4GB   &    2026  &     3534\\
+   cc-pV5Z   &     93.3GB    &   2334   &     3687\\
+aug-cc-pV5Z  &    316.1GB   &    3293  &     5014\\ 
+
 \end{tabular}
 \end{table}
 \endgroup
@@ -46,7 +50,7 @@ Then, we will read and write only those blocks of $P$ along with all of $\mu$ an
 The latency of these operations is
 bounded by the movement of a physical read-write head, so it is critically important to ensure that read and writes are as
 contiguous as possible. In the case of $P$ blocking, the $A_{P\mu\nu}$ tensor is far superior to $A_{\mu P\mu}$ since the 
-former will yield entirely contiguous operations whereas the latter will require strided operations.  
+former will yield entirely contiguous operations whereas the latter will require strided operations. 
 
 Unfortunately, within the density fitting regime, different operations are optimal under different blocking schemes. For example,
 consider the construction of the full three-index AO integrals according to (1.9). To accomplish this, 
@@ -103,7 +107,7 @@ small to intermediate size chemical systems.
 The communication overhead that hinders large scale parallelism for density
 fitting is nominal for single node investigations, but even a single multicore processor contains viable
 parallelism that can be challenging to fully exploit. 
-Coupling the cost reduction of sparsity approximations with a finely tuned parallel code is crucial to performance.   
+Coupling the cost reduction of sparsity approximations with a finely tuned parallel code is crucial to performance.  
 
 Maximizing parallelism in Algorithm 2 will require careful implementation design. 
 The choice of memory layout for the sparse 3-dimensional integral tensors will affect both algorithmic 
@@ -113,7 +117,7 @@ The $A_{P \mu \nu}$ layout is intuitive, as it allows looping through $P$ and di
 for each submatrix. The resulting sparse form $A_{P \mu \nu^\mu}$ contains submatrices of identical structure.
 However, another form, $A_{\mu P \nu}$, must be considered. The sparse form $A_{\mu P \nu^\mu}$
 results in submatrices of differing sizes. However, some advantages may be ascertained.
-We sought to determine which of these two sparse memory layouts, $A_{P \nu \mu^\nu}$ or 
+We sought to determine which of these two sparse memory layouts, $A_{P \mu \nu^\mu}$ or 
 $A_{\mu P \nu^\mu}$, is optimal for transforming the integrals into an MO basis.
 Algorithms 5 and 6 illustrate the difference:
 
@@ -156,7 +160,8 @@ larger problem sizes to highly optimized level 3 BLAS routines.
 However, the crucial difference is acertained when one considers which index, $\mu$ or $P$, would be most appropriate to block accross
 for a disk-bound implementation. If we choose to block accross $\mu$, the result of the final transformation, $A_{pq}^P$, would be incomplete,
 and a full cummulative disk write of $\mathcal{O}(N_{aux}N_pN_p)$ size would be necessary for each block of $\mu$. Moreover, there is a chance
-this operation could be altogether impossible if memory constraints would be violated by having a full $A_{pq}^P$ tensor. On the other hand, 
+this operation could be altogether impossible if memory constraints would be violated by having a full $A_{pq}^P$ tensor in memory. 
+On the other hand, 
 blocking accross the $P$ index would not pose this problem, as no contractions occur accros the $P$ index. Therefore, blocking accross 
 $P$ is the only scalable solution.
 
@@ -164,23 +169,23 @@ Now, if it is necessary to block accross $P$, consider the implications for Algo
 over $P$ are very small, e.g. $<10$, then the parallelized loops will have very few iterations. Typically, the fewer the iterations the worse
 the parallel scalability as the workloads are much more succeptible to being unbalanced. To the contrary, Algorithm 6 will not suffer this 
 drawback and is therefore the better option. Since Algorithm 6 contains higher concurrency and utilizes larger matrix-matrix multiplications, 
-we propose that it will yield enhanced parallel scaling.  
+we propose that it will yield enhanced parallel scaling. 
 
 \section{Context Dependent Workflows}
 
-Equation (1.8) demonstrates the necessity of the fitting metric when using the 3-center density-fitted integrals. Unfortunately, the
-metric contraction in equation (1.8) comes at the heavy price of $\mathcal{O}(N_{aux}^2N^2)$ operations.
+Equation (1.9) demonstrates the necessity of the fitting metric when using the 3-center density-fitted integrals. Unfortunately, the
+metric contraction in equation (1.9) comes at the heavy price of $\mathcal{O}(N_{aux}^2N^2)$ operations.
 Considering that $N_{aux}$ can be 2-3x larger
 than $N_{AO}$, this can be an extremely costly operation. One remedy for cost reduction is to transform the 3-center integrals prior to contracting
 them with the metric:
 \begin{align} 
 A_{p q}^Q &= A_{\mu \nu}^Q C_{\mu p}C_{\nu q} \\
-B_{pq}^Q &= [J]_{PQ}^{-\frac{1}{2}}A_{p q}^Q
+B_{pq}^P &= [J]_{PQ}^{-\frac{1}{2}}A_{p q}^Q
 \end{align}
  
 \noindent Since $N_p$ and $N_q$ are often much smaller than $N_{AO}$, the speedup of 
 $\mathcal{O}(\frac{N_{AO}^2}{N_pN_q})$ can be substantial. 
-Table 3.1 illustrates the potential benefit for some commonly used transformed integrals using occupied and virtual spaces.
+Table 3.2 illustrates the potential benefit for some commonly used transformed integrals using occupied and virtual spaces.
 Orbital indices $i,j$ denote occupied spaces and $a,b$ denote virtual spaces.
 
 \begingroup
@@ -192,7 +197,7 @@ Orbital indices $i,j$ denote occupied spaces and $a,b$ denote virtual spaces.
 \multicolumn{1}{l}{\textbf{Transformation}} &
 \multicolumn{1}{c}{\textbf{$\frac{N_{AO}}{N_i}=2$}} & 
 \multicolumn{1}{c}{\textbf{$\frac{N_{AO}}{N_i}=5$}} & 
-\multicolumn{1}{c}{\textbf{$\frac{N_{AO}}{N_i}=5$}} \\ 
+\multicolumn{1}{c}{\textbf{$\frac{N_{AO}}{N_i}=10$}} \\ 
 \hline
 $(Q|ij)$       & 4               & 25              & 100      \\ 
 $(Q|ia)$       & 4               & 6.25            & 11.1     \\ 
@@ -201,16 +206,16 @@ $(Q|ab)$        & 4              & 1.56            & 1.23     \\
 \end{table}
 \endgroup
 
-The speedups in Table 3.1 are undoubtedly beneficial. However, we propose that this technique 
-will be a disadvatageous in certain contexts. 
+The speedups in Table 3.2 are undoubtedly beneficial and this technique is commonly used in practice. 
+However, we propose that this technique will be a disadvatageous in certain contexts. 
 Namely, applying this workflow to methods using many transformations will increase cost unecessarily. 
 Using this method, a metric contraction is necessary for each transformation, whereas only one contraction is required if this technique is not used.
 If many transformations occur, the cost of contracting the metric for 
-each transformation will eventually outweight the speedups attainable in Table 3.1. Therefore, both workflows must be considered when carrying
+each transformation will eventually outweight the speedups attainable in Table 3.2. Therefore, both workflows must be considered when carrying
 out 3-center integral transformations. Algorithm 7 and 8 illustrate the corresponding workflows:
 
 \begin{algorithm}[H]
-\caption{"Store" algorithm - contract metric then transform.}
+\caption{The "Store" algorithm - contract metric then transform.}
 \begin{algorithmic}
 \REQUIRE AO integrals: $A_{\mu \nu}^P$, fitting metric: $[J]_{PQ}^{-\frac{1}{2}}$, orbital matrices: $C_{\mu p}, C_{\nu q}$
 \STATE Contract metric: $A_{\mu \nu}^P [J]_{PQ}^{-\frac{1}{2}} \rightarrow B_{\mu \nu}^Q$
@@ -223,7 +228,7 @@ out 3-center integral transformations. Algorithm 7 and 8 illustrate the correspo
 \end{algorithm}
 
 \begin{algorithm}[H]
-\caption{"Direct" algorithm - transform then contract metric.}
+\caption{The "Direct" algorithm - transform then contract metric.}
 \begin{algorithmic}
 \REQUIRE AO integrals: $A_{\mu \nu}^P$, fitting metric: $[J]_{PQ}^{-\frac{1}{2}}$, orbital matrices: $C_{\mu p}, C_{\nu q}$
 \STATE Compute: $A_{\mu \nu}^Q$
@@ -249,7 +254,7 @@ this includes DFMP2 \cite{ref4}.
 %\section{Disk IO considerations for transformed integrals}
 %Remember that the transformed integrals, $A_{pq}^P$, are used within the context of varous density-fitted proocedures, such as M\{o}ller-Plesset
 %Perturbation Theory (DFMP2), Multi-configurational Self-Consistent Field (DFMCSCF), Electron Propagator Theory (DFEP2), and many more.
-%Depending on the implementation, these procedures could use one of three memory layouts: $A_{Ppq}$, $A_{pPq}$, or $A_{pqP}$.  
+%Depending on the implementation, these procedures could use one of three memory layouts: $A_{Ppq}$, $A_{pPq}$, or $A_{pqP}$. 
 
 \section{Intermediate Recycling}
 
@@ -282,7 +287,7 @@ Library.
 
 \subsection{Parallel Scaling of Transformations}
 
-To measure parallel scaling, we performed integral transformations for the boron catalyst system shown in Figure 3. 
+To measure parallel scaling, we performed integral transformations for the boron catalyst system shown in Figure 3.1. 
 We varied the problem size by adjusting the $\zeta$ level for the Dunning basis sets with $\zeta$ = D, T, Q.
 The characteristics of these systems are included in Table 4. Note that while parallel scaling typically improves
 for larger systems (i.e. due to larger workloads),
@@ -293,7 +298,7 @@ obtaining maximum parallel efficiency.
 
 \begin{figure}[H] 
 \centering
-\includegraphics[width=80mm]{geometries/boron_catalyst.png} \caption{Transition state for organoboron addition to trifluooroacetone. Taken from Ref. \cite{Lec:2016:768}} 
+\includegraphics[width=80mm]{geometries/boron_catalyst.png} \caption{Transition state for organoboron addition to trifluooroacetone. Taken from Ref. \cite{???Lec:2016:768}} 
 \label{fig:databases} \end{figure}
 
 \begingroup
@@ -342,7 +347,8 @@ cc-pVQZ   & 3040 & 5593 & 50.2 \\
   \hfill
   \subfloat[]{\includegraphics[width=0.5\textwidth]{figures/parallel_scaling_plots/times-cc-pVQZ.png}\label{fig:f2}}
   \hfill
-  \caption{Speedup and execution time plots obtained using our optimized memory layout from Section 3 for sparsity screened 3-center integrals. 
+  \caption{Speedup and execution time plots obtained using our optimized memory layout, $B_{\mu P \nu^\nu}$, 
+ for sparsity screened 3-center integrals. 
  Execution times involve computing three common transformations: $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$,
  where $i,j$ and $a,b$ denote occupied and virtual indices, respectively. Graphs (a), (c), and (e) include speedups for constructing the integrals (orange),
  transforming (blue), total time (red), and ideal (black). Graphs (b), (d), and (f) plot total execution times. Problem sizes were increased by increasing basis set size
@@ -365,12 +371,12 @@ the increase in sparsity.
 In this section, we reveal the contexts in which either the Store or Direct algorithms are superior. First, we analyzed performance when applying either algorithm
  to carry out each of the three common integral transformations: $(Q|ij)$, $(Q|ib)$, and $(Q|ab)$. Doing so reveals the crossover in computational complexity that occurs between the two
  algorithms. For few transformations, the Direct algorithm will be superior as it benefits from the speedups given
- in Table 1. However, if many transformations occur, we propose the Store algorithm will become superior as it avoids the costly metric contraction for each transformation.
+ in Table 3.2. However, if many transformations occur, we propose the Store algorithm will become superior as it avoids the costly metric contraction for each transformation.
  
 We applied both algorithms to each transformation using the
-same boron catalyst system in Section 6.2. To reveal the crossover in computational work between the two algorithms, 
+same boron catalyst system in Figure 3.1. To reveal the crossover in computational work between the two algorithms, 
 the execution times to carry out one to ten transformations were recorded. To reveal additional trends, we varied the
-system size by adjusting the basis set size using $\zeta$ = D, T, Q. The characteristics of these systems are described in Table 3.1.
+system size by adjusting the basis set size using $\zeta$ = D, T, Q. The characteristics of these systems are described in Table 3.3.
 The experiments were carried out using one node consisting of an Intel Core i7-5930K processor
 (6 cores at 3.50GHz) and 50GB DRAM. The results are plotted in Figure 3.3.
  
@@ -420,7 +426,7 @@ With increasing basis set size, the crossover point is shifted to the right for 
 transformations and it is shifted slightly to the left for the $(ab|Q)$ transformation.}
 \end{figure}
 
-If only one transformation occurs, then the speedups of Table 1 enable the Direct algorithm to be superior. 
+If only one transformation occurs, then the speedups of Table 3.2 enable the Direct algorithm to be superior. 
 However, the Direct algorithm must carry out expensive metric contractions for every transformation. As the
 number of transformations increase, the expense of these contractions
 overtakes the speedups of pre-transforming the integrals. Note that a crossover between the two algorithms occurs in each system. 
@@ -431,7 +437,7 @@ USAPT. Conversely, the Direct algorithm is advantageous for methods
 requiring few transformations, such as DFMP2.
 
 Additionally, the crossover point shifts to the left as the transformation spaces get larger ($ij, ia, ab$), occuring in fewer transforamtions.
-This finding is supportive of the proposed speedups in Table 1.
+This finding is supportive of the proposed speedups in Table 3.2.
 Therefore procedures using anything larger than a $(ib|Q)$ transformation will recieve nominal benefits from employing the 
 Direct algorithm and may incur slowdowns if many transformations occur.
 Last, the crossover point shifts to the right for the $(ij|Q)$ and $(ib|Q)$ transformations as larger basis sets are used. 
@@ -447,9 +453,9 @@ In the previous section, we determined the Direct algorithm will be superior in 
 algorithm will be superior in methods such as MCSCF.
 After determing the contexts in which either algorithm prevail, we sought to reveal their benefits when applied in practice. 
 To do so, we employed either algorithm
-in the contexts of different procedures and systems.  For procedures, we tested DFMCSCF and DFMP2.  We ran these 
+in the contexts of different procedures and systems. For procedures, we tested DFMCSCF and DFMP2. We ran these 
 procedures on the systems included in Figure 3.4.
-Figure 3.4 (a) is a hexatriene molecule.  Figure 3.4 (b) is benzene and toluene solvated by 20 water molecules.
+Figure 3.4 (a) is a hexatriene molecule. Figure 3.4 (b) is benzene and toluene solvated by 20 water molecules.
 Table 3.4 lists the characteristics of each system,
 which includes the basis set, the number of primary and auxiliary basis functions, and the mask sparsity. 
 
@@ -485,17 +491,18 @@ Benzene-Toluene   & jun-cc-pVDZ & jun-cc-pVDZ-rifit & 867   &  2901       \\
 \endgroup
 
 The experiments were carried out using one node consisting of an Intel Core i7-5930K processor
-(6 cores at 3.50GHz) and 60GB DRAM. The results are included in Tables 3.5 and 3.6. Table 3.5 includes
+(6 cores at 3.50GHz) and 60GB DRAM. The results are included in Tables 3.6 and 3.7. Table 3.6 includes
 the total computation time spent in operations involving the three-index integrals. These times will
-reflect the algorithmic benifits illustrated in Figure 3.3. Table 3.6 includes the total time required
-to exectue the program. These times reflect total procedure times, which include many operations extraneous
+reflect the algorithmic benifits illustrated in Figure 3.3. Table 3.7 includes the total time required
+to execute the program. These times reflect total procedure times, which include many operations extraneous
 to the three-index integrals.
 
 \begingroup
 \begin{table}[H]
 \centering
 \renewcommand{\baselinestretch}{1}
-\caption{Computatoinal times comparing the Direct and Store algorithms for three-index integral transformations}
+\caption{Computatoinal times comparing the Direct and Store algorithms for three-index integral construction and
+transformations.}
 \begin{tabular}{l cccc}
 \multicolumn{1}{l}{\textbf{System}} &
 \multicolumn{1}{c}{\textbf{Procedure}} &
@@ -516,7 +523,7 @@ Benzene-Toluene   & DFMP2   & 31.4s   &  61.2s  &  1.9x  \\
 \begin{table}[H]
 \centering
 \renewcommand{\baselinestretch}{1}
-\caption{Total procedure wall clock times comparing the Direct and Store algorithms for three-index integral transformations}
+\caption{Total procedure wall clock times comparing the Direct and Store algorithms.}
 \begin{tabular}{l cccc}
 \multicolumn{1}{l}{\textbf{System}} &
 \multicolumn{1}{c}{\textbf{Procedure}} &

@@ -20,12 +20,12 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {table}{\numberline {3.5}{\ignorespaces Characteristics of systems for Store vs Direct algorithm comparisons.\relax }}{28}{table.caption.16}
 \defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {3.6}{\ignorespaces Computatoinal times comparing the Direct and Store algorithms for three-index integral transformations\relax }}{29}{table.caption.17}
+\contentsline {table}{\numberline {3.6}{\ignorespaces Computatoinal times comparing the Direct and Store algorithms for three-index integral construction and transformations.\relax }}{29}{table.caption.17}
 \defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {3.7}{\ignorespaces Total procedure wall clock times comparing the Direct and Store algorithms for three-index integral transformations\relax }}{29}{table.caption.18}
+\contentsline {table}{\numberline {3.7}{\ignorespaces Total procedure wall clock times comparing the Direct and Store algorithms.\relax }}{29}{table.caption.18}
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 
-\contentsline {table}{\numberline {4.1}{\ignorespaces Total execution times for SCF procedures accross various systems using Algorithms 10 and 11 for exchange matrix evaluations. The corresponding Coulomb matrix evaluations were performed using Algorithms 13 and 14, respectively. Total wall times include wall time for the entire program to execute. J and K compute time indicates the total time spent in the Coulomb and exchange matrix evaluation kernels, respectively. System descriptions including number of AO basis functions, $N_{AO}$, number of auxiliary basis functions, $N_{aux}$, basis, and number of atoms, $N_{at.}$, are included in the leftmost columns. All rows are sorted by the product: $N_{aux}N_{AO}$. A speedup column is included for total wall time and is calculated as the time spent using Algorithm 11 dived by the time spent using Algorithm 10. \relax }}{37}{table.caption.19}
+\contentsline {table}{\numberline {4.1}{\ignorespaces Total execution times for SCF procedures accross various systems using Algorithms 10 and 11 for exchange matrix evaluations. The corresponding Coulomb matrix evaluations were performed using Algorithms 13 and 14, respectively. Total wall times include wall time for the entire program to execute. J and K compute time indicates the total time spent in the Coulomb and exchange matrix evaluation kernels, respectively. System descriptions including number of AO basis functions, $N_{AO}$, number of auxiliary basis functions, $N_{aux}$, basis, and number of atoms, $N_{at.}$, are included in the leftmost columns. All rows are sorted by the product: $N_{aux}N_{AO}$. A speedup column is included for total wall time and is calculated as the total prcedure time spent using Algorithms 11 and 14 dived by the total procedure time spent using Algorithms 10 and 13. \relax }}{38}{table.caption.19}
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
