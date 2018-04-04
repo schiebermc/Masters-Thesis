@@ -5,7 +5,7 @@ in quantum chemistry. There exists two primary forms of spatial sparsity in (1.6
 results from the Gaussian product $\mu(\textbf{r}_{1}) \nu(\textbf{r}_{1})$ diminishing with the overlap of the 
 two AO Gaussians. This product diminishes rapidly with distance between the Gaussian function centers and is also 
 highly sensitive to their degree of locality.
-If the overlap between two AO Gaussians is insignificant, then it becomes unecessary to compute any shell triplet featuring
+If the overlap between two AO Gaussians is insignificant, then it becomes unnecessary to compute any shell triplet featuring
 this AO Gaussian pair.
 Utilizing this pairwise sparsity requires only an estimation of the significant AO Gaussian pairs.
 Once this spatial sparsity is applied and insignificant AO function pairs are screened, the complexity of 
@@ -20,8 +20,8 @@ then this sparsity can be utilized in later operations such as the fitting metri
 
 The pairwise sparsity available to the 3-center integrals can be determined via an estimation of significant AO function pairs.
 An implementation will require a two dimensional sparsity mapping structure which keeps track of the significant pairs.
-We refer to these structures as sparsity masks, which are $N_{AO}$ by $N_{AO}$ boolean matrices denoted as $S_{\mu \nu}^b$. 
-The superscript $b$ reminds the reader that the structure is of boolean type.
+We refer to these structures as sparsity masks, which are $N_{AO}$ by $N_{AO}$ Boolean matrices denoted as $S_{\mu \nu}^b$. 
+The superscript $b$ reminds the reader that the structure is of Boolean type.
 The element $S_{\mu \nu}^b$ will be true if the product $\mu(r)\nu(r)$ is estimated to be significant 
 and false otherwise.
 
@@ -47,7 +47,7 @@ that are not screened out, we can apply function-level screening and avoid compu
 
 Using this strategy, a sparsity mask can be easily constructed. Figure 2.1 includes
 illustrations of sparsity masks for benzene stacks with 1, 5, and 10 benzenes spaced 3\text{\AA} apart. As sparsity increases, the number of
-significant AO functin pairs contained in these masks becomes $\mathcal{O}(N_{AO}^{1-2})$, where the lower bound is obtained for 
+significant AO function pairs contained in these masks becomes $\mathcal{O}(N_{AO}^{1-2})$, where the lower bound is obtained for 
 sufficiently sparse systems. 
 
 \begin{figure}[H] 
@@ -60,7 +60,7 @@ sufficiently sparse systems.
 \section{Integral Construction}
 
 Now, we are equipped to discuss the resulting algorithms when applying the integral sparsity to important operations such as
-integral construction and transformation. To write more readible algorithms, 
+integral construction and transformation. To write more readable algorithms, 
 we employ some tensor notation and write $A_{\mu \nu}^P$ to represent
 the pre-contracted 3-center integrals $(\mu \nu |P)$. To prune these integrals using sparsity, 
 the following algorithm can be employed:
@@ -83,7 +83,7 @@ build the full $A_{\mu \nu}^P$ integrals and then prune them for sparsity.
 Rather, sparsity screening would be applied as the integrals are constructed and insignificant
 function triplets are never computed. The computation
 and storage of $A_{\mu \nu^\mu}^P$ scales as $\mathcal{O}(N_{aux}N_{AO}^{1-2})$. 
-Moroever, the costly metric contraction becomes
+Moreover, the costly metric contraction becomes
 \begin{align} 
 B_{\mu \nu^\mu}^Q = A_{\mu \nu^\mu}^P[J]_{PQ}^{-\frac{1}{2}}
 \end{align}
@@ -186,7 +186,7 @@ Note that our novel contribution involves the application of the sparsity screen
   \caption{Comparison of execution times using sparsity screening (blue) against no sparsity screening (orange). Execution time is plotted against number of benzenes
  in a benzene stack from one to ten benzenes. Transformations involved computing $(ib|Q)$, where $i$ and $b$ denote occupied and virtual indices, respectively.
  Cutoff refers to the Schwarz screening threshold. (a) Computing the integrals. (b) Contracting AO integrals with the fitting metric. 
-(c) First transformation times only. (d) Total transformation times.}
+(c) First transformation times only. (d) Sum of first and second transformation times.}
 \end{figure}
 
 \noindent The cost of the first contraction becomes $\mathcal{O}(N_{aux}N_{AO}^{1-2}N_p)$. 
@@ -214,7 +214,7 @@ Clearly, Figure 2.2 reveals significant time reductions for all procedures measu
 Table 2.2 reinforces that operations with higher complexity scaling have the largest time
 reduction, with the caveat that total transformation time includes portions without sparsity utilization.
 In the integral computations (Figure 2.2 (a)), we construct the sparse integrals using
-function screening; however, we still compute them in shell triplets for effeciency.
+function screening; however, we still compute them in shell triplets for efficiency.
 Therefore the acquired speedup is slightly less dramatic compared to the metric contraction and
 transformation procedures (Figure 2.2 (b) and (c), respectively) due to select functions being 
 screened in cases where the entire shell is not screened. 

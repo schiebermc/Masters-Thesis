@@ -4,9 +4,9 @@
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {2.1}{\ignorespaces Schwarz sparsity masks used for benzene stacks containing 1, 5, and 10 benzenes spaced 3\text {\r A} apart. Sparsity masks were obtained by evaluating $(\mu \nu |\mu \nu )<\frac {\tau ^2}{(\mu \nu |\mu \nu )_{max}}$.\relax }}{7}{figure.caption.4}
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Schwarz sparsity masks used for benzene stacks containing 1, 5, and 10 benzenes spaced 3\text {\r A} apart. Sparsity masks were obtained by evaluating $(\mu \nu |\mu \nu )<\frac {\tau ^2}{(\mu \nu |\mu \nu )_{max}}$.\relax }}{8}{figure.caption.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {2.2}{\ignorespaces Comparison of execution times using sparsity screening (blue) against no sparsity screening (orange). Execution time is plotted against number of benzenes in a benzene stack from one to ten benzenes. Transformations involved computing $(ib|Q)$, where $i$ and $b$ denote occupied and virtual indices, respectively. Cutoff refers to the Schwarz screening threshold. (a) Computing the integrals. (b) Contracting AO integrals with the fitting metric. (c) First transformation times only. (d) Total transformation times.\relax }}{12}{figure.caption.6}
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Comparison of execution times using sparsity screening (blue) against no sparsity screening (orange). Execution time is plotted against number of benzenes in a benzene stack from one to ten benzenes. Transformations involved computing $(ib|Q)$, where $i$ and $b$ denote occupied and virtual indices, respectively. Cutoff refers to the Schwarz screening threshold. (a) Computing the integrals. (b) Contracting AO integrals with the fitting metric. (c) First transformation times only. (d) Sum of first and second transformation times.\relax }}{12}{figure.caption.6}
 \defcounter {refsection}{0}\relax 
 \contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{12}{subfigure.2.1}
 \defcounter {refsection}{0}\relax 
@@ -20,7 +20,7 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {figure}{\numberline {3.1}{\ignorespaces Transition state for organoboron addition to trifluooroacetone. Taken from Ref. \cite {???Lec:2016:768}\relax }}{23}{figure.caption.10}
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Speedup and execution time plots obtained using our optimized memory layout, $B_{\mu P \nu ^\nu }$, for sparsity screened 3-center integrals. Execution times involve computing three common transformations: $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$, where $i,j$ and $a,b$ denote occupied and virtual indices, respectively. Graphs (a), (c), and (e) include speedups for constructing the integrals (orange), transforming (blue), total time (red), and ideal (black). Graphs (b), (d), and (f) plot total execution times. Problem sizes were increased by increasing basis set size using cc-pVXZ, X = D,T,Q.\relax }}{24}{figure.caption.12}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Speedup and execution time plots obtained using our optimized memory layout, $B_{\mu P \nu ^\nu }$, for sparsity screened 3-center integrals. Execution times involve computing three common transformation classes: $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$, where $i,j$ and $a,b$ denote occupied and virtual indices, respectively. Graphs (a), (c), and (e) include speedups for constructing the integrals (orange), transforming (blue), total time (red), and ideal (black). Graphs (b), (d), and (f) plot total execution times. Problem sizes were increased by increasing basis set size using cc-pVXZ, X = D,T,Q.\relax }}{24}{figure.caption.12}
 \defcounter {refsection}{0}\relax 
 \contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{24}{subfigure.2.1}
 \defcounter {refsection}{0}\relax 

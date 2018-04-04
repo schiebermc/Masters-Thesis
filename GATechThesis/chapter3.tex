@@ -1,11 +1,11 @@
 \chapter{Optimizing Integral Transformations}
 
-\section{A note on disk-bound index blocking}
+\section{A Note on Disk-bound Index Blocking}
 
 The size of tensors grow rapidly in quantum chemistry. The 3-center integrals of density fitting are no exception.
 Often, the size of the AO three-index integrals will exceed 64GB of RAM for small systems when
 a moderate basis set such as aug-cc-pVQZ is used, even with sparsity screening. Table 3.1 illustrates this point by listing
-the total memory required for sparse three-index AO integrals for adenine-thymine dimer accross various a basis sets. Once the memory required
+the total memory required for sparse three-index AO integrals for adenine-thymine dimer across various a basis sets. Once the memory required
 exceeds what is available, it is necessary for
 any implementation to begin reading and writing these tensors to and from disk-based memory. For any field this can
 be a major slowdown, but it is especially critical to performance when high-dimensional data is involved. To illustrate
@@ -15,7 +15,7 @@ this issue, we will introduce an adapted tensor notation which better indicates 
 \begin{table}[H]
 \centering
 \renewcommand{\baselinestretch}{1}
-\caption{Total memory required for sparse three-index AO integrals for adenine-thymine dimer accross various basis sets.}
+\caption{Total memory required for sparse three-index AO integrals for adenine-thymine dimer across various basis sets.}
 \begin{tabular}{l ccc}
 \multicolumn{1}{l}{\textbf{Basis}} &
 \multicolumn{1}{c}{\textbf{Memory Required}} &
@@ -44,8 +44,8 @@ of the fastest-running index, $n$, are contiguous in memory.
 
 Now, we can consider two possible forms for the three-center integrals: $A_{P\mu\nu}$ or $A_{\mu P\mu}$.
 If these tensors are too large to fit into memory, we must read and write pieces of them to and from disk-based memory.
-To accomplish this, we must choose an index to block accross. Primarily, this will involve either the $P$ or $\mu$ index.
-For example, if we choose to block accross the $P$ index, then we will partition the basis of $P$ into discrete blocks: $P_i \in P$.
+To accomplish this, we must choose an index to block across. Primarily, this will involve either the $P$ or $\mu$ index.
+For example, if we choose to block across the $P$ index, then we will partition the basis of $P$ into discrete blocks: $P_i \in P$.
 Then, we will read and write only those blocks of $P$ along with all of $\mu$ and $\nu$.
 The latency of these operations is
 bounded by the movement of a physical read-write head, so it is critically important to ensure that read and writes are as
@@ -55,11 +55,11 @@ former will yield entirely contiguous operations whereas the latter will require
 Unfortunately, within the density fitting regime, different operations are optimal under different blocking schemes. For example,
 consider the construction of the full three-index AO integrals according to (1.9). To accomplish this, 
 the initial integrals, $A_{\mu \nu}^P$, are computed and then contracted with the fitting metric. If the AOs are too large to fully 
-fit in-core, then we must choose an index, $P$ or $\mu$, to block accross. Consider the following two algorithms
-that block accross either index, respectively:
+fit in-core, then we must choose an index, $P$ or $\mu$, to block across. Consider the following two algorithms
+that block across either index, respectively:
 
 \begin{algorithm}[H]
-\caption{Construct the full AO integrals $B_{\mu \nu}^P$ by blocking accross the $P$ index.}
+\caption{Construct the full AO integrals $B_{\mu \nu}^P$ by blocking across the $P$ index.}
 \begin{algorithmic}
 \REQUIRE Coulomb metric: $[J]_{PQ}^{-\frac{1}{2}}$
 \FOR {block $P_i \in P$}  
@@ -72,7 +72,7 @@ that block accross either index, respectively:
 \end{algorithm}
 
 \begin{algorithm}[H]
-\caption{Construct the full AO integrals $B_{\mu \nu}^P$ by blocking accross the $\mu$ index.}
+\caption{Construct the full AO integrals $B_{\mu \nu}^P$ by blocking across the $\mu$ index.}
 \begin{algorithmic}
 \REQUIRE Coulomb metric: $[J]_{PQ}^{-\frac{1}{2}}$
 \FOR {block $\mu_i \in \mu$}  
@@ -87,17 +87,17 @@ that block accross either index, respectively:
 Of the two algorithms, only Algorithm 4 would respect the memory constraints of a blocking procedure. Note that after the 
 contraction $A_{\mu \nu}^{P_i} [J]_{P_iQ}^{-\frac{1}{2}} \rightarrow B_{\mu \nu}^Q$ in Algorithm 3, the full 3-dimensional quantity
 $B_{\mu \nu}^Q$ is returned, which would immediately violate memory constraints. For this operation, only one blocking method is
-\textit{possible}. If we are constrained to blocking accross the $\mu$ index, then the tensor form $A_{\mu P \nu}$ will yield
+\textit{possible}. If we are constrained to blocking across the $\mu$ index, then the tensor form $A_{\mu P \nu}$ will yield
 superior disk performance, as it would allow for completely contiguous read operations. The purpose of this illustration is
 to remind the reader that for large enough systems, disk performance
 is crucially important, therefore memory layout should be considered carefully.
 
-\section{Memory layout for sparsity-utilized transformations}
+\section{Memory Layout for Sparsity-utilized Transformations}
 
 Algorithm 2 revealed a technique that can be used to utilize sparsity when carrying out three-index integral transformations.
-Although utilizing sparsity is imperitive for cost reduction, an optimal implementation must be tailored to
+Although utilizing sparsity is imperative for cost reduction, an optimal implementation must be tailored to
 fully exploit modern computing hardware.
-Multicore processors consisting of upwards of ten cores are found commonly both at the desk of computational
+Multi-core processors consisting of upwards of ten cores are found commonly both at the desk of computational
 chemists and in commodity computing clusters.
 Moreover, the birth of Intel's manycore architecture further necessitates that scientific computing
 exploit every means of parallelism.
@@ -105,7 +105,7 @@ Although the density fitting technique has been shown to be challenging to explo
 algorithms \cite{ref3}, it remains an essential technique for accelerating computations of 
 small to intermediate size chemical systems.
 The communication overhead that hinders large scale parallelism for density
-fitting is nominal for single node investigations, but even a single multicore processor contains viable
+fitting is nominal for single node investigations, but even a single multi-core processor contains viable
 parallelism that can be challenging to fully exploit. 
 Coupling the cost reduction of sparsity approximations with a finely tuned parallel code is crucial to performance.  
 
@@ -154,20 +154,20 @@ To carry out the first step of the transformation, both algorithms must loop thr
 Operations within this loop should be parallelized.
 The number of iterations for this step are greater in Algorithm 3 than in Algorithm 4 since $N_{aux}$ will always be 
 larger than $N_{AO}$.
-Conversely, the matrix-matrix multiplications occuring in Algorithm 4 are larger. As a result, Algorithm 4 will benefit from delegating
+Conversely, the matrix-matrix multiplications occurring in Algorithm 4 are larger. As a result, Algorithm 4 will benefit from delegating
 larger problem sizes to highly optimized level 3 BLAS routines. 
 
-However, the crucial difference is acertained when one considers which index, $\mu$ or $P$, would be most appropriate to block accross
-for a disk-bound implementation. If we choose to block accross $\mu$, the result of the final transformation, $A_{pq}^P$, would be incomplete,
-and a full cummulative disk write of $\mathcal{O}(N_{aux}N_pN_p)$ size would be necessary for each block of $\mu$. Moreover, there is a chance
+However, the crucial difference is ascertained when one considers which index, $\mu$ or $P$, would be most appropriate to block across
+for a disk-bound implementation. If we choose to block across $\mu$, the result of the final transformation, $A_{pq}^P$, would be incomplete,
+and a full cumulative disk write of $\mathcal{O}(N_{aux}N_pN_p)$ size would be necessary for each block of $\mu$. Moreover, there is a chance
 this operation could be altogether impossible if memory constraints would be violated by having a full $A_{pq}^P$ tensor in memory. 
 On the other hand, 
-blocking accross the $P$ index would not pose this problem, as no contractions occur accros the $P$ index. Therefore, blocking accross 
+blocking across the $P$ index would not pose this problem, as no contractions occur across the $P$ index. Therefore, blocking across 
 $P$ is the only scalable solution.
 
-Now, if it is necessary to block accross $P$, consider the implications for Algorithms 5 and 6. For Algorithm 5, this means that if the blocks
+Now, if it is necessary to block across $P$, consider the implications for Algorithms 5 and 6. For Algorithm 5, this means that if the blocks
 over $P$ are very small, e.g. $<10$, then the parallelized loops will have very few iterations. Typically, the fewer the iterations the worse
-the parallel scalability as the workloads are much more succeptible to being unbalanced. To the contrary, Algorithm 6 will not suffer this 
+the parallel scalability as the workloads are much more susceptible to being unbalanced. To the contrary, Algorithm 6 will not suffer this 
 drawback and is therefore the better option. Since Algorithm 6 contains higher concurrency and utilizes larger matrix-matrix multiplications, 
 we propose that it will yield enhanced parallel scaling. 
 
@@ -207,11 +207,11 @@ $(Q|ab)$        & 4              & 1.56            & 1.23     \\
 \endgroup
 
 The speedups in Table 3.2 are undoubtedly beneficial and this technique is commonly used in practice. 
-However, we propose that this technique will be a disadvatageous in certain contexts. 
-Namely, applying this workflow to methods using many transformations will increase cost unecessarily. 
+However, we propose that this technique will be a disadvantageous in certain contexts. 
+Namely, applying this workflow to methods using many transformations will increase cost unnecessarily. 
 Using this method, a metric contraction is necessary for each transformation, whereas only one contraction is required if this technique is not used.
 If many transformations occur, the cost of contracting the metric for 
-each transformation will eventually outweight the speedups attainable in Table 3.2. Therefore, both workflows must be considered when carrying
+each transformation will eventually outweigh the speedups attainable in Table 3.2. Therefore, both workflows must be considered when carrying
 out 3-center integral transformations. Algorithm 7 and 8 illustrate the corresponding workflows:
 
 \begin{algorithm}[H]
@@ -261,7 +261,7 @@ this includes DFMP2 \cite{ref4}.
 Most often, quantum chemistry procedures will require numerous integral transformations. For example, a USAPT procedure will employ
 upwards of 24 unique integral transformations. Since all transformations are carried out at the same time, one should build an 
 implementation that queues the transformations, gathers information, and deploys strategic contraction paths.
-As mentioned prevously, the first contraction of these integral transformations $A_{p \nu}^P=A_{\mu \nu}^PC_{\mu p}$ 
+As mentioned previously, the first contraction of these integral transformations $A_{p \nu}^P=A_{\mu \nu}^PC_{\mu p}$ 
 should always be carried out on the smallest MO index $p$ 
 possible. Thereafter, transformations using the same intermediate, $A_{p \nu}^P$, should all occur at the same time to avoid
 recomputing $A_{p \nu}^P$. 
@@ -291,7 +291,7 @@ To measure parallel scaling, we performed integral transformations for the boron
 We varied the problem size by adjusting the $\zeta$ level for the Dunning basis sets with $\zeta$ = D, T, Q.
 The characteristics of these systems are included in Table 4. Note that while parallel scaling typically improves
 for larger systems (i.e. due to larger workloads),
-this is not gauranteed in a sparsity regime. Larger systems may contain more sparsity;
+this is not guaranteed in a sparsity regime. Larger systems may contain more sparsity;
 more sparsity will result in more striding, copying, and irregular sizing,
 which will hinder parallel scaling. Nonetheless, our method outlined in Algorithm 2 is designed to utilize sparsity while also
 obtaining maximum parallel efficiency. 
@@ -349,7 +349,7 @@ cc-pVQZ   & 3040 & 5593 & 50.2 \\
   \hfill
   \caption{Speedup and execution time plots obtained using our optimized memory layout, $B_{\mu P \nu^\nu}$, 
  for sparsity screened 3-center integrals. 
- Execution times involve computing three common transformations: $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$,
+ Execution times involve computing three common transformation classes: $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$,
  where $i,j$ and $a,b$ denote occupied and virtual indices, respectively. Graphs (a), (c), and (e) include speedups for constructing the integrals (orange),
  transforming (blue), total time (red), and ideal (black). Graphs (b), (d), and (f) plot total execution times. Problem sizes were increased by increasing basis set size
  using cc-pVXZ, X = D,T,Q.}
@@ -361,7 +361,7 @@ may be attributed to larger system sizes. The sizes of the sparsity screened AO 
 for these systems, respectively. In the latter case,
 the 24GB of memory at the compute node was fully used and work for each thread was increased to maximal levels. Conversely, 
 when the system size was increased again using
-$\zeta = $ Q, the memory contraint did not allow for further increase in work per thread. 
+$\zeta = $ Q, the memory constraint did not allow for further increase in work per thread. 
 The hindrance in scaling from $\zeta = $ T to $\zeta = $ Q is explained by the workload inbalance incurred by
 the increase in sparsity. 
 
@@ -436,9 +436,9 @@ are carried out in each iteration, such as MCSCF, as well as methods which requi
 USAPT. Conversely, the Direct algorithm is advantageous for methods
 requiring few transformations, such as DFMP2.
 
-Additionally, the crossover point shifts to the left as the transformation spaces get larger ($ij, ia, ab$), occuring in fewer transforamtions.
+Additionally, the crossover point shifts to the left as the transformation spaces get larger ($ij, ia, ab$), occuring in fewer transformations.
 This finding is supportive of the proposed speedups in Table 3.2.
-Therefore procedures using anything larger than a $(ib|Q)$ transformation will recieve nominal benefits from employing the 
+Therefore procedures using anything larger than a $(ib|Q)$ transformation will receive nominal benefits from employing the 
 Direct algorithm and may incur slowdowns if many transformations occur.
 Last, the crossover point shifts to the right for the $(ij|Q)$ and $(ib|Q)$ transformations as larger basis sets are used. 
 This will allow for 
@@ -451,7 +451,7 @@ by the increasing ratio of $\frac{N_{aux}}{N_{AO}}$.
 
 In the previous section, we determined the Direct algorithm will be superior in methods such as DFMP2, while the Store 
 algorithm will be superior in methods such as MCSCF.
-After determing the contexts in which either algorithm prevail, we sought to reveal their benefits when applied in practice. 
+After determining the contexts in which either algorithm prevail, we sought to reveal their benefits when applied in practice. 
 To do so, we employed either algorithm
 in the contexts of different procedures and systems. For procedures, we tested DFMCSCF and DFMP2. We ran these 
 procedures on the systems included in Figure 3.4.
@@ -493,7 +493,7 @@ Benzene-Toluene   & jun-cc-pVDZ & jun-cc-pVDZ-rifit & 867   &  2901       \\
 The experiments were carried out using one node consisting of an Intel Core i7-5930K processor
 (6 cores at 3.50GHz) and 60GB DRAM. The results are included in Tables 3.6 and 3.7. Table 3.6 includes
 the total computation time spent in operations involving the three-index integrals. These times will
-reflect the algorithmic benifits illustrated in Figure 3.3. Table 3.7 includes the total time required
+reflect the algorithmic benefits illustrated in Figure 3.3. Table 3.7 includes the total time required
 to execute the program. These times reflect total procedure times, which include many operations extraneous
 to the three-index integrals.
 
@@ -501,7 +501,7 @@ to the three-index integrals.
 \begin{table}[H]
 \centering
 \renewcommand{\baselinestretch}{1}
-\caption{Computatoinal times comparing the Direct and Store algorithms for three-index integral construction and
+\caption{Computational times comparing the Direct and Store algorithms for three-index integral construction and
 transformations.}
 \begin{tabular}{l cccc}
 \multicolumn{1}{l}{\textbf{System}} &

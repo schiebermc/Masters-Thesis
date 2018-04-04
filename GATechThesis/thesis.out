@@ -10,8 +10,8 @@
 \BOOKMARK [1][-]{section.2.3}{Integral Transformation}{chapter.2}% 10
 \BOOKMARK [1][-]{section.2.4}{Results}{chapter.2}% 11
 \BOOKMARK [0][-]{chapter.3}{Optimizing Integral Transformations}{}% 12
-\BOOKMARK [1][-]{section.3.1}{A note on disk-bound index blocking}{chapter.3}% 13
-\BOOKMARK [1][-]{section.3.2}{Memory layout for sparsity-utilized transformations}{chapter.3}% 14
+\BOOKMARK [1][-]{section.3.1}{A Note on Disk-bound Index Blocking}{chapter.3}% 13
+\BOOKMARK [1][-]{section.3.2}{Memory Layout for Sparsity-utilized Transformations}{chapter.3}% 14
 \BOOKMARK [1][-]{section.3.3}{Context Dependent Workflows}{chapter.3}% 15
 \BOOKMARK [1][-]{section.3.4}{Intermediate Recycling}{chapter.3}% 16
 \BOOKMARK [1][-]{section.3.5}{Results}{chapter.3}% 17
@@ -22,4 +22,4 @@
 \BOOKMARK [1][-]{section.4.1}{Coulomb and Exchange Evaluations}{chapter.4}% 22
 \BOOKMARK [1][-]{section.4.2}{Results}{chapter.4}% 23
 \BOOKMARK [0][-]{chapter.5}{Conclusions}{}% 24
-\BOOKMARK [0][-]{chapter*.20}{References}{}% 25
+\BOOKMARK [0][-]{chapter*.21}{References}{}% 25

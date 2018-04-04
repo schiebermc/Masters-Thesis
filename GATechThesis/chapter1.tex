@@ -11,8 +11,9 @@ d{\textbf{r}_{1}}d{\textbf{r}_{2}},
 are electron coordinates \cite{ref1}. For simplicity, we have assumed the orbitals are real functions, as is usually
 the case in practice. Immediately, one should note the $\mathcal{O}(N_{AO}^4)$ storage costs (where $N_{AO}$ is
 the number of AO basis functions), which quickly 
-limits the size of in-core investigations. Moreover, the two fundamental operations involving ERIs 
-are also costly. The first operation involves their evaluation to build the Coulomb and exchange matrices:
+limits the size of in-core investigations. Moreover, various fundamental operations involving ERIs 
+are also costly. Here we focus on two types of operations. 
+The first is the construction of the Coulomb and exchange matrices:
 \begin{align}
 J_{\mu \nu} &= (\mu \nu|\lambda \sigma)D_{\lambda \sigma} \\
 K_{\mu \nu} &= (\mu \lambda|\nu \sigma)D_{\lambda \sigma}
@@ -22,15 +23,18 @@ K_{\mu \nu} &= (\mu \lambda|\nu \sigma)D_{\lambda \sigma}
 and $D_{\lambda \sigma}$ are the Coulomb, exchange, and density matrices, respectively.
 Evaluating the 4-center ERIs according to (1.2) and (1.3) requires $\mathcal{O}(N_{AO}^4)$ operations, 
 which is a heavy computational burden that plagues even the most basic quantum chemistry procedures.
-For example, the AO Fock matrix is built as:
+For example, the Fock matrix for Restricted Hartree-Fock is built in the AO basis as:
 \begin{align}
 F_{\mu \nu} = H_{\mu \nu} + 2J_{\mu \nu} - K_{\mu \nu}
 \end{align} 
-The simplist quantum chemistry procedure, known as the Self-Consistent Field approach, involves iteratively
-reconstructing the Fock matrix until convergence. The most compuatationally demanding operation for this
-method is by far the evaluating of the Coulomb and exchange matrices. 
+
+Hartree-Fock is the simplest quantum chemistry procedure, also known as the Self-Consistent Field approach, 
+because it involves iteratively
+reconstructing the Fock matrix until convergence. Except for very large systems with large degrees of spatial sparsity, 
+the most computationally demanding operation for this
+method is the evaluation of the Coulomb and exchange matrices. 
  
-The second fundamental operation when using ERIs involves their transformation from the AO basis 
+The second fundamental operation considered here involves the transformation of the ERIs from the AO basis 
 to the molecular orbital (MO) basis. This operation is written as:
 \begin{align}
 (pq | rs) = C_{p \mu}C_{q \nu}
@@ -53,7 +57,7 @@ density fitting reduces the rank of the 4-center ERIs and approximates them usin
 (\mu \nu|\lambda \sigma) &\approx (\mu \nu| P)[J]_{PQ}^{-1}(Q|\lambda \sigma)  
 \end{align} 
 
-\noindent Here we have introduced an auxiliary basis $P, Q$ and the Coloumb fitting metric $[J]_{PQ}$ \cite{ref2}. 
+\noindent Here we have introduced an auxiliary basis $P, Q$ and the Coulomb fitting metric $[J]_{PQ}$ \cite{ref2}. 
 In practice, permuational symmetry is almost always used so that only one set of these 3-center integrals need be built:
 \begin{align} 
 B_{\mu \nu}^P &= [J]_{PQ}^{-\frac{1}{2}}(\mu \nu | Q)  \\ 
@@ -71,7 +75,7 @@ K_{\mu \nu} &= B_{\mu \lambda}^P B_{\nu \sigma}^PD_{\lambda \sigma}
 \noindent Using (1.11), the Coulomb matrix is evaluated in $\mathcal{O}(N_{aux}N_{AO}^2)$ operations, which is a great success
 for reducing computational complexity. On the other hand, (1.12) still requires $\mathcal{O}(N_{aux}N_{AO}^3)$ operations. 
 Since $N_{aux}$ is always larger than $N_{AO}$, evaluating (1.12) is actually more expensive than evaluating (1.3).
-This leaves the exchange matrix evaluation as the major bottleck for most density-fitted procedures.
+This leaves the exchange matrix evaluation as the major bottleneck for most density-fitted procedures.
 One method for alleviating this bottleneck involves employing knowledge 
 of the form of the density matrix:
 \begin{align}
@@ -87,7 +91,7 @@ K_{\mu \nu} &= B_{\mu \lambda}^P B_{\nu \sigma}^PC_{p\lambda}C_{p\sigma}
 \end{align}
 
 \noindent Evaluating both (1.14) and (1.15) requires $\mathcal{O}(N_{aux}N_{AO}^2N_p)$ operations.
-This technique is not benificial for Coulomb matrix evaluations, since the complexity of (1.14) is actually
+This technique is not beneficial for Coulomb matrix evaluations, since the complexity of (1.14) is actually
 higher than that of (1.11). However, (1.15) reduces the complexity of exchange matrix evaluation by  
 $\frac{N_{aux}}{N_p}$, which provides moderate speedups in practice.
 
@@ -105,7 +109,7 @@ focus on optimizing the computation of $B^P_{pq}$ via (1.16).
 Although density fitting makes considerable progress towards reducing the space and computation complexity when
 using the ERIs, there is still work to be done. Importantly, (1.15) and (1.16) still serve as major computational
 bottlenecks for iterative and perturbative methods, respectively. In my research, I have sought out and implemented various 
-optimizations to further improve the density fitting regime. The essense of my work involves the marriage of sparsity screening,
+optimizations to further improve the density fitting regime. The essence of my work involves the marriage of sparsity screening,
 parallel scaling, minimizing disk IO, and optimal contraction paths. This thesis details the progress made via my research.
 In Chapter 2, I discuss the spatial sparsity of the three-index integrals and the utilization of such sparsity for integral 
 construction, metric contractions, and integral transformations.
