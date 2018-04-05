@@ -26,22 +26,26 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {3.3}Context Dependent Workflows}{19}{section.3.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {3.4}Intermediate Recycling}{21}{section.3.4}
+\contentsline {section}{\numberline {3.4}Intermediate Recycling}{22}{section.3.4}
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {3.5}Results}{22}{section.3.5}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {3.5.1}Parallel Scaling of Transformations}{22}{subsection.3.5.1}
+\contentsline {subsection}{\numberline {3.5.1}Parallel Scaling of Transformations}{23}{subsection.3.5.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {3.5.2}Performance Crossover Through Number of Transformations}{25}{subsection.3.5.2}
+\contentsline {subsection}{\numberline {3.5.2}Performance Crossover Through Number of Transformations}{26}{subsection.3.5.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {3.5.3}Superior Workflows in Practice}{27}{subsection.3.5.3}
+\contentsline {subsection}{\numberline {3.5.3}Superior Workflows in Practice}{28}{subsection.3.5.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {4}Evaluating Coulomb and Exchange Matrices}{30}{chapter.4}
+\contentsline {chapter}{\numberline {4}Evaluating Coulomb and Exchange Matrices}{31}{chapter.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {4.1}Coulomb and Exchange Evaluations}{30}{section.4.1}
+\contentsline {section}{\numberline {4.1}Coulomb and Exchange Evaluations}{31}{section.4.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {4.2}Results}{36}{section.4.2}
+\contentsline {section}{\numberline {4.2}Results}{37}{section.4.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {5}Conclusions}{41}{chapter.5}
+\contentsline {subsection}{\numberline {4.2.1}Multi-core Results}{37}{subsection.4.2.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{References}{42}{chapter*.21}
+\contentsline {subsection}{\numberline {4.2.2}Manycore Results}{41}{subsection.4.2.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\numberline {5}Conclusions}{43}{chapter.5}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{References}{45}{chapter*.23}

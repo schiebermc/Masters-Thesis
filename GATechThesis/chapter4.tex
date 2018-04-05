@@ -189,14 +189,18 @@ Library. Currently, the state of the art for exchange matrix evaluations in
 {\sc Psi4} is Algorithm 11. However, we conjecture that Algorithm 10 could provide 
 considerable speedups as it eliminates entirely a strided, level 1 BLAS copy. 
 
+\subsection{Multi-core Results}
+
+First, we reveal the performance of the above algorithms on multi-core processors.
 We implemented Algorithms 10 and 13 and incorporated them into a development version of {\sc Psi4}. 
 Then, we used {\sc Psi4}'s Self-Consistent Field
 procedure to produce energies for various systems and basis set combinations. The systems used involved a protein-drug complex,
 where the drug molecule is omitted and the atoms of the protein are added in a series according to distance from the center of
 the drug molecule. 
 
-The experiments were carried out using one node consisting of an Intel Core i7-5930K processor
-(6 cores at 3.50GHz) and 60GB DRAM. The results are included in Table 4.1:
+The experiments were carried out on two separate architectures. The first includes one node consisting of an Intel Core i7-5930K processor
+(6 cores at 3.50GHz) and 60GB DRAM. The results for this architecture are included in Table 4.1. The second architecture includes one node consisting
+of two Intel and 256GB DRAM. The results for this architecture are included in Table 4.2. 
 
 \begingroup
 %\squeezetable
@@ -382,13 +386,19 @@ $\mathcal{O}(N_{aux}^2N_{AO}^2)$, can be the most expensive operation of an SCF 
 apply permutational symmetry, it can be more efficient for this operation as both the contractions and disk writes are contiguous.
 
 
+\subsection{Manycore Results}
 
+Here we examine the performance of the above algorithms on Intel's Knights Landing manycore processor. 
+We implemented Algorithms 10 and 13 and incorporated them into a development version of {\sc Psi4}. 
+Then, we used {\sc Psi4}'s Self-Consistent Field procedure to produce energies for the system in Figure 3.1 using the cc-pVTZ basis set. 
+The experiments were carried out using one node consisting of one Knights Landing processor.
 
 \begingroup
 \begin{table}[H]
 \centering
 \renewcommand{\baselinestretch}{1}
-\caption{Total memory required for sparse three-index AO integrals for adenine-thymine dimer accross various basis sets.}
+\caption{Total procedure execution times for a Self-Consistent Field procedure using both Algorithms 10 and 11. The programs were executed on one Knights Landing processor
+    using a development version of {\sc Psi4}. A relative speedup is listed.}
 \begin{tabular}{l ccc}
 \multicolumn{1}{l}{\textbf{Cores}} &
 \multicolumn{1}{c}{\textbf{Alg. 1}} &
@@ -413,7 +423,8 @@ apply permutational symmetry, it can be more efficient for this operation as bot
 \begin{table}[H]
 \centering
 \renewcommand{\baselinestretch}{1}
-\caption{Total memory required for sparse three-index AO integrals for adenine-thymine dimer accross various basis sets.}
+\caption{Total exchange matrix evaluation times within an Self-Consistent Field procedure using both Algorithms 10 and 11. The programs were executed on one Knights Landing processor
+    using a development version of {\sc Psi4}. A relative speedup is listed.}
 \begin{tabular}{l ccc}
 \multicolumn{1}{l}{\textbf{Cores}} &
 \multicolumn{1}{c}{\textbf{Alg. 1}} &

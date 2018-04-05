@@ -21,6 +21,7 @@ K_{\mu \nu} &= (\mu \lambda|\nu \sigma)D_{\lambda \sigma}
 
 \noindent Where $J_{\mu \nu}$, $K_{\mu \nu}$, 
 and $D_{\lambda \sigma}$ are the Coulomb, exchange, and density matrices, respectively.
+Note that the use of the Einstein summation notation implies summations over indices.
 Evaluating the 4-center ERIs according to (1.2) and (1.3) requires $\mathcal{O}(N_{AO}^4)$ operations, 
 which is a heavy computational burden that plagues even the most basic quantum chemistry procedures.
 For example, the Fock matrix for Restricted Hartree-Fock is built in the AO basis as:
@@ -41,13 +42,17 @@ to the molecular orbital (MO) basis. This operation is written as:
 (\mu \nu | \lambda \sigma)C_{r\lambda}C_{s\sigma},
 \end{align} 
 
-\noindent where $p,q,r,s$ denote MO indices and orbital matrices, $C$, were introduced. These integral transformations scale 
-as $\mathcal{O}(N_{AO}^4N_p)$ (where $N_p$ is the size of the denoted MO basis) and serve as a major 
+\noindent where $p,q,r,s$ denote MO indices and each MO is expanded as a linear combination of AO's as 
+$\phi_p(\textbf{r}_{2})=\sum_\mu C_{\mu i} \phi_i(\textbf{r}_{2})$.
+These integral transformations scale 
+as $\mathcal{O}(N_{AO}^4N_p)$ (where $N_p$ is the size of the smallest subest of MO's required in the target integrals). 
+The transform serves as a major 
 bottleneck for perturbative correlation methods like second-order M{\o}ller-Plesset perturbation theory (MP2).
 
 To overcome the drastic cost of evaluation, transforming, and processing the 4-center ERIs, various approximations 
 and screening techniques have been developed. 
-Density fitting is one method for alleviating these costs which has been gaining popularity in electronic structure theory.
+Density fitting is one method for alleviating these costs that has been gaining popularity in electronic structure theory 
+\cite{Sherrill:2010:110902}, \cite{Whitten:1973:4496}, \cite{Dunlap:1979:3396}, \cite{Dunlap:1979:3396}.
 By utilizing the resolution of the identity technique, 
 density fitting reduces the rank of the 4-center ERIs and approximates them using a 3-center form: 
 \begin{align} 
@@ -63,9 +68,9 @@ In practice, permuational symmetry is almost always used so that only one set of
 B_{\mu \nu}^P &= [J]_{PQ}^{-\frac{1}{2}}(\mu \nu | Q)  \\ 
 (\lambda \sigma | \mu \nu) &\approx  B_{\mu \nu}^P B_{\lambda \sigma}^P  \end{align} 
 
-\noindent The $B$ tensors indicate integrals that have been contracted with the fitting metric.
-The rank-reduced 3-center ERIs yield a space complexity of $\mathcal{O}(N_{aux}N_{AO}^2)$, 
-which allows many more investigations to be run in-core. 
+\noindent In this work, tensors labeled $B$ indicate integrals that have been contracted with the fitting metric.
+The rank-reduced 3-center ERIs have a storage requirement of $\mathcal{O}(N_{aux}N_{AO}^2)$, 
+which allows many more investigations to be run in-core compared to the original 4-center ERIs. 
 Using the 3-center ERIs, the Coulomb and exchange matrices are evaluated as: 
 \begin{align}
 J_{\mu \nu} &= B_{\mu \nu}^P B_{\lambda \sigma}^PD_{\lambda \sigma} \\
@@ -77,23 +82,24 @@ for reducing computational complexity. On the other hand, (1.12) still requires 
 Since $N_{aux}$ is always larger than $N_{AO}$, evaluating (1.12) is actually more expensive than evaluating (1.3).
 This leaves the exchange matrix evaluation as the major bottleneck for most density-fitted procedures.
 One method for alleviating this bottleneck involves employing knowledge 
-of the form of the density matrix:
+of the form of the density matrix. In Hartree-Fock theory, the density matrix is 
 \begin{align}
-D_{\lambda \sigma} &= C_{p\lambda}C_{p\sigma} 
+D_{\lambda \sigma} &= C_{i \lambda}C_{i \sigma},
 \end{align}
 
+\noindent where $i$ indicates an occupied MO, and there are far fewer occupied MO's than there are AO basis functions.
 \noindent Since MO spaces are often much smaller than AO spaces, it is possible to lower the complexity prefactor when 
 building the exchange matrix. 
 Decomposing the density matrix and rewriting the Coulomb and exchange matrix evaluations, we get:
 \begin{align}
-J_{\mu \nu} &= B_{\mu \nu}^P B_{\lambda \sigma}^PC_{p\lambda}C_{p\sigma} \\
-K_{\mu \nu} &= B_{\mu \lambda}^P B_{\nu \sigma}^PC_{p\lambda}C_{p\sigma}
+J_{\mu \nu} &= B_{\mu \nu}^P B_{\lambda \sigma}^PC_{i \lambda}C_{i \sigma} \\
+K_{\mu \nu} &= B_{\mu \lambda}^P B_{\nu \sigma}^PC_{i \lambda}C_{i \sigma}
 \end{align}
 
-\noindent Evaluating both (1.14) and (1.15) requires $\mathcal{O}(N_{aux}N_{AO}^2N_p)$ operations.
+\noindent Both (1.14) and (1.15) requires $\mathcal{O}(N_{aux}N_{AO}^2N_i)$ operations.
 This technique is not beneficial for Coulomb matrix evaluations, since the complexity of (1.14) is actually
 higher than that of (1.11). However, (1.15) reduces the complexity of exchange matrix evaluation by  
-$\frac{N_{aux}}{N_p}$, which provides moderate speedups in practice.
+$\frac{N_{aux}}{N_i}$, where $N_i$ denotes the number of occupied orbitals, which provides moderate speedups in practice.
 
 Moreover, density fitting also improves the cost of integral transformations. Applying (1.10) to (1.5), we get:
 \begin{align}
@@ -106,11 +112,11 @@ algorithms based on density fitting often involve contracting the transformed th
 rather than explicit formulation of $(pq|rs)$ as actual intermediates. Therefore, optimizing these procedures will primarily
 focus on optimizing the computation of $B^P_{pq}$ via (1.16). 
 
-Although density fitting makes considerable progress towards reducing the space and computation complexity when
+Although density fitting makes considerable progress towards reducing the storage and computation complexity when
 using the ERIs, there is still work to be done. Importantly, (1.15) and (1.16) still serve as major computational
 bottlenecks for iterative and perturbative methods, respectively. In my research, I have sought out and implemented various 
 optimizations to further improve the density fitting regime. The essence of my work involves the marriage of sparsity screening,
-parallel scaling, minimizing disk IO, and optimal contraction paths. This thesis details the progress made via my research.
+parallel scaling, minimizing disk I/O, and optimal contraction paths. 
 In Chapter 2, I discuss the spatial sparsity of the three-index integrals and the utilization of such sparsity for integral 
 construction, metric contractions, and integral transformations.
 In Chapter 3, I focus on (1.15) by discussing blocking procedures, sparse memory layouts, disk implications,

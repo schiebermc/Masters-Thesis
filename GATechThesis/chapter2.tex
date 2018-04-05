@@ -1,8 +1,8 @@
 \chapter{Utilizing Spatial Sparsity}
 
 For all but the smallest molecules, spatial sparsity is very important for achieving computational savings
-in quantum chemistry. There exists two primary forms of spatial sparsity in (1.6). The first form
-results from the Gaussian product $\mu(\textbf{r}_{1}) \nu(\textbf{r}_{1})$ diminishing with the overlap of the 
+in quantum chemistry. There exist two primary forms of spatial sparsity in the 3-center integrals $(\mu \nu |P)$, Eq. (1.6). 
+The first form results from the Gaussian product $\mu(\textbf{r}_{1}) \nu(\textbf{r}_{1})$ diminishing with the overlap of the 
 two AO Gaussians. This product diminishes rapidly with distance between the Gaussian function centers and is also 
 highly sensitive to their degree of locality.
 If the overlap between two AO Gaussians is insignificant, then it becomes unnecessary to compute any shell triplet featuring
@@ -11,9 +11,9 @@ Utilizing this pairwise sparsity requires only an estimation of the significant 
 Once this spatial sparsity is applied and insignificant AO function pairs are screened, the complexity of 
 computing the 3-center integrals becomes $\mathcal{O}(N_{aux}N_{AO}^{1-2})$, where the lower bound is achieved for sufficiently 
 sparse systems. Another type of spatial sparsity in (1.6) involves the auxiliary function, which is more complicated to 
-take advantage of. see Ref. \cite{ref5}. In this thesis, I focus on the former, pairwise sparsity which is featured
+utilize; see Ref. \cite{ref5}. In this thesis, I focus on the former, pairwise sparsity which is featured
 in the product $\mu(\textbf{r}_{1}) \nu(\textbf{r}_{1})$. 
-Utilizing this sparsity not only speeds up the computation of the three-index integrals, but stored in a sparse format,
+Utilizing this sparsity not only speeds up the computation of the three-index integrals, but when the integrals are stored in a sparse format,
 then this sparsity can be utilized in later operations such as the fitting metric contraction and basis transformations.
 
 \section{Sparsity Masks}
@@ -25,20 +25,22 @@ The superscript $b$ reminds the reader that the structure is of Boolean type.
 The element $S_{\mu \nu}^b$ will be true if the product $\mu(r)\nu(r)$ is estimated to be significant 
 and false otherwise.
 
-For efficiency, it is common to compute batches of integrals in \textit{shell triples}: 
+For efficiency, it is common to compute batches of density fitted integrals in \textit{shell triples}: 
 \begin{align} 
-(M N | Q) = \{(\mu \nu|P), \mu \in M, \nu \in N, Q \in P\} 
+(M N | Q) = \{(\mu \nu|P), \mu \in M, \nu \in N, Q \in P\}, 
 \end{align} 
 
-\noindent An individual integral $(\mu \nu | P)$ is bounded by the Schwarz inequality $(\mu \nu | P) \leq 
-\sqrt{(\mu \nu | \mu \nu)(P|P)}$. We can eliminate entire shells of integrals , $(MN|P)$, where $M$ and $N$ denote AO shells, by computing
+\noindent where $M$ and $N$ denote shells of AO functions, and $P$ denotes a shell of auxiliary basis functions. 
+A shell is simply a collection of all angular momentum components of a given radial function, e.g., $p_x$, $p_y$, $p_z$ for $p$ shell. 
+An individual integral $(\mu \nu | P)$ is bounded by the Schwarz inequality $(\mu \nu | P) \leq 
+\sqrt{(\mu \nu | \mu \nu)(P|P)}$. We can eliminate entire shells of integrals , $(MN|P)$, by computing
 and storing the maximum $(\mu \nu | \mu \nu)$ that occurs for a given shell $\mu \in M, \nu \in N$. We use a relative cutoff tolerance
 $\tau$ and neglect shells for which 
 \begin{align}
-MN_{max} < \frac{\tau^2}{(\mu \nu | \mu \nu)_{max}},
+(MN)_{max} < \frac{\tau^2}{(\mu \nu | \mu \nu)_{max}},
 \end{align}
 
-\noindent where $MN_{max}$ is the maximum $(\mu \nu | \mu \nu)$
+\noindent where $(MN)_{max}$ is the maximum $(\mu \nu | \mu \nu)$
 within a shell pair $(M, N)$ and $(\mu \nu | \mu \nu)_{max}$ is the global maximum $(\mu \nu | \mu \nu)$. In addition, even for shell pairs
 that are not screened out, we can apply function-level screening and avoid computation of $(\mu \nu | P)$, where
 \begin{align}
@@ -94,12 +96,14 @@ systems.
 
 The transformation of $A_{\mu \nu}^P$ (or $B_{\mu \nu^\nu}^Q$) from the AO basis to the MO basis is 
 an essential operation for many quantum 
-chemistry procedures. The operation requires two MO matrices: $C_{\mu p}, C_{\nu q}$, where $p, q$ are general MO space
-indices. A first contraction $A_{p \nu}^P=A_{\mu \nu}^PC_{\mu p}$ will half-transform the integrals and costs 
+chemistry procedures. The operation requires two MO matrices: $C_{\mu p}, C_{\nu q}$, where $p, q$ are MO space
+indices. These matrices will be identical if $p$ and $q$ run over the full space of MOs, but could be different if $p$ and $q$
+belong to two different subests of MOs (e.g., occupied orbitals and unoccupied orbitals).
+A first contraction $A_{p \nu}^P=A_{\mu \nu}^PC_{\mu p}$ will half-transform the integrals and costs 
 $\mathcal{O}(N_{aux}N_{AO}^2N_p)$. The second contraction $A_{p q}^P=A_{p \nu}^PC_{\nu q}$ will cost
 $\mathcal{O}(N_{aux}N_{AO}N_pN_q)$.
 Note the first contraction should involve the smaller of $N_p$ and $N_q$ in order to reduce complexity. Also, the first contraction
-is comparably more expensive than the latter since the size of the AO space is larger than most MO spaces. Therefore,
+is comparably more expensive than the latter since the size of the AO space is larger than any MO space. Therefore,
 reducing the cost of the first contraction would alleviate a bottleneck overall. 
 Thankfully, we can exploit the sparsity of $A_{\mu \nu^\mu}^P$.
 To do so, we carry out a looping DGEMM through the $\mu$ index and apply the sparsity mask to the orbital matrix $C_{\mu p}$.
@@ -121,7 +125,7 @@ Algorithm 2 illustrates the resulting process:
 
 \section{Results}
 
-All methods were implemented in the {\sc Psi4} electronic structure software package.
+All methods were implemented in the {\sc Psi4} electronic structure software package \cite{Parrish:2017:3185}.
 The parallelism in {\sc Psi4} relies on the shared memory programming model using OpenMP 
 and carries out matrix multiplications using Intel's Math Kernel
 Library. 
@@ -138,7 +142,7 @@ transformation, as would be required by density-fitted MP2:
 \end{align}
 
 \noindent Where $i, j$ and $a, b$ denote occupied and virtual spaces, respectively. 
-Algorithm 4 was implemented and used to carry out these transformations.
+Algorithm 2 was implemented and used to carry out these transformations.
 The cc-pVTZ and cc-pVTZ-jkfit basis sets were used for primary 
 and auxiliary basis sets, respectively. The characteristics
 of each system are listed in Table 2.1. The mask sparsity listed in Table 2.1 refers to the percentage of non-significant AO function pairs appearing in the sparsity mask.
@@ -214,7 +218,7 @@ Clearly, Figure 2.2 reveals significant time reductions for all procedures measu
 Table 2.2 reinforces that operations with higher complexity scaling have the largest time
 reduction, with the caveat that total transformation time includes portions without sparsity utilization.
 In the integral computations (Figure 2.2 (a)), we construct the sparse integrals using
-function screening; however, we still compute them in shell triplets for efficiency.
+function screening; however, we still compute them in shells for efficiency.
 Therefore the acquired speedup is slightly less dramatic compared to the metric contraction and
 transformation procedures (Figure 2.2 (b) and (c), respectively) due to select functions being 
 screened in cases where the entire shell is not screened. 
@@ -223,8 +227,8 @@ highlight the boon of sparsity utilization and in another part
 illustrate the pertinence of our workflow investigation in Chapter 3 of this thesis.
 Last, our proposal outlined in Algorithm 2 for applying sparsity screening to integral transformations
 is proven viable by Figure 2.2 (c). Note that significant reductions are obtained for the
-first transformation; however, the sparsity thereafter is unrelated to the initial sparsity
-mask. With sparsity utilization, the first step scales as $\mathcal{O}(N_{aux}N_{AO}^{1-2}p)$,
+first transformation; however, the sparsity mask constructed is not helpful for the second transformation step.
+With sparsity utilization, the first step scales as $\mathcal{O}(N_{aux}N_{AO}^{1-2}p)$,
 whereas the second transformation step will still scale as $\mathcal{O}(N_{aux}N_pN_q)$.
 In this work we have not gone on to consider sparsity of the MO indices, which would 
 typically require transformation to local orbitals.

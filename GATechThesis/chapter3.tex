@@ -2,20 +2,20 @@
 
 \section{A Note on Disk-bound Index Blocking}
 
-The size of tensors grow rapidly in quantum chemistry. The 3-center integrals of density fitting are no exception.
+The size of tensors grows rapidly in quantum chemistry. The 3-center integrals of density fitting are no exception.
 Often, the size of the AO three-index integrals will exceed 64GB of RAM for small systems when
-a moderate basis set such as aug-cc-pVQZ is used, even with sparsity screening. Table 3.1 illustrates this point by listing
-the total memory required for sparse three-index AO integrals for adenine-thymine dimer across various a basis sets. Once the memory required
+a large basis set such as aug-cc-pVQZ is used, even with sparsity screening. Table 3.1 illustrates this point by listing
+the total memory required for sparse three-index AO integrals for the adenine-thymine dimer across various a basis sets. Once the memory required
 exceeds what is available, it is necessary for
 any implementation to begin reading and writing these tensors to and from disk-based memory. For any field this can
-be a major slowdown, but it is especially critical to performance when high-dimensional data is involved. To illustrate
-this issue, we will introduce an adapted tensor notation which better indicates memory layout.
+be a major slowdown, but it is especially critical to performance when high-dimensional data is involved. 
 
 \begingroup
 \begin{table}[H]
 \centering
 \renewcommand{\baselinestretch}{1}
-\caption{Total memory required for sparse three-index AO integrals for adenine-thymine dimer across various basis sets.}
+\caption{Total memory required for sparse three-index AO integrals for adenine-thymine dimer across various basis sets.
+The JK type auxiliary basis sets were used.}
 \begin{tabular}{l ccc}
 \multicolumn{1}{l}{\textbf{Basis}} &
 \multicolumn{1}{c}{\textbf{Memory Required}} &
@@ -36,6 +36,8 @@ aug-cc-pV5Z  &    316.1GB   &    3293  &     5014\\
 \end{table}
 \endgroup
 
+To illustrate
+this issue, we will introduce an adapted tensor notation which better indicates memory layout.
 We denote an $n$-dimensional tensor as $T_{ab\hdots n}$, where the indices from left to right go from the slowest-running
 to the fastest-running indices. Here, $a$ is the slowest-running index, $b$ is the next slowest-running
 index, and $n$ is the fastest-running index. The choice of memory layout plays a crucial role when indices are being accessed.
@@ -44,12 +46,12 @@ of the fastest-running index, $n$, are contiguous in memory.
 
 Now, we can consider two possible forms for the three-center integrals: $A_{P\mu\nu}$ or $A_{\mu P\mu}$.
 If these tensors are too large to fit into memory, we must read and write pieces of them to and from disk-based memory.
-To accomplish this, we must choose an index to block across. Primarily, this will involve either the $P$ or $\mu$ index.
-For example, if we choose to block across the $P$ index, then we will partition the basis of $P$ into discrete blocks: $P_i \in P$.
-Then, we will read and write only those blocks of $P$ along with all of $\mu$ and $\nu$.
+To accomplish this, we must choose an index to block across. 
+For example, if we choose to block across the $P$ index, then we will partition the basis of $P$ into discrete blocks: $P_i \in \{P\}$.
+Then, we will read and write only those blocks of $P$ along with all of $\mu$ and $\nu$ for that given block.
 The latency of these operations is
 bounded by the movement of a physical read-write head, so it is critically important to ensure that read and writes are as
-contiguous as possible. In the case of $P$ blocking, the $A_{P\mu\nu}$ tensor is far superior to $A_{\mu P\mu}$ since the 
+contiguous as possible. In the case of $P$ blocking, the $A_{P\mu\nu}$ tensor is far superior to $A_{\mu P \nu}$ since the 
 former will yield entirely contiguous operations whereas the latter will require strided operations. 
 
 Unfortunately, within the density fitting regime, different operations are optimal under different blocking schemes. For example,
@@ -62,10 +64,11 @@ that block across either index, respectively:
 \caption{Construct the full AO integrals $B_{\mu \nu}^P$ by blocking across the $P$ index.}
 \begin{algorithmic}
 \REQUIRE Coulomb metric: $[J]_{PQ}^{-\frac{1}{2}}$
+\STATE Initialize: $B_{\mu \nu}^Q$ = 0
 \FOR {block $P_i \in P$}  
     \STATE Compute:  $A_{\mu \nu}^{P_i}$
     \STATE Contract: $A_{\mu \nu}^{P_i} [J]_{P_iQ}^{-\frac{1}{2}} \rightarrow B_{\mu \nu}^Q$
-    \STATE Reduction Write:    $B_{\mu \nu}^Q$
+    \STATE Write:    $B_{\mu \nu}^Q$ 
 \ENDFOR
 \RETURN $B_{\mu \nu}^Q$
 \end{algorithmic}
@@ -99,7 +102,8 @@ Although utilizing sparsity is imperative for cost reduction, an optimal impleme
 fully exploit modern computing hardware.
 Multi-core processors consisting of upwards of ten cores are found commonly both at the desk of computational
 chemists and in commodity computing clusters.
-Moreover, the birth of Intel's manycore architecture further necessitates that scientific computing
+Moreover, the birth of Intel's manycore architecture , and the advent of Graphics Processign Units (GPUs), 
+further necessitate that scientific computing
 exploit every means of parallelism.
 Although the density fitting technique has been shown to be challenging to exploit in massively parallel
 algorithms \cite{ref3}, it remains an essential technique for accelerating computations of 
@@ -113,7 +117,7 @@ Maximizing parallelism in Algorithm 2 will require careful implementation design
 The choice of memory layout for the sparse 3-dimensional integral tensors will affect both algorithmic 
 complexity and parallel scalability. For the three-center integrals, we use $A_{P\mu \nu}$ to denote a memory 
 layout with the auxiliary index $P$ as the slowest-running index. 
-The $A_{P \mu \nu}$ layout is intuitive, as it allows looping through $P$ and directly apply a sparsity mask 
+The $A_{P \mu \nu}$ layout is intuitive, as it allows looping through $P$ and direct application sparsity mask 
 for each submatrix. The resulting sparse form $A_{P \mu \nu^\mu}$ contains submatrices of identical structure.
 However, another form, $A_{\mu P \nu}$, must be considered. The sparse form $A_{\mu P \nu^\mu}$
 results in submatrices of differing sizes. However, some advantages may be ascertained.
@@ -126,8 +130,10 @@ Algorithms 5 and 6 illustrate the difference:
 \begin{algorithmic}
 \REQUIRE Sparse AO integrals: $A_{P \mu \nu^\mu}$, orbital matrices: $C_{\mu p}, C_{\nu q}$, screening mask: $S_{\mu \nu}^b$
 \FOR {$P = 0$ to $P = N_{aux}-1$}
-    \STATE Trim from dense to sparse: $C_{\nu q}S_{\mu \nu}^b \rightarrow C_{\nu^{\mu} q}$
-    \STATE $A_{P \mu \nu^\mu} C_{\nu^{\mu} p} \rightarrow A_{P \mu p}$
+    \FOR {$\mu = 0$ to $\mu = N_{AO}-1$}  
+        \STATE Trim from dense to sparse: $C_{\nu q}S_{\mu \nu}^b \rightarrow C_{\nu^{\mu} q}$
+        \STATE $A_{P \mu \nu^\mu} C_{\nu^{\mu} p} \rightarrow A_{P \mu p}$
+    \ENDFOR
 \ENDFOR
 \RETURN $A_{P \mu p}$
 \STATE Final transform: $A_{P \mu q}C_{\mu p} \rightarrow A_{P p q}$
@@ -174,7 +180,7 @@ we propose that it will yield enhanced parallel scaling.
 \section{Context Dependent Workflows}
 
 Equation (1.9) demonstrates the necessity of the fitting metric when using the 3-center density-fitted integrals. Unfortunately, the
-metric contraction in equation (1.9) comes at the heavy price of $\mathcal{O}(N_{aux}^2N^2)$ operations.
+metric contraction in equation (1.9) comes at the heavy price of $\mathcal{O}(N_{aux}^2N_{AO}^2)$ operations.
 Considering that $N_{aux}$ can be 2-3x larger
 than $N_{AO}$, this can be an extremely costly operation. One remedy for cost reduction is to transform the 3-center integrals prior to contracting
 them with the metric:
@@ -192,7 +198,8 @@ Orbital indices $i,j$ denote occupied spaces and $a,b$ denote virtual spaces.
 \begin{table}[H]
 \centering
 \renewcommand{\baselinestretch}{1}
-\caption{Speedups obtainable via pre-transforming the 3-center integrals prior to metric contraction for common occupied-virtual transformations.}
+\caption{Speedups obtainable via pre-transforming the 3-center integrals prior to metric contraction for common occupied-virtual transformations.
+$N_{AO}$ and $N_i$ denote the number of atomic orbitals and occupied molecular orbitals, respectively. }
 \begin{tabular}{l c c c}
 \multicolumn{1}{l}{\textbf{Transformation}} &
 \multicolumn{1}{c}{\textbf{$\frac{N_{AO}}{N_i}=2$}} & 
@@ -240,15 +247,16 @@ out 3-center integral transformations. Algorithm 7 and 8 illustrate the correspo
 \end{algorithmic}
 \end{algorithm}
 
-\noindent Hereafter we refer to the Store algorithm being the workflow which contracts the metric and then transforms the integrals. Conversely, 
-we refer to the Direct algorithm as the workflow which transforms the integrals then contracts the metric. 
+\noindent Hereafter we refer to the Store algorithm being the workflow that contracts the metric and then transforms the integrals. Conversely, 
+we refer to the Direct algorithm as the workflow that transforms the integrals then contracts the metric. 
 
 Depending on the context, either the Store or Direct algorithm may be superior. We propose the Store algorithm 
 will be superior for procedures requiring
-many transformations. This includes contexts which iteratively recompute transformations, such as DFMCSCF \cite{??}, as well as contexts 
-involving a large number of transformations spaces, such as FSAPT and USAPT \cite{ref6} \cite{ref7}. 
+many transformations. This includes contexts which iteratively recompute transformations, such as density-fitted multiconfigurational self-consisten-field (DFMCSCF) \cite{??}, 
+as well as contexts 
+involving a large number of transformations spaces, such as density-fitted symmetry-adapted perturbation theory (SAPT) \cite{ref6} \cite{ref7}. 
 Conversely, the Direct algorithm will be superior in contexts requiring a small number of transformations. Most notably, 
-this includes DFMP2 \cite{ref4}.
+this includes density-fitted second-order M{\o}ller-Plesset perturbation theory (DFMP2) \cite{ref4}.
 
 %
 %\section{Disk IO considerations for transformed integrals}
@@ -258,15 +266,17 @@ this includes DFMP2 \cite{ref4}.
 
 \section{Intermediate Recycling}
 
-Most often, quantum chemistry procedures will require numerous integral transformations. For example, a USAPT procedure will employ
-upwards of 24 unique integral transformations. Since all transformations are carried out at the same time, one should build an 
+Quantum chemistry procedures can require numerous integral transformations. For example, an unrestricted Hartree-Fock (UHF) based SAPT
+procedure will employ
+24 unique integral transformations. Since all transformations are carried out at the same stage of the computation, one should build an 
 implementation that queues the transformations, gathers information, and deploys strategic contraction paths.
 As mentioned previously, the first contraction of these integral transformations $A_{p \nu}^P=A_{\mu \nu}^PC_{\mu p}$ 
 should always be carried out on the smallest MO index $p$ 
 possible. Thereafter, transformations using the same intermediate, $A_{p \nu}^P$, should all occur at the same time to avoid
 recomputing $A_{p \nu}^P$. 
-For example, if two sets of transformed integrals are required $A^P_{u v}, A^P_{up}$ where $u,v << N$ are active 
-indices and $p$ is a general MO index where $N_p \approx N_{AO}$. For both transformations, the first step will be:
+For example, suppose two sets of transformed integrals are required, $A^P_{u v}$ and$A^P_{up}$, where $u,v << N$ are
+indices restricted to some small "active" subspace of MOs
+and $p$ is a general MO index where $N_p \approx N_{AO}$. For both transformations, the first step will be:
 \begin{align} 
 A^P_{\mu \nu}C_{\mu u} \rightarrow A^P_{u \nu} 
 \end{align}
@@ -288,7 +298,7 @@ Library.
 \subsection{Parallel Scaling of Transformations}
 
 To measure parallel scaling, we performed integral transformations for the boron catalyst system shown in Figure 3.1. 
-We varied the problem size by adjusting the $\zeta$ level for the Dunning basis sets with $\zeta$ = D, T, Q.
+We varied the problem size by adjusting the $\zeta$ level for the Dunning correlation-consistent basis sets with $\zeta$ = D, T, Q.
 The characteristics of these systems are included in Table 4. Note that while parallel scaling typically improves
 for larger systems (i.e. due to larger workloads),
 this is not guaranteed in a sparsity regime. Larger systems may contain more sparsity;
@@ -298,7 +308,7 @@ obtaining maximum parallel efficiency.
 
 \begin{figure}[H] 
 \centering
-\includegraphics[width=80mm]{geometries/boron_catalyst.png} \caption{Transition state for organoboron addition to trifluooroacetone. Taken from Ref. \cite{???Lec:2016:768}} 
+\includegraphics[width=80mm]{geometries/boron_catalyst.png} \caption{Transition state for organoboron addition to trifluooroacetone. Taken from Ref. \cite{Lee:2016}} 
 \label{fig:databases} \end{figure}
 
 \begingroup
@@ -306,11 +316,11 @@ obtaining maximum parallel efficiency.
 \centering
 \renewcommand{\baselinestretch}{1}
 \caption{Characteristics of organoboron catalyst.
-$N$ and $N_{aux}$ refer to the number of primary and auxiliary basis functions, respectively.
+$N_{AO}$ and $N_{aux}$ refer to the number of primary and auxiliary basis functions, respectively.
 Mask sparsity refers to the percentage of significant AO function pairs in the sparsity mask.}
 \begin{tabular}{l ccc}
 \multicolumn{1}{l}{\textbf{Basis}} &
-\multicolumn{1}{c}{\textbf{$N$}} &
+\multicolumn{1}{c}{\textbf{$N_{AO}$}} &
 \multicolumn{1}{c}{\textbf{$N_{aux}$}} &
 \multicolumn{1}{c}{\textbf{Mask Sparsity (\%)}} \\
 \hline
@@ -325,13 +335,14 @@ cc-pVQZ   & 3040 & 5593 & 50.2 \\
 \noindent For each system, we performed the three common transformations:
 
 \begin{align} 
-(i j | Q) = (\lambda \sigma | Q) C_{\sigma i} C_{\lambda j} \\
-(i b | Q) = (\lambda \sigma | Q) C_{\sigma i} C_{\lambda b} \\
-(a b | Q) = (\lambda \sigma | Q) C_{\sigma a} C_{\lambda b} 
+(i j | Q) = (\lambda \sigma | Q) C_{\sigma i} C_{\lambda j} , \\
+(i b | Q) = (\lambda \sigma | Q) C_{\sigma i} C_{\lambda b} , \\
+(a b | Q) = (\lambda \sigma | Q) C_{\sigma a} C_{\lambda b} , 
 \end{align}
 
-\noindent The experiment was carried out using one node consisting of an Intel Xeon E5-2630 processor 
-(10 cores at 2.20GHz) and 24GB DRAM. Figure 4 includes plots of both speedups and execution times for each system.
+\noindent where $i$ and $j$ refer to occupied orbitals,a nd $a$ and $b$ refer to unoccupied orbitals.
+The experiment was carried out using one node consisting of an Intel Xeon E5-2630 processor 
+(10 cores at 2.20GHz) and using 24GB DRAM. Figure 4 includes plots of both speedups and execution times for each system.
 
 \begin{figure}[H]
   \centering
@@ -347,11 +358,12 @@ cc-pVQZ   & 3040 & 5593 & 50.2 \\
   \hfill
   \subfloat[]{\includegraphics[width=0.5\textwidth]{figures/parallel_scaling_plots/times-cc-pVQZ.png}\label{fig:f2}}
   \hfill
-  \caption{Speedup and execution time plots obtained using our optimized memory layout, $B_{\mu P \nu^\nu}$, 
+  \caption{Speedup and execution time plots obtained using our optimized memory layout, $B_{\mu P \nu^\mu}$, 
  for sparsity screened 3-center integrals. 
  Execution times involve computing three common transformation classes: $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$,
  where $i,j$ and $a,b$ denote occupied and virtual indices, respectively. Graphs (a), (c), and (e) include speedups for constructing the integrals (orange),
- transforming (blue), total time (red), and ideal (black). Graphs (b), (d), and (f) plot total execution times. Problem sizes were increased by increasing basis set size
+ transforming (blue), total time (red), and ideal (black). Graphs (b), (d), and (f) plot total execution times. Construction times include both integral computations
+ and metric contractions. Problem sizes were increased by increasing basis set size
  using cc-pVXZ, X = D,T,Q.}
 \end{figure}
 
@@ -387,7 +399,7 @@ The experiments were carried out using one node consisting of an Intel Core i7-5
 \caption{Characteristics of organoboron catalyst systems across the cc-pVDZ, cc-pVTZ, and cc-pVQZ basis sets.}
 \begin{tabular}{l cccc}
 \multicolumn{1}{l}{\textbf{Basis}} &
-\multicolumn{1}{c}{\textbf{$N$}} &
+\multicolumn{1}{c}{\textbf{$N_{AO}$}} &
 \multicolumn{1}{c}{\textbf{$N_{aux}$}} &
 \multicolumn{1}{c}{\textbf{$N_{occ}$}} &
 \multicolumn{1}{c}{\textbf{$N_{virt}$}} \\
@@ -419,7 +431,7 @@ cc-pVQZ   & 3040 & 5593      & 129       & 2911       \\
   \subfloat[]{\includegraphics[width=0.35\textwidth]{figures/workflow_plots/input2-cc-pVQZ.png}}
   %\hfill
   \subfloat[]{\includegraphics[width=0.35\textwidth]{figures/workflow_plots/input3-cc-pVQZ.png}}
-  \caption{Comparison of execution times for the Store and Direct algorithms to complete $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$ transformations
+  \caption{Comparison of total execution times for the Store and Direct algorithms to complete $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$ transformations
 across the cc-pVDZ, cc-pVTZ, and cc-pVQZ basis sets. A scan from one to ten transformations was performed. In each case, a crossover
 occurs as the Direct algorithm becomes more expensive. The crossover occurs in fewer iterations for transformations involving larger MO spaces.
 With increasing basis set size, the crossover point is shifted to the right for the $(ij|Q)$ and $(ib|Q)$
@@ -432,8 +444,8 @@ number of transformations increase, the expense of these contractions
 overtakes the speedups of pre-transforming the integrals. Note that a crossover between the two algorithms occurs in each system. 
 This finding supports our conjecture that the Store algorithm is advantageous in contexts where many transformations occur. 
 This includes iterative methods where the transformations
-are carried out in each iteration, such as MCSCF, as well as methods which require many transformations, such as FSAPT and 
-USAPT. Conversely, the Direct algorithm is advantageous for methods
+are carried out in each iteration, such as MCSCF, as well as methods which require many transformations, such as SAPT.
+Conversely, the Direct algorithm is advantageous for methods
 requiring few transformations, such as DFMP2.
 
 Additionally, the crossover point shifts to the left as the transformation spaces get larger ($ij, ia, ab$), occuring in fewer transformations.

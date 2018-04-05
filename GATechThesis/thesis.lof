@@ -18,47 +18,47 @@
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Transition state for organoboron addition to trifluooroacetone. Taken from Ref. \cite {???Lec:2016:768}\relax }}{23}{figure.caption.10}
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Transition state for organoboron addition to trifluooroacetone. Taken from Ref. \cite {Lee:2016}\relax }}{23}{figure.caption.10}
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Speedup and execution time plots obtained using our optimized memory layout, $B_{\mu P \nu ^\nu }$, for sparsity screened 3-center integrals. Execution times involve computing three common transformation classes: $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$, where $i,j$ and $a,b$ denote occupied and virtual indices, respectively. Graphs (a), (c), and (e) include speedups for constructing the integrals (orange), transforming (blue), total time (red), and ideal (black). Graphs (b), (d), and (f) plot total execution times. Problem sizes were increased by increasing basis set size using cc-pVXZ, X = D,T,Q.\relax }}{24}{figure.caption.12}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Speedup and execution time plots obtained using our optimized memory layout, $B_{\mu P \nu ^\mu }$, for sparsity screened 3-center integrals. Execution times involve computing three common transformation classes: $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$, where $i,j$ and $a,b$ denote occupied and virtual indices, respectively. Graphs (a), (c), and (e) include speedups for constructing the integrals (orange), transforming (blue), total time (red), and ideal (black). Graphs (b), (d), and (f) plot total execution times. Construction times include both integral computations and metric contractions. Problem sizes were increased by increasing basis set size using cc-pVXZ, X = D,T,Q.\relax }}{25}{figure.caption.12}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{24}{subfigure.2.1}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{25}{subfigure.2.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{24}{subfigure.2.2}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{25}{subfigure.2.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{24}{subfigure.2.3}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{25}{subfigure.2.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{24}{subfigure.2.4}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{25}{subfigure.2.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {}}}{24}{subfigure.2.5}
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {}}}{25}{subfigure.2.5}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {}}}{24}{subfigure.2.6}
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {}}}{25}{subfigure.2.6}
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Comparison of execution times for the Store and Direct algorithms to complete $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$ transformations across the cc-pVDZ, cc-pVTZ, and cc-pVQZ basis sets. A scan from one to ten transformations was performed. In each case, a crossover occurs as the Direct algorithm becomes more expensive. The crossover occurs in fewer iterations for transformations involving larger MO spaces. With increasing basis set size, the crossover point is shifted to the right for the $(ij|Q)$ and $(ib|Q)$ transformations and it is shifted slightly to the left for the $(ab|Q)$ transformation.\relax }}{26}{figure.caption.14}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Comparison of execution times for the Store and Direct algorithms to complete $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$ transformations across the cc-pVDZ, cc-pVTZ, and cc-pVQZ basis sets. A scan from one to ten transformations was performed. In each case, a crossover occurs as the Direct algorithm becomes more expensive. The crossover occurs in fewer iterations for transformations involving larger MO spaces. With increasing basis set size, the crossover point is shifted to the right for the $(ij|Q)$ and $(ib|Q)$ transformations and it is shifted slightly to the left for the $(ab|Q)$ transformation.\relax }}{27}{figure.caption.14}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{26}{subfigure.3.1}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{27}{subfigure.3.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{26}{subfigure.3.2}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{27}{subfigure.3.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{26}{subfigure.3.3}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {}}}{27}{subfigure.3.3}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{26}{subfigure.3.4}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {}}}{27}{subfigure.3.4}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {}}}{26}{subfigure.3.5}
+\contentsline {subfigure}{\numberline {(e)}{\ignorespaces {}}}{27}{subfigure.3.5}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {}}}{26}{subfigure.3.6}
+\contentsline {subfigure}{\numberline {(f)}{\ignorespaces {}}}{27}{subfigure.3.6}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(g)}{\ignorespaces {}}}{26}{subfigure.3.7}
+\contentsline {subfigure}{\numberline {(g)}{\ignorespaces {}}}{27}{subfigure.3.7}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(h)}{\ignorespaces {}}}{26}{subfigure.3.8}
+\contentsline {subfigure}{\numberline {(h)}{\ignorespaces {}}}{27}{subfigure.3.8}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(i)}{\ignorespaces {}}}{26}{subfigure.3.9}
+\contentsline {subfigure}{\numberline {(i)}{\ignorespaces {}}}{27}{subfigure.3.9}
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Systems used for context dependent investigation of the Store and Direct workflows. (a) Hexatriene. (b) Benzene and toluene in 20 water solvent molecules. \relax }}{28}{figure.caption.15}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Systems used for context dependent investigation of the Store and Direct workflows. (a) Hexatriene. (b) Benzene and toluene in 20 water solvent molecules. \relax }}{29}{figure.caption.15}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{28}{subfigure.4.1}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{29}{subfigure.4.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{28}{subfigure.4.2}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{29}{subfigure.4.2}
 \defcounter {refsection}{0}\relax 
 \addvspace {10\p@ }
 \defcounter {refsection}{0}\relax 

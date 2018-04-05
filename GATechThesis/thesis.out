@@ -21,5 +21,7 @@
 \BOOKMARK [0][-]{chapter.4}{Evaluating Coulomb and Exchange Matrices}{}% 21
 \BOOKMARK [1][-]{section.4.1}{Coulomb and Exchange Evaluations}{chapter.4}% 22
 \BOOKMARK [1][-]{section.4.2}{Results}{chapter.4}% 23
-\BOOKMARK [0][-]{chapter.5}{Conclusions}{}% 24
-\BOOKMARK [0][-]{chapter*.21}{References}{}% 25
+\BOOKMARK [2][-]{subsection.4.2.1}{Multi-core Results}{section.4.2}% 24
+\BOOKMARK [2][-]{subsection.4.2.2}{Manycore Results}{section.4.2}% 25
+\BOOKMARK [0][-]{chapter.5}{Conclusions}{}% 26
+\BOOKMARK [0][-]{chapter*.23}{References}{}% 27
