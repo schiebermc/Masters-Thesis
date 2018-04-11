@@ -42,10 +42,10 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {section}{\numberline {4.2}Results}{37}{section.4.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {4.2.1}Multi-core Results}{37}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.1}Multi-core Results}{38}{subsection.4.2.1}
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {4.2.2}Manycore Results}{41}{subsection.4.2.2}
+\contentsline {subsection}{\numberline {4.2.2}Manycore Results}{42}{subsection.4.2.2}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{\numberline {5}Conclusions}{43}{chapter.5}
+\contentsline {chapter}{\numberline {5}Conclusions}{44}{chapter.5}
 \defcounter {refsection}{0}\relax 
-\contentsline {chapter}{References}{45}{chapter*.23}
+\contentsline {chapter}{References}{46}{chapter*.23}

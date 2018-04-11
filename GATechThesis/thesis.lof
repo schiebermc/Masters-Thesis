@@ -34,7 +34,7 @@
 \defcounter {refsection}{0}\relax 
 \contentsline {subfigure}{\numberline {(f)}{\ignorespaces {}}}{25}{subfigure.2.6}
 \defcounter {refsection}{0}\relax 
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Comparison of execution times for the Store and Direct algorithms to complete $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$ transformations across the cc-pVDZ, cc-pVTZ, and cc-pVQZ basis sets. A scan from one to ten transformations was performed. In each case, a crossover occurs as the Direct algorithm becomes more expensive. The crossover occurs in fewer iterations for transformations involving larger MO spaces. With increasing basis set size, the crossover point is shifted to the right for the $(ij|Q)$ and $(ib|Q)$ transformations and it is shifted slightly to the left for the $(ab|Q)$ transformation.\relax }}{27}{figure.caption.14}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Comparison of total execution times for the Store and Direct algorithms to complete $(ij|Q)$, $(ib|Q)$, and $(ab|Q)$ transformations across the cc-pVDZ, cc-pVTZ, and cc-pVQZ basis sets. A scan from one to ten transformations was performed. In each case, a crossover occurs as the Direct algorithm becomes more expensive. The crossover occurs in fewer iterations for transformations involving larger MO spaces. With increasing basis set size, the crossover point is shifted to the right for the $(ij|Q)$ and $(ib|Q)$ transformations and it is shifted slightly to the left for the $(ab|Q)$ transformation.\relax }}{27}{figure.caption.14}
 \defcounter {refsection}{0}\relax 
 \contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{27}{subfigure.3.1}
 \defcounter {refsection}{0}\relax 

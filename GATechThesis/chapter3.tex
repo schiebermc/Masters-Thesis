@@ -65,7 +65,7 @@ that block across either index, respectively:
 \begin{algorithmic}
 \REQUIRE Coulomb metric: $[J]_{PQ}^{-\frac{1}{2}}$
 \STATE Initialize: $B_{\mu \nu}^Q$ = 0
-\FOR {block $P_i \in P$}  
+\FOR {block $P_i \in \{P\}$}  
     \STATE Compute:  $A_{\mu \nu}^{P_i}$
     \STATE Contract: $A_{\mu \nu}^{P_i} [J]_{P_iQ}^{-\frac{1}{2}} \rightarrow B_{\mu \nu}^Q$
     \STATE Write:    $B_{\mu \nu}^Q$ 
@@ -78,7 +78,7 @@ that block across either index, respectively:
 \caption{Construct the full AO integrals $B_{\mu \nu}^P$ by blocking across the $\mu$ index.}
 \begin{algorithmic}
 \REQUIRE Coulomb metric: $[J]_{PQ}^{-\frac{1}{2}}$
-\FOR {block $\mu_i \in \mu$}  
+\FOR {block $\mu_i \in \{\mu\}$}  
     \STATE Compute:  $A_{\mu^i \nu}^{P}$
     \STATE Contract: $A_{\mu^i \nu}^{P}[J]_{PQ}^{-\frac{1}{2}} \rightarrow B_{\mu_i \nu}^Q$
     \STATE Write:    $B_{\mu_i \nu}^Q$
@@ -102,7 +102,7 @@ Although utilizing sparsity is imperative for cost reduction, an optimal impleme
 fully exploit modern computing hardware.
 Multi-core processors consisting of upwards of ten cores are found commonly both at the desk of computational
 chemists and in commodity computing clusters.
-Moreover, the birth of Intel's manycore architecture , and the advent of Graphics Processign Units (GPUs), 
+Moreover, the birth of Intel's manycore architecture , and the advent of Graphics Processing Units (GPUs), 
 further necessitate that scientific computing
 exploit every means of parallelism.
 Although the density fitting technique has been shown to be challenging to exploit in massively parallel
@@ -252,9 +252,10 @@ we refer to the Direct algorithm as the workflow that transforms the integrals t
 
 Depending on the context, either the Store or Direct algorithm may be superior. We propose the Store algorithm 
 will be superior for procedures requiring
-many transformations. This includes contexts which iteratively recompute transformations, such as density-fitted multiconfigurational self-consisten-field (DFMCSCF) \cite{??}, 
+many transformations. This includes contexts which iteratively recompute transformations, such as density-fitted 
+multiconfigurational self-consistent field (DFMCSCF) \cite{Hohenstein:2015:224103}, 
 as well as contexts 
-involving a large number of transformations spaces, such as density-fitted symmetry-adapted perturbation theory (SAPT) \cite{ref6} \cite{ref7}. 
+involving a large number of transformations spaces, such as density-fitted symmetry-adapted perturbation theory (SAPT) \cite{ref6, ref7}. 
 Conversely, the Direct algorithm will be superior in contexts requiring a small number of transformations. Most notably, 
 this includes density-fitted second-order M{\o}ller-Plesset perturbation theory (DFMP2) \cite{ref4}.
 
@@ -289,7 +290,7 @@ which as $N_p \rightarrow N_{AO}$ approaches
 
 \section{Results}
 
-All methods were implemented in the {\sc Psi4} electronic structure software package.
+All methods were implemented in the {\sc Psi4} electronic structure software package \cite{Parrish:2017:3185}.
 The parallelism in {\sc Psi4} relies on the shared memory programming model using OpenMP 
 and carries out matrix multiplications using Intel's Math Kernel
 Library. 
@@ -340,7 +341,7 @@ cc-pVQZ   & 3040 & 5593 & 50.2 \\
 (a b | Q) = (\lambda \sigma | Q) C_{\sigma a} C_{\lambda b} , 
 \end{align}
 
-\noindent where $i$ and $j$ refer to occupied orbitals,a nd $a$ and $b$ refer to unoccupied orbitals.
+\noindent where $i$ and $j$ refer to occupied orbitals, and $a$ and $b$ refer to unoccupied orbitals.
 The experiment was carried out using one node consisting of an Intel Xeon E5-2630 processor 
 (10 cores at 2.20GHz) and using 24GB DRAM. Figure 4 includes plots of both speedups and execution times for each system.
 
@@ -374,7 +375,7 @@ for these systems, respectively. In the latter case,
 the 24GB of memory at the compute node was fully used and work for each thread was increased to maximal levels. Conversely, 
 when the system size was increased again using
 $\zeta = $ Q, the memory constraint did not allow for further increase in work per thread. 
-The hindrance in scaling from $\zeta = $ T to $\zeta = $ Q is explained by the workload inbalance incurred by
+The hindrance in scaling from $\zeta = $ T to $\zeta = $ Q is explained by the workload imbalance incurred by
 the increase in sparsity. 
 
 
@@ -448,7 +449,7 @@ are carried out in each iteration, such as MCSCF, as well as methods which requi
 Conversely, the Direct algorithm is advantageous for methods
 requiring few transformations, such as DFMP2.
 
-Additionally, the crossover point shifts to the left as the transformation spaces get larger ($ij, ia, ab$), occuring in fewer transformations.
+Additionally, the crossover point shifts to the left as the transformation spaces get larger ($ij, ia, ab$), occurring in fewer transformations.
 This finding is supportive of the proposed speedups in Table 3.2.
 Therefore procedures using anything larger than a $(ib|Q)$ transformation will receive nominal benefits from employing the 
 Direct algorithm and may incur slowdowns if many transformations occur.

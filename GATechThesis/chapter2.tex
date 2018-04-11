@@ -11,7 +11,7 @@ Utilizing this pairwise sparsity requires only an estimation of the significant 
 Once this spatial sparsity is applied and insignificant AO function pairs are screened, the complexity of 
 computing the 3-center integrals becomes $\mathcal{O}(N_{aux}N_{AO}^{1-2})$, where the lower bound is achieved for sufficiently 
 sparse systems. Another type of spatial sparsity in (1.6) involves the auxiliary function, which is more complicated to 
-utilize; see Ref. \cite{ref5}. In this thesis, I focus on the former, pairwise sparsity which is featured
+utilize; see \cite{ref5}. In this thesis, I focus on the former, pairwise sparsity which is featured
 in the product $\mu(\textbf{r}_{1}) \nu(\textbf{r}_{1})$. 
 Utilizing this sparsity not only speeds up the computation of the three-index integrals, but when the integrals are stored in a sparse format,
 then this sparsity can be utilized in later operations such as the fitting metric contraction and basis transformations.
@@ -98,7 +98,7 @@ The transformation of $A_{\mu \nu}^P$ (or $B_{\mu \nu^\nu}^Q$) from the AO basis
 an essential operation for many quantum 
 chemistry procedures. The operation requires two MO matrices: $C_{\mu p}, C_{\nu q}$, where $p, q$ are MO space
 indices. These matrices will be identical if $p$ and $q$ run over the full space of MOs, but could be different if $p$ and $q$
-belong to two different subests of MOs (e.g., occupied orbitals and unoccupied orbitals).
+belong to two different subsets of MOs (e.g., occupied orbitals and unoccupied orbitals).
 A first contraction $A_{p \nu}^P=A_{\mu \nu}^PC_{\mu p}$ will half-transform the integrals and costs 
 $\mathcal{O}(N_{aux}N_{AO}^2N_p)$. The second contraction $A_{p q}^P=A_{p \nu}^PC_{\nu q}$ will cost
 $\mathcal{O}(N_{aux}N_{AO}N_pN_q)$.
