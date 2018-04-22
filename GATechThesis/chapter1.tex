@@ -100,7 +100,7 @@ K_{\mu \nu} &= B_{\mu \lambda}^P B_{\nu \sigma}^PC_{\lambda i}C_{\sigma i}
 \noindent Both (1.14) and (1.15) requires $\mathcal{O}(N_{aux}N_{AO}^2N_i)$ operations.
 This technique is not beneficial for Coulomb matrix evaluations, since the complexity of (1.14) is actually
 higher than that of (1.11). However, (1.15) reduces the complexity of exchange matrix evaluation by  
-$\frac{N_{aux}}{N_i}$, where $N_i$ denotes the number of occupied orbitals, which provides moderate speedups in practice.
+$\frac{N_{AO}}{N_i}$, where $N_i$ denotes the number of occupied orbitals, which provides moderate speedups in practice.
 
 Moreover, density fitting also improves the cost of integral transformations. Applying (1.10) to (1.5), we get:
 \begin{align}

@@ -5,7 +5,7 @@
 The size of tensors grows rapidly in quantum chemistry. The 3-center integrals of density fitting are no exception.
 Often, the size of the AO three-index integrals will exceed 64GB of RAM for small systems when
 a large basis set such as aug-cc-pVQZ is used, even with sparsity screening. Table 3.1 illustrates this point by listing
-the total memory required for sparse three-index AO integrals for the adenine-thymine dimer across various a basis sets. Once the memory required
+the total memory required for sparse three-index AO integrals for the adenine-thymine dimer across various basis sets. Once the memory required
 exceeds what is available, it is necessary for
 any implementation to begin reading and writing these tensors to and from disk-based memory. For any field this can
 be a major slowdown, but it is especially critical to performance when high-dimensional data is involved. 
@@ -68,7 +68,7 @@ that block across either index, respectively:
 \FOR {block $P_i \in \{P\}$}  
     \STATE Compute:  $A_{\mu \nu}^{P_i}$
     \STATE Contract: $A_{\mu \nu}^{P_i} [J]_{P_iQ}^{-\frac{1}{2}} \rightarrow B_{\mu \nu}^Q$
-    \STATE Write:    $B_{\mu \nu}^Q$ 
+    \STATE Write:    $B_{\mu \nu}^Q$ += $B_{\mu \nu}^Q$ 
 \ENDFOR
 \RETURN $B_{\mu \nu}^Q$
 \end{algorithmic}
@@ -158,9 +158,9 @@ Algorithms 5 and 6 illustrate the difference:
 
 To carry out the first step of the transformation, both algorithms must loop through the slowest-running index of the integrals.
 Operations within this loop should be parallelized.
-The number of iterations for this step are greater in Algorithm 3 than in Algorithm 4 since $N_{aux}$ will always be 
+The number of iterations for this step are greater in Algorithm 5 than in Algorithm 6 since $N_{aux}$ will always be 
 larger than $N_{AO}$.
-Conversely, the matrix-matrix multiplications occurring in Algorithm 4 are larger. As a result, Algorithm 4 will benefit from delegating
+Conversely, the matrix-matrix multiplications occurring in Algorithm 6 are larger. As a result, Algorithm 6 will benefit from delegating
 larger problem sizes to highly optimized level 3 BLAS routines. 
 
 However, the crucial difference is ascertained when one considers which index, $\mu$ or $P$, would be most appropriate to block across
@@ -225,6 +225,7 @@ out 3-center integral transformations. Algorithm 7 and 8 illustrate the correspo
 \caption{The "Store" algorithm - contract metric then transform.}
 \begin{algorithmic}
 \REQUIRE AO integrals: $A_{\mu \nu}^P$, fitting metric: $[J]_{PQ}^{-\frac{1}{2}}$, orbital matrices: $C_{\mu p}, C_{\nu q}$
+\STATE Compute: $A_{\mu \nu}^Q$
 \STATE Contract metric: $A_{\mu \nu}^P [J]_{PQ}^{-\frac{1}{2}} \rightarrow B_{\mu \nu}^Q$
 \STATE Save: $B_{\mu \nu}^Q$
 \FOR {all transformation spaces: $C_{\mu p}, C_{\nu q}$}  
@@ -300,7 +301,7 @@ Library.
 
 To measure parallel scaling, we performed integral transformations for the boron catalyst system shown in Figure 3.1. 
 We varied the problem size by adjusting the $\zeta$ level for the Dunning correlation-consistent basis sets with $\zeta$ = D, T, Q.
-The characteristics of these systems are included in Table 4. Note that while parallel scaling typically improves
+The characteristics of these systems are included in Table 3.3. Note that while parallel scaling typically improves
 for larger systems (i.e. due to larger workloads),
 this is not guaranteed in a sparsity regime. Larger systems may contain more sparsity;
 more sparsity will result in more striding, copying, and irregular sizing,
@@ -343,7 +344,7 @@ cc-pVQZ   & 3040 & 5593 & 50.2 \\
 
 \noindent where $i$ and $j$ refer to occupied orbitals, and $a$ and $b$ refer to unoccupied orbitals.
 The experiment was carried out using one node consisting of an Intel Xeon E5-2630 processor 
-(10 cores at 2.20GHz) and using 24GB DRAM. Figure 4 includes plots of both speedups and execution times for each system.
+(10 cores at 2.20GHz) and using 24GB DRAM. Figure 3.2 includes plots of both speedups and execution times for each system.
 
 \begin{figure}[H]
   \centering

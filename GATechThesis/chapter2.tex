@@ -25,15 +25,15 @@ The superscript $b$ reminds the reader that the structure is of Boolean type.
 The element $S_{\mu \nu}^b$ will be true if the product $\mu(r)\nu(r)$ is estimated to be significant 
 and false otherwise.
 
-For efficiency, it is common to compute batches of density fitted integrals in \textit{shell triples}: 
+For efficiency, it is common to compute batches of density fitted integrals in \textit{shell triplets}: 
 \begin{align} 
-(M N | Q) = \{(\mu \nu|P), \mu \in M, \nu \in N, Q \in P\}, 
+(M N | Q) = \{(\mu \nu|P), \mu \in M, \nu \in N, P \in Q\}, 
 \end{align} 
 
 \noindent where $M$ and $N$ denote shells of AO functions, and $P$ denotes a shell of auxiliary basis functions. 
 A shell is simply a collection of all angular momentum components of a given radial function, e.g., $p_x$, $p_y$, $p_z$ for $p$ shell. 
 An individual integral $(\mu \nu | P)$ is bounded by the Schwarz inequality $(\mu \nu | P) \leq 
-\sqrt{(\mu \nu | \mu \nu)(P|P)}$. We can eliminate entire shells of integrals, $(MN|P)$, by computing
+\sqrt{(\mu \nu | \mu \nu)(P|P)}$. We can eliminate entire shells of integrals, $(MN|Q)$, by computing
 and storing the maximum $(\mu \nu | \mu \nu)$ that occurs for a given shell $\mu \in M, \nu \in N$. We use a relative cutoff tolerance
 $\tau$ and neglect shells for which 
 \begin{align}
