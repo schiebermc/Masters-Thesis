@@ -392,7 +392,7 @@ of two Intel Xeon E5-2640 processors (10 cores at 2.40GHz) and 256GB DRAM.
 \endgroup
 
 Note that the $^{\dagger}$ symbol is used to indicate when a disk-based implementation is required. For Algorithm 11, it is possible
-to store up to half of the AO function pairs by applying permuatational symmetry. The necessary copy, 
+to store up to half of the AO function pairs by applying permutational symmetry. The necessary copy, 
 $B_{P_i \mu \nu^{\mu}} \rightarrow b_{P_i \nu^{\mu}}$, allows for this. Doing so effectively halves the memory requirement for Algorithm 11
 with respect to Algorithm 10. For this reason, Algorithm 10 is forced to resort to a disk-based implementation sooner than Algorithm 11.
 
@@ -405,7 +405,7 @@ Only when the procedures switch to a disk-based implementation
 do strided reads of the $B_{\mu P \nu^\mu}$ tensor result in a performance switch when using the two integral memory layouts. 
 Moreover, since the scaling of the Coulomb matrix evaluation is an entire factor smaller than the exchange matrix evaluation, its required time is almost trivial overall.
 
-Last, note that the total time spent in the $J$ and $K$ evaluations does not entirely account for the differences in performance. The 
+Lastly, note that the total time spent in the $J$ and $K$ evaluations does not entirely account for the differences in performance. The 
 remaining difference involves the computation of $B^P_{\mu \nu^\mu}$, which with a metric contraction scaling as 
 $\mathcal{O}(N_{aux}^2N_{AO}^2)$, can be the most expensive operation of an SCF procedure. Even though Algorithm 10 does not 
 apply permutational symmetry, it can be more efficient for this operation as both the contractions and disk writes are contiguous.

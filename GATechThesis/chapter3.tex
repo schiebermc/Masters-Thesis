@@ -41,7 +41,7 @@ this issue, we will introduce an adapted tensor notation which better indicates 
 We denote an $n$-dimensional tensor as $T_{ab\hdots n}$, where the indices from left to right go from the slowest-running
 to the fastest-running indices. Here, $a$ is the slowest-running index, $b$ is the next slowest-running
 index, and $n$ is the fastest-running index. The choice of memory layout plays a crucial role when indices are being accessed.
-Iterating through the slowest-running index, $a$, would require the largest memory strides whereas the elements 
+Iterating through the slowest-running index, $a$, would require the largest memory strides whereas adjacent elements 
 of the fastest-running index, $n$, are contiguous in memory. 
 
 Now, we can consider two possible forms for the three-center integrals: $A_{P\mu\nu}$ or $A_{\mu P\mu}$.
@@ -79,8 +79,8 @@ that block across either index, respectively:
 \begin{algorithmic}
 \REQUIRE Coulomb metric: $[J]_{PQ}^{-\frac{1}{2}}$
 \FOR {block $\mu_i \in \{\mu\}$}  
-    \STATE Compute:  $A_{\mu^i \nu}^{P}$
-    \STATE Contract: $A_{\mu^i \nu}^{P}[J]_{PQ}^{-\frac{1}{2}} \rightarrow B_{\mu_i \nu}^Q$
+    \STATE Compute:  $A_{\mu_i \nu}^{P}$
+    \STATE Contract: $A_{\mu_i \nu}^{P}[J]_{PQ}^{-\frac{1}{2}} \rightarrow B_{\mu_i \nu}^Q$
     \STATE Write:    $B_{\mu_i \nu}^Q$
 \ENDFOR
 \RETURN $B_{\mu \nu}^Q$
@@ -102,9 +102,9 @@ Although utilizing sparsity is imperative for cost reduction, an optimal impleme
 fully exploit modern computing hardware.
 Multi-core processors consisting of upwards of ten cores are found commonly both at the desk of computational
 chemists and in commodity computing clusters.
-Moreover, the birth of Intel's manycore architecture , and the advent of Graphics Processing Units (GPUs), 
+Moreover, the birth of Intel's manycore architecture and the advent of Graphics Processing Units (GPUs)
 further necessitate that scientific computing
-exploit every means of parallelism.
+exploits every means of parallelism.
 Although the density fitting technique has been shown to be challenging to exploit in massively parallel
 algorithms \cite{ref3}, it remains an essential technique for accelerating computations of 
 small to intermediate size chemical systems.
@@ -117,7 +117,7 @@ Maximizing parallelism in Algorithm 2 will require careful implementation design
 The choice of memory layout for the sparse 3-dimensional integral tensors will affect both algorithmic 
 complexity and parallel scalability. For the three-center integrals, we use $A_{P\mu \nu}$ to denote a memory 
 layout with the auxiliary index $P$ as the slowest-running index. 
-The $A_{P \mu \nu}$ layout is intuitive, as it allows looping through $P$ and direct application sparsity mask 
+The $A_{P \mu \nu}$ layout is intuitive, as it allows looping through $P$ and direct application of the sparsity mask 
 for each submatrix. The resulting sparse form $A_{P \mu \nu^\mu}$ contains submatrices of identical structure.
 However, another form, $A_{\mu P \nu}$, must be considered. The sparse form $A_{\mu P \nu^\mu}$
 results in submatrices of differing sizes. However, some advantages may be ascertained.

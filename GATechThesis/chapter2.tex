@@ -33,7 +33,7 @@ For efficiency, it is common to compute batches of density fitted integrals in \
 \noindent where $M$ and $N$ denote shells of AO functions, and $P$ denotes a shell of auxiliary basis functions. 
 A shell is simply a collection of all angular momentum components of a given radial function, e.g., $p_x$, $p_y$, $p_z$ for $p$ shell. 
 An individual integral $(\mu \nu | P)$ is bounded by the Schwarz inequality $(\mu \nu | P) \leq 
-\sqrt{(\mu \nu | \mu \nu)(P|P)}$. We can eliminate entire shells of integrals , $(MN|P)$, by computing
+\sqrt{(\mu \nu | \mu \nu)(P|P)}$. We can eliminate entire shells of integrals, $(MN|P)$, by computing
 and storing the maximum $(\mu \nu | \mu \nu)$ that occurs for a given shell $\mu \in M, \nu \in N$. We use a relative cutoff tolerance
 $\tau$ and neglect shells for which 
 \begin{align}
@@ -117,7 +117,7 @@ Algorithm 2 illustrates the resulting process:
     \STATE $C_{\nu q}S_{\mu \nu}^b \rightarrow C_{\nu^{\mu} q}$
     \STATE $A_{\mu \nu^{\mu}}^P C_{\nu^{\mu} q} \rightarrow A_{\mu q}^P$
 \ENDFOR
-\STATE $A_{\mu q}^PC_{\mu p} \rightarrow A_{p q}$
+\STATE $A_{\mu q}^PC_{\mu p} \rightarrow A_{p q}^P$
 \RETURN $A_{p q}^P$
 \end{algorithmic}
 \end{algorithm}
@@ -225,7 +225,7 @@ screened in cases where the entire shell is not screened.
 Note that the metric contraction is by far the most expensive operation, which should in one part
 highlight the boon of sparsity utilization and in another part
 illustrate the pertinence of our workflow investigation in Chapter 3 of this thesis.
-Last, our proposal outlined in Algorithm 2 for applying sparsity screening to integral transformations
+Lastly, our proposal outlined in Algorithm 2 for applying sparsity screening to integral transformations
 is proven viable by Figure 2.2 (c). Note that significant reductions are obtained for the
 first transformation; however, the sparsity mask constructed is not helpful for the second transformation step.
 With sparsity utilization, the first step scales as $\mathcal{O}(N_{aux}N_{AO}^{1-2}p)$,

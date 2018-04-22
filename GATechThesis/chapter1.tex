@@ -43,7 +43,7 @@ to the molecular orbital (MO) basis. This operation is written as:
 \end{align} 
 
 \noindent where $p,q,r,s$ denote MO indices and each MO is expanded as a linear combination of AO's as 
-$\phi_p(\textbf{r}_{2})=\sum_\mu C_{\mu p} \phi_p(\textbf{r}_{2})$.
+$\phi_p(\textbf{r}_{2})=\sum_\mu C_{\mu p} \mu_p(\textbf{r}_{2})$.
 These integral transformations scale 
 as $\mathcal{O}(N_{AO}^4N_p)$ (where $N_p$ is the size of the smallest subset of MO's required in the target integrals). 
 The transform serves as a major 
@@ -66,7 +66,7 @@ density fitting reduces the rank of the 4-center ERIs and approximates them usin
 \noindent Here we have introduced an auxiliary basis $P, Q$ and the Coulomb fitting metric $[J]_{PQ}$ \cite{ref2}. 
 In practice, permuational symmetry is almost always used so that only one set of these 3-center integrals need be built:
 \begin{align} 
-B_{\mu \nu}^P &= [J]_{PQ}^{-\frac{1}{2}}(\mu \nu | Q)  \\ 
+B_{\mu \nu}^P &= (\mu \nu | Q)[J]_{PQ}^{-\frac{1}{2}}  \\ 
 (\lambda \sigma | \mu \nu) &\approx  B_{\mu \nu}^P B_{\lambda \sigma}^P  \end{align} 
 
 \noindent In this work, tensors labeled $B$ indicate integrals that have been contracted with the fitting metric.
