@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.8.30)  22 APR 2018 18:26
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.8.30)  30 APR 2018 18:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -849,9 +849,9 @@ d
 <to be read again> 
                    \relax 
 l.18 \end{titlepage}
-                     [1]) (./acknowledgements.tex [5
+                     [1]) (./acknowledgements.tex [4
 
-]) (./thesis.toc [6
+]) (./thesis.toc [5
 
 
 ])
@@ -859,21 +859,21 @@ l.18 \end{titlepage}
 \openout5 = `thesis.toc'.
 
 
-[7] (./thesis.lot [8
+[6] (./thesis.lot [7
 
 
 ])
 \tf@lot=\write6
 \openout6 = `thesis.lot'.
 
- [9] (./thesis.lof)
+ [8] (./thesis.lof)
 \tf@lof=\write7
 \openout7 = `thesis.lof'.
 
- [10
+ [9
 
 
-] [11] (./summary.tex) [12
+] [10] (./summary.tex) [11
 
 
 ]
@@ -946,62 +946,62 @@ Chapter 3.
 [14
 
 ] [15] [16] [17] [18] [19] [20] [21] [22]
-<geometries/boron_catalyst.png, id=534, 642.4pt x 481.8pt>
+<geometries/boron_catalyst.png, id=536, 642.4pt x 481.8pt>
 File: geometries/boron_catalyst.png Graphic file (type png)
 
 <use geometries/boron_catalyst.png>
-Package pdftex.def Info: geometries/boron_catalyst.png used on input line 312.
+Package pdftex.def Info: geometries/boron_catalyst.png used on input line 313.
 (pdftex.def)             Requested size: 227.62204pt x 170.71304pt.
  [23 <./geometries/boron_catalyst.png>]
-<figures/parallel_scaling_plots/speedup-cc-pVDZ.png, id=543, 1104.125pt x 620.3
+<figures/parallel_scaling_plots/speedup-cc-pVDZ.png, id=544, 1104.125pt x 620.3
 175pt>
 File: figures/parallel_scaling_plots/speedup-cc-pVDZ.png Graphic file (type png
 )
  <use figures/parallel_scaling_plots/speedup-cc-pVDZ.png>
 Package pdftex.def Info: figures/parallel_scaling_plots/speedup-cc-pVDZ.png use
-d on input line 350.
+d on input line 351.
 (pdftex.def)             Requested size: 216.81pt x 121.80856pt.
 
-<figures/parallel_scaling_plots/times-cc-pVDZ.png, id=544, 1104.125pt x 620.317
+<figures/parallel_scaling_plots/times-cc-pVDZ.png, id=545, 1104.125pt x 620.317
 5pt>
 File: figures/parallel_scaling_plots/times-cc-pVDZ.png Graphic file (type png)
  <use figures/parallel_scaling_plots/times-cc-pVDZ.png>
 Package pdftex.def Info: figures/parallel_scaling_plots/times-cc-pVDZ.png used 
-on input line 352.
+on input line 353.
 (pdftex.def)             Requested size: 216.81pt x 121.80856pt.
 
-<figures/parallel_scaling_plots/speedup-cc-pVTZ.png, id=545, 1104.125pt x 620.3
+<figures/parallel_scaling_plots/speedup-cc-pVTZ.png, id=546, 1104.125pt x 620.3
 175pt>
 File: figures/parallel_scaling_plots/speedup-cc-pVTZ.png Graphic file (type png
 )
  <use figures/parallel_scaling_plots/speedup-cc-pVTZ.png>
 Package pdftex.def Info: figures/parallel_scaling_plots/speedup-cc-pVTZ.png use
-d on input line 354.
+d on input line 355.
 (pdftex.def)             Requested size: 216.81pt x 121.80856pt.
 
-<figures/parallel_scaling_plots/times-cc-pVTZ.png, id=546, 1104.125pt x 620.317
+<figures/parallel_scaling_plots/times-cc-pVTZ.png, id=547, 1104.125pt x 620.317
 5pt>
 File: figures/parallel_scaling_plots/times-cc-pVTZ.png Graphic file (type png)
  <use figures/parallel_scaling_plots/times-cc-pVTZ.png>
 Package pdftex.def Info: figures/parallel_scaling_plots/times-cc-pVTZ.png used 
-on input line 356.
+on input line 357.
 (pdftex.def)             Requested size: 216.81pt x 121.80856pt.
 
-<figures/parallel_scaling_plots/speedup-cc-pVQZ.png, id=547, 1104.125pt x 620.3
+<figures/parallel_scaling_plots/speedup-cc-pVQZ.png, id=548, 1104.125pt x 620.3
 175pt>
 File: figures/parallel_scaling_plots/speedup-cc-pVQZ.png Graphic file (type png
 )
  <use figures/parallel_scaling_plots/speedup-cc-pVQZ.png>
 Package pdftex.def Info: figures/parallel_scaling_plots/speedup-cc-pVQZ.png use
-d on input line 358.
+d on input line 359.
 (pdftex.def)             Requested size: 216.81pt x 121.80856pt.
 
-<figures/parallel_scaling_plots/times-cc-pVQZ.png, id=548, 1104.125pt x 620.317
+<figures/parallel_scaling_plots/times-cc-pVQZ.png, id=549, 1104.125pt x 620.317
 5pt>
 File: figures/parallel_scaling_plots/times-cc-pVQZ.png Graphic file (type png)
  <use figures/parallel_scaling_plots/times-cc-pVQZ.png>
 Package pdftex.def Info: figures/parallel_scaling_plots/times-cc-pVQZ.png used 
-on input line 360.
+on input line 361.
 (pdftex.def)             Requested size: 216.81pt x 121.80856pt.
  [24] [25 <./figures/parallel_scaling_plots/speedup-cc-pVDZ.png> <./figures/par
 allel_scaling_plots/times-cc-pVDZ.png> <./figures/parallel_scaling_plots/speedu
@@ -1009,87 +1009,87 @@ p-cc-pVTZ.png> <./figures/parallel_scaling_plots/times-cc-pVTZ.png> <./figures/
 parallel_scaling_plots/speedup-cc-pVQZ.png> <./figures/parallel_scaling_plots/t
 imes-cc-pVQZ.png>]
 [26]
-<figures/workflow_plots/input1-cc-pVDZ.png, id=577, 1104.125pt x 620.3175pt>
+<figures/workflow_plots/input1-cc-pVDZ.png, id=578, 1104.125pt x 620.3175pt>
 File: figures/workflow_plots/input1-cc-pVDZ.png Graphic file (type png)
 
 <use figures/workflow_plots/input1-cc-pVDZ.png>
 Package pdftex.def Info: figures/workflow_plots/input1-cc-pVDZ.png used on inpu
-t line 418.
+t line 419.
 (pdftex.def)             Requested size: 151.76964pt x 85.26315pt.
 
-<figures/workflow_plots/input2-cc-pVDZ.png, id=578, 1104.125pt x 620.3175pt>
+<figures/workflow_plots/input2-cc-pVDZ.png, id=579, 1104.125pt x 620.3175pt>
 File: figures/workflow_plots/input2-cc-pVDZ.png Graphic file (type png)
 
 <use figures/workflow_plots/input2-cc-pVDZ.png>
 Package pdftex.def Info: figures/workflow_plots/input2-cc-pVDZ.png used on inpu
-t line 420.
+t line 421.
 (pdftex.def)             Requested size: 151.76964pt x 85.26315pt.
 
-<figures/workflow_plots/input3-cc-pVDZ.png, id=579, 1104.125pt x 620.3175pt>
+<figures/workflow_plots/input3-cc-pVDZ.png, id=580, 1104.125pt x 620.3175pt>
 File: figures/workflow_plots/input3-cc-pVDZ.png Graphic file (type png)
 
 <use figures/workflow_plots/input3-cc-pVDZ.png>
 Package pdftex.def Info: figures/workflow_plots/input3-cc-pVDZ.png used on inpu
-t line 422.
+t line 423.
 (pdftex.def)             Requested size: 151.76964pt x 85.26315pt.
 
-Overfull \hbox (21.6889pt too wide) in paragraph at lines 418--422
+Overfull \hbox (21.6889pt too wide) in paragraph at lines 419--423
  [][][][][][] 
  []
 
-<figures/workflow_plots/input1-cc-pVTZ.png, id=580, 1104.125pt x 620.3175pt>
+<figures/workflow_plots/input1-cc-pVTZ.png, id=581, 1104.125pt x 620.3175pt>
 File: figures/workflow_plots/input1-cc-pVTZ.png Graphic file (type png)
 
 <use figures/workflow_plots/input1-cc-pVTZ.png>
 Package pdftex.def Info: figures/workflow_plots/input1-cc-pVTZ.png used on inpu
-t line 424.
+t line 425.
 (pdftex.def)             Requested size: 151.76964pt x 85.26315pt.
 
-<figures/workflow_plots/input2-cc-pVTZ.png, id=581, 1104.125pt x 620.3175pt>
+<figures/workflow_plots/input2-cc-pVTZ.png, id=582, 1104.125pt x 620.3175pt>
 File: figures/workflow_plots/input2-cc-pVTZ.png Graphic file (type png)
 
 <use figures/workflow_plots/input2-cc-pVTZ.png>
 Package pdftex.def Info: figures/workflow_plots/input2-cc-pVTZ.png used on inpu
-t line 426.
+t line 427.
 (pdftex.def)             Requested size: 151.76964pt x 85.26315pt.
 
-<figures/workflow_plots/input3-cc-pVTZ.png, id=582, 1104.125pt x 620.3175pt>
+<figures/workflow_plots/input3-cc-pVTZ.png, id=583, 1104.125pt x 620.3175pt>
 File: figures/workflow_plots/input3-cc-pVTZ.png Graphic file (type png)
 
 <use figures/workflow_plots/input3-cc-pVTZ.png>
 Package pdftex.def Info: figures/workflow_plots/input3-cc-pVTZ.png used on inpu
-t line 428.
+t line 429.
 (pdftex.def)             Requested size: 151.76964pt x 85.26315pt.
 
-Overfull \hbox (21.6889pt too wide) in paragraph at lines 423--428
+Overfull \hbox (21.6889pt too wide) in paragraph at lines 424--429
  [][][][][][] 
  []
 
-<figures/workflow_plots/input1-cc-pVQZ.png, id=583, 1104.125pt x 620.3175pt>
+<figures/workflow_plots/input1-cc-pVQZ.png, id=584, 1104.125pt x 620.3175pt>
 File: figures/workflow_plots/input1-cc-pVQZ.png Graphic file (type png)
 
 <use figures/workflow_plots/input1-cc-pVQZ.png>
 Package pdftex.def Info: figures/workflow_plots/input1-cc-pVQZ.png used on inpu
-t line 430.
+t line 431.
 (pdftex.def)             Requested size: 151.76964pt x 85.26315pt.
 
-<figures/workflow_plots/input2-cc-pVQZ.png, id=584, 1104.125pt x 620.3175pt>
+<figures/workflow_plots/input2-cc-pVQZ.png, id=585, 1104.125pt x 620.3175pt>
 File: figures/workflow_plots/input2-cc-pVQZ.png Graphic file (type png)
 
 <use figures/workflow_plots/input2-cc-pVQZ.png>
 Package pdftex.def Info: figures/workflow_plots/input2-cc-pVQZ.png used on inpu
-t line 432.
+t line 433.
 (pdftex.def)             Requested size: 151.76964pt x 85.26315pt.
 
-<figures/workflow_plots/input3-cc-pVQZ.png, id=585, 1104.125pt x 620.3175pt>
+<figures/workflow_plots/input3-cc-pVQZ.png, id=586, 1104.125pt x 620.3175pt>
 File: figures/workflow_plots/input3-cc-pVQZ.png Graphic file (type png)
 
 <use figures/workflow_plots/input3-cc-pVQZ.png>
 Package pdftex.def Info: figures/workflow_plots/input3-cc-pVQZ.png used on inpu
-t line 434.
+t line 435.
 (pdftex.def)             Requested size: 151.76964pt x 85.26315pt.
 
-Overfull \hbox (21.6889pt too wide) in paragraph at lines 429--439
+Overfull \hbox (21.6889pt too wide) in paragraph at lines 430--440
  [][][][][][] 
  []
 
@@ -1098,19 +1098,19 @@ ut2-cc-pVDZ.png> <./figures/workflow_plots/input3-cc-pVDZ.png> <./figures/workf
 low_plots/input1-cc-pVTZ.png> <./figures/workflow_plots/input2-cc-pVTZ.png> <./
 figures/workflow_plots/input3-cc-pVTZ.png> <./figures/workflow_plots/input1-cc-
 pVQZ.png> <./figures/workflow_plots/input2-cc-pVQZ.png> <./figures/workflow_plo
-ts/input3-cc-pVQZ.png>] <geometries/hexatriene.png, id=608, 642.4pt x 481.8pt>
+ts/input3-cc-pVQZ.png>] <geometries/hexatriene.png, id=609, 642.4pt x 481.8pt>
 File: geometries/hexatriene.png Graphic file (type png)
 
 <use geometries/hexatriene.png>
-Package pdftex.def Info: geometries/hexatriene.png used on input line 479.
+Package pdftex.def Info: geometries/hexatriene.png used on input line 480.
 (pdftex.def)             Requested size: 156.49014pt x 117.362pt.
 
-<geometries/benzene-toluene-solvated.png, id=609, 642.4pt x 481.8pt>
+<geometries/benzene-toluene-solvated.png, id=610, 642.4pt x 481.8pt>
 File: geometries/benzene-toluene-solvated.png Graphic file (type png)
 
 <use geometries/benzene-toluene-solvated.png>
 Package pdftex.def Info: geometries/benzene-toluene-solvated.png used on input 
-line 480.
+line 481.
 (pdftex.def)             Requested size: 156.49014pt x 117.362pt.
  [28] [29 <./geometries/hexatriene.png> <./geometries/benzene-toluene-solvated.
 png>]) (./chapter4.tex [30]
@@ -1157,8 +1157,8 @@ Package logreq Info: Writing requests to 'thesis.run.xml'.
  )
 (\end occurred when \iftrue on line 53 was incomplete) 
 Here is how much of TeX's memory you used:
- 13815 strings out of 494953
- 219205 string characters out of 6180977
+ 13816 strings out of 494953
+ 219218 string characters out of 6180977
  438357 words of memory out of 5000000
  16553 multiletter control sequences out of 15000+600000
  19999 words of font info for 46 fonts, out of 8000000 for 9000
@@ -1185,10 +1185,10 @@ re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texl
 ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></home/schiebermc/texmf
 /fonts/type1/urw/times/utmb8a.pfb></home/schiebermc/texmf/fonts/type1/urw/times
 /utmr8a.pfb></home/schiebermc/texmf/fonts/type1/urw/times/utmri8a.pfb>
-Output written on thesis.pdf (57 pages, 1929976 bytes).
+Output written on thesis.pdf (57 pages, 1929977 bytes).
 PDF statistics:
- 909 PDF objects out of 1000 (max. 8388607)
- 780 compressed objects within 8 object streams
- 316 named destinations out of 1000 (max. 500000)
+ 910 PDF objects out of 1000 (max. 8388607)
+ 781 compressed objects within 8 object streams
+ 317 named destinations out of 1000 (max. 500000)
  332 words of extra memory for PDF output out of 10000 (max. 10000000)
 
